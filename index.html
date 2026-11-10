@@ -144,6 +144,17 @@
   .rec .combo li .ic, .hero .combo li .ic { color: var(--brand); }
   .tag.now { background: var(--accent); }
   .plan.is-now { border-color: var(--accent); }
+  .member { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 10px; background: var(--bg); }
+  .member-head { display: flex; justify-content: space-between; align-items: center; font-weight: 700; margin-bottom: 8px; }
+  .member-fields { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .member-fields label { font-size: .82rem; color: var(--muted); display: block; margin-bottom: 2px; }
+  .member input, .member select { background: var(--card); }
+  .remove { background: none; border: 0; color: var(--muted); font-size: .85rem; width: auto; min-height: 32px; padding: 4px 8px; cursor: pointer; }
+  .sub-btn { background: var(--card); color: var(--accent); border: 1px dashed var(--accent); font-size: .95rem; }
+  .sub-btn:disabled { opacity: .4; cursor: default; }
+  @media (min-width: 700px) { .member-fields { grid-template-columns: 1fr 1fr 1fr; } }
+  @media (min-width: 1000px) { .member-fields { grid-template-columns: 1fr 1fr; } .member-fields > :first-child { grid-column: 1 / -1; } }
+  .who { font-weight: 700; margin-right: 4px; }
 </style>
 </head>
 <body>
@@ -171,40 +182,10 @@
             <option value="other">その他の格安SIM</option>
           </select>
         </div>
-        <div class="q">
-          <label for="current">今のスマホ代 <span class="hint">（1回線・月額・税込）</span></label>
-          <input id="current" type="number" inputmode="numeric" min="0" step="1" placeholder="例：7500" required>
-        </div>
-        <div class="q">
-          <label for="data">1か月に使うデータ量</label>
-          <select id="data">
-            <option value="1">1GB未満（Wi-Fiがメイン）</option>
-            <option value="3">1〜3GB</option>
-            <option value="5" selected>3〜5GB</option>
-            <option value="10">5〜10GB</option>
-            <option value="20">10〜20GB</option>
-            <option value="30">20〜30GB</option>
-            <option value="50">30〜50GB</option>
-            <option value="Infinity">50GB以上 / 無制限が必要</option>
-          </select>
-        </div>
         <div class="q wide">
-          <span class="label">電話のかけ方</span>
-          <div class="chips fill">
-            <label><input type="radio" name="call" value="none" checked>ほぼかけない</label>
-            <label><input type="radio" name="call" value="short">短い電話が多い</label>
-            <label><input type="radio" name="call" value="long">長電話をよくする</label>
-          </div>
-        </div>
-        <div class="q">
-          <label for="lines">家族で使う回線数</label>
-          <select id="lines">
-            <option value="1">1回線（自分だけ）</option>
-            <option value="2">2回線</option>
-            <option value="3">3回線</option>
-            <option value="4">4回線</option>
-            <option value="5">5回線</option>
-          </select>
+          <span class="label">使う人ごとのスマホ代・データ量・通話 <span class="hint">（月額・税込）</span></span>
+          <div id="members"></div>
+          <button type="button" id="addMember" class="sub-btn">＋ 家族を追加</button>
         </div>
         <div class="q">
           <span class="label">各社のカード払い <span class="hint">（dカード・au PAYカード・PayPayカード）</span></span>
@@ -342,8 +323,8 @@ function kwhFromBill(p, bill) {
 }
 
 // ───── スマホ：1回線あたりの月額 ─────
-function linePrice(c, plan, ctx, setNet, setDenki) {
-  const tier = plan.tiers.find(([g]) => g >= ctx.need);
+function linePrice(c, plan, ctx, setNet, setDenki, mem) {
+  const tier = plan.tiers.find(([g]) => g >= mem.need);
   if (!tier) return null;
   const parts = [`基本 ${yen(tier[1])}`];
   let cost = tier[1];
@@ -363,8 +344,8 @@ function linePrice(c, plan, ctx, setNet, setDenki) {
   if (setLine) { cost -= setLine; parts.push(`セット割 -${yen(setLine)}`); }
   if (fam) { cost -= fam; parts.push(`家族割 -${yen(fam)}${plan.famFrom2nd ? "（平均）" : ""}`); }
   if (ctx.card && c.card && plan.card !== false) { cost -= c.card; parts.push(`${c.cardName} -${yen(c.card)}`); }
-  const add = ctx.call === "short" ? plan.callShort : ctx.call === "long" ? plan.callLong : 0;
-  if (add) { cost += add; parts.push(`${ctx.call === "short" ? "短時間かけ放題" : "かけ放題"} +${yen(add)}`); }
+  const add = mem.call === "short" ? plan.callShort : mem.call === "long" ? plan.callLong : 0;
+  if (add) { cost += add; parts.push(`${mem.call === "short" ? "短時間かけ放題" : "かけ放題"} +${yen(add)}`); }
   return { plan: plan.name, gb: tier[0], cost: Math.max(cost, 0), parts };
 }
 
@@ -375,25 +356,69 @@ function bestFor(c, ctx) {
     for (const el of ctx.elecOptions) {
       const setNet = !!(c.net && net.id && c.net.ids.includes(net.id));
       const setDenki = !!(c.denki && el.id === c.denki.id);
-      const lines = c.plans.map(p => linePrice(c, p, ctx, setNet, setDenki)).filter(Boolean);
-      if (!lines.length) continue;
-      const m = lines.sort((a, b) => a.cost - b.cost)[0];
+      // 一人ずつ、そのキャリアで一番安いプランを選ぶ
+      const members = ctx.members.map(mem => {
+        const opts = c.plans.map(p => linePrice(c, p, ctx, setNet, setDenki, mem)).filter(Boolean);
+        return opts.length ? { who: mem.who, ...opts.sort((a, b) => a.cost - b.cost)[0] } : null;
+      });
+      if (members.some(x => !x)) continue;
+      const m = { cost: members.reduce((t, x) => t + x.cost, 0), plan: [...new Set(members.map(x => x.plan))].join("・"), members };
       let netCost = net.cost, homeDisc = 0, homeLabel = "";
       if (setNet && c.net.extra) netCost += c.net.extra;
       if (setNet && c.net.per === "home") { homeDisc += c.net.amt; homeLabel = c.net.label; }
-      const total = m.cost * ctx.lines + netCost + el.real - homeDisc;
+      const total = m.cost + netCost + el.real - homeDisc;
       if (!best || total < best.total) best = { carrier: c, mobile: m, net, netCost, el, setNet, setDenki, homeDisc, homeLabel, total };
     }
   }
   return best;
 }
 
+// ───── 使う人ごとの入力欄 ─────
+const DATA_OPTS = [["1","1GB未満"],["3","1〜3GB"],["5","3〜5GB"],["10","5〜10GB"],["20","10〜20GB"],["30","20〜30GB"],["50","30〜50GB"],["Infinity","50GB以上・無制限"]];
+const CALL_OPTS = [["none","ほぼかけない"],["short","短い電話が多い"],["long","長電話をよくする"]];
+const MAX_MEMBERS = 6;
+const opts = (list, sel) => list.map(([v, t]) => `<option value="${v}"${v === sel ? " selected" : ""}>${t}</option>`).join("");
+function addMember(preset = {}) {
+  const box = document.getElementById("members");
+  if (box.children.length >= MAX_MEMBERS) return;
+  const div = document.createElement("div");
+  div.className = "member";
+  div.innerHTML = `
+    <div class="member-head"><span class="who-label"></span><button type="button" class="remove">削除</button></div>
+    <div class="member-fields">
+      <div><label>今のスマホ代</label><input class="m-cost" type="number" inputmode="numeric" min="0" step="1" placeholder="例：7500" value="${preset.cost ?? ""}"></div>
+      <div><label>データ量</label><select class="m-data">${opts(DATA_OPTS, preset.data || "5")}</select></div>
+      <div><label>電話</label><select class="m-call">${opts(CALL_OPTS, preset.call || "none")}</select></div>
+    </div>`;
+  div.querySelector(".remove").addEventListener("click", () => { div.remove(); relabel(); });
+  box.appendChild(div);
+  relabel();
+}
+function relabel() {
+  const rows = [...document.querySelectorAll("#members .member")];
+  rows.forEach((r, i) => {
+    r.querySelector(".who-label").textContent = i === 0 ? "あなた" : `家族${i}`;
+    r.querySelector(".remove").style.visibility = i === 0 ? "hidden" : "visible";
+    r.querySelector(".m-cost").required = i === 0;
+  });
+  document.getElementById("addMember").disabled = rows.length >= MAX_MEMBERS;
+}
+function readMembers() {
+  return [...document.querySelectorAll("#members .member")].map((r, i) => ({
+    who: i === 0 ? "あなた" : `家族${i}`,
+    current: Number(r.querySelector(".m-cost").value) || 0,
+    need: Number(r.querySelector(".m-data").value),
+    call: r.querySelector(".m-call").value,
+  }));
+}
+document.getElementById("addMember").addEventListener("click", () => addMember());
+addMember();
+
 document.getElementById("form").addEventListener("submit", e => {
   e.preventDefault();
-  const ctx = {
-    need: Number(val("data")), call: radio("call"), lines: Number(val("lines")), card: radio("card") === "yes",
-  };
-  const current = Number(val("current")) || 0;
+  const members = readMembers();
+  const ctx = { members, lines: members.length, card: radio("card") === "yes" };
+  const current = members.reduce((t, m) => t + m.current, 0); // 家族全員の今のスマホ代
   const house = radio("house");
   const netNow = val("netNow");
   const netMove = radio("netMove") === "yes";
@@ -425,7 +450,7 @@ document.getElementById("form").addEventListener("submit", e => {
   if (elecMove) for (const r of elecRows) if (r.id !== elecNow && r.id !== "kepcoNattoku") ctx.elecOptions.push({ ...r, name: r.name + " に切り替え", keep: false });
 
   // 各社の最安
-  const nowTotal = current * ctx.lines + netCurrent + keepElec.real;
+  const nowTotal = current + netCurrent + keepElec.real;
   const results = D.carriers.map(c => bestFor(c, ctx)).filter(Boolean).sort((a, b) => a.total - b.total);
   const top = results[0];
   const diff = nowTotal - top.total;
@@ -437,11 +462,13 @@ document.getElementById("form").addEventListener("submit", e => {
 
   const comboList = r => `
     <ul class="combo">
-      <li>${IC.phone}${r.carrier.name} ${r.mobile.plan}（${gbText(r.mobile.gb)}）<span class="ex">${yen(r.mobile.cost)} × ${ctx.lines}回線</span></li>
+      ${r.mobile.members.map(x => `<li>${IC.phone}<span class="who">${x.who}</span>${r.carrier.name} ${x.plan}（${gbText(x.gb)}）<span class="ex">${yen(x.cost)}</span></li>`).join("")}
       <li>${IC.net}${r.net.name}<span class="ex">${r.netCost ? yen(r.netCost) : "—"}${r.setNet && r.carrier.net.extra ? `（オプションパック ${yen(r.carrier.net.extra)} 込み）` : ""}</span></li>
       <li>${IC.elec}${r.el.name}<span class="ex">${yen(r.el.real)}${r.el.points ? `（ポイント ${r.el.points}pt 差引）` : ""}</span></li>
       ${r.homeDisc ? `<li>${IC.gift}${r.homeLabel}<span class="ex">-${yen(r.homeDisc)}</span></li>` : ""}
     </ul>`;
+
+  const partsDetail = r => `<details><summary>スマホ料金の内訳</summary>${r.mobile.members.map(x => `<div class="breakdown"><span class="who">${x.who}</span>${x.parts.join(" / ")}</div>`).join("")}</details>`;
 
   // まとめ
   document.getElementById("hero").innerHTML = `
@@ -452,7 +479,7 @@ document.getElementById("form").addEventListener("submit", e => {
     ${diff > 0
       ? `<div class="big">${yen(diff * 12)} おトク</div><div class="ex">月 ${yen(nowTotal)} → ${yen(top.total)}（月 ${yen(diff)} 安くなります）</div>`
       : `<div class="big bad">今の契約がいちばんお得です</div><div class="ex">試算した中で最安は 月 ${yen(top.total)}（今は 月 ${yen(nowTotal)}）</div>`}
-    ${top.mobile.parts.length ? `<details><summary>スマホ料金の内訳</summary><div class="breakdown">${top.mobile.parts.join(" / ")}</div></details>` : ""}
+    ${partsDetail(top)}
     <table>
       <thead><tr><th></th><th>月額</th><th>今と比べて/年</th></tr></thead>
       <tbody>
@@ -467,14 +494,14 @@ document.getElementById("form").addEventListener("submit", e => {
   const maxT = Math.max(...results.map(r => r.total), nowTotal, 1);
   document.getElementById("ranking").innerHTML = `
     <h2>${IC.rank}各社の最安プランで比べた家計の合計（月額）</h2>
-    <div class="ex">今：${yen(nowTotal)}（${nowName} ${yen(current * ctx.lines)} ＋ ネット ${yen(netCurrent)} ＋ でんき ${yen(keepElec.real)}）</div>
+    <div class="ex">今：${yen(nowTotal)}（${nowName} ${yen(current)} ＋ ネット ${yen(netCurrent)} ＋ でんき ${yen(keepElec.real)}）</div>
     <div class="ranking" style="margin-top:10px">${results.map((r, i) => `
       <div class="plan ${i === 0 ? "rec" : ""} ${r === stay ? "is-now" : ""}">
         <div class="plan-head"><span class="carrier-head"><span class="rank">${i + 1}</span><span class="plan-name">${r.carrier.name}${r === stay ? '<span class="tag now">今のキャリア</span>' : ""}</span></span><span class="price">${yen(r.total)}</span></div>
         <div class="ex">${r === stay ? "プランを見直すと" : "乗り換えると"} 今と比べて 月 ${signed(nowTotal - r.total)}・年 ${yen((nowTotal - r.total) * 12)}</div>
         <div class="bar"><span style="width:${Math.min(r.total / maxT, 1) * 100}%"></span></div>
         ${comboList(r)}
-        ${r.mobile.parts.length ? `<details><summary>スマホ料金の内訳</summary><div class="breakdown">${r.mobile.parts.join(" / ")}</div></details>` : ""}
+        ${partsDetail(r)}
       </div>`).join("")}</div>`;
 
   // 自宅ネット
