@@ -142,6 +142,8 @@
   .combo li { display: flex; align-items: baseline; flex-wrap: wrap; }
   .combo li .ic { align-self: center; color: var(--muted); }
   .rec .combo li .ic, .hero .combo li .ic { color: var(--brand); }
+  .tag.now { background: var(--accent); }
+  .plan.is-now { border-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -154,6 +156,21 @@
     <fieldset>
       <legend><span class="num">1</span>スマホ</legend>
       <div class="grid">
+        <div class="q">
+          <label for="carrierNow">今のキャリア</label>
+          <select id="carrierNow">
+            <option value="docomo">ドコモ・ahamo</option>
+            <option value="au" selected>au</option>
+            <option value="uq">UQ mobile</option>
+            <option value="softbank">ソフトバンク</option>
+            <option value="ymobile">ワイモバイル</option>
+            <option value="linemo">LINEMO</option>
+            <option value="rakuten">楽天モバイル</option>
+            <option value="mineo">mineo</option>
+            <option value="iij">IIJmio</option>
+            <option value="other">その他の格安SIM</option>
+          </select>
+        </div>
         <div class="q">
           <label for="current">今のスマホ代 <span class="hint">（1回線・月額・税込）</span></label>
           <input id="current" type="number" inputmode="numeric" min="0" step="1" placeholder="例：7500" required>
@@ -412,6 +429,11 @@ document.getElementById("form").addEventListener("submit", e => {
   const results = D.carriers.map(c => bestFor(c, ctx)).filter(Boolean).sort((a, b) => a.total - b.total);
   const top = results[0];
   const diff = nowTotal - top.total;
+  const carrierNow = val("carrierNow");
+  const nowCarrier = D.carriers.find(c => c.id === carrierNow);
+  const nowName = nowCarrier ? nowCarrier.name : "今の格安SIM";
+  const stay = results.find(r => r.carrier.id === carrierNow); // 今のキャリアのまま見直した場合
+  const topIsStay = stay && stay === top;
 
   const comboList = r => `
     <ul class="combo">
@@ -423,24 +445,33 @@ document.getElementById("form").addEventListener("submit", e => {
 
   // まとめ
   document.getElementById("hero").innerHTML = `
-    <div class="tagline">いちばん安くなる組み合わせ</div>
-    <div class="title">${top.carrier.name}${top.net.keep ? "" : " × " + top.net.name.replace(" に乗り換え", "")}${top.el.keep ? "" : " × " + top.el.name.replace(" に切り替え", "")}</div>
+    <div class="tagline">${topIsStay ? `今の${nowName}のまま見直すのがいちばんお得` : `${nowName} から乗り換えると、いちばん安いのは`}</div>
+    <div class="title">${topIsStay ? "" : nowName + " → "}${top.carrier.name}${top.net.keep ? "" : " × " + top.net.name.replace(" に乗り換え", "")}${top.el.keep ? "" : " × " + top.el.name.replace(" に切り替え", "")}</div>
     ${comboList(top)}
     <div style="margin-top:12px">${diff > 0 ? "家計全体で 年間" : ""}</div>
     ${diff > 0
       ? `<div class="big">${yen(diff * 12)} おトク</div><div class="ex">月 ${yen(nowTotal)} → ${yen(top.total)}（月 ${yen(diff)} 安くなります）</div>`
       : `<div class="big bad">今の契約がいちばんお得です</div><div class="ex">試算した中で最安は 月 ${yen(top.total)}（今は 月 ${yen(nowTotal)}）</div>`}
-    ${top.mobile.parts.length ? `<details><summary>スマホ料金の内訳</summary><div class="breakdown">${top.mobile.parts.join(" / ")}</div></details>` : ""}`;
+    ${top.mobile.parts.length ? `<details><summary>スマホ料金の内訳</summary><div class="breakdown">${top.mobile.parts.join(" / ")}</div></details>` : ""}
+    <table>
+      <thead><tr><th></th><th>月額</th><th>今と比べて/年</th></tr></thead>
+      <tbody>
+        <tr><td>今の契約（${nowName}）</td><td>${yen(nowTotal)}</td><td>—</td></tr>
+        ${stay && !topIsStay ? `<tr><td>${nowName}のまま見直し<div class="breakdown">${stay.mobile.plan}</div></td><td>${yen(stay.total)}</td><td>${signed((nowTotal - stay.total) * 12)}</td></tr>` : ""}
+        <tr><td>${topIsStay ? `${nowName}のまま見直し` : `${top.carrier.name}に乗り換え`}<div class="breakdown">${top.mobile.plan}</div></td><td>${yen(top.total)}</td><td>${signed(diff * 12)}</td></tr>
+      </tbody>
+    </table>
+    ${stay && !topIsStay ? `<div class="ex" style="margin-top:8px">${nowName}のまま見直すより、${top.carrier.name}に乗り換えた方が 年 ${yen((stay.total - top.total) * 12)} 安くなります。</div>` : ""}`;
 
   // ランキング
   const maxT = Math.max(...results.map(r => r.total), nowTotal, 1);
   document.getElementById("ranking").innerHTML = `
     <h2>${IC.rank}各社の最安プランで比べた家計の合計（月額）</h2>
-    <div class="ex">今：${yen(nowTotal)}（スマホ ${yen(current * ctx.lines)} ＋ ネット ${yen(netCurrent)} ＋ でんき ${yen(keepElec.real)}）</div>
+    <div class="ex">今：${yen(nowTotal)}（${nowName} ${yen(current * ctx.lines)} ＋ ネット ${yen(netCurrent)} ＋ でんき ${yen(keepElec.real)}）</div>
     <div class="ranking" style="margin-top:10px">${results.map((r, i) => `
-      <div class="plan ${i === 0 ? "rec" : ""}">
-        <div class="plan-head"><span class="carrier-head"><span class="rank">${i + 1}</span><span class="plan-name">${r.carrier.name}</span></span><span class="price">${yen(r.total)}</span></div>
-        <div class="ex">今と比べて 月 ${signed(nowTotal - r.total)}・年 ${yen((nowTotal - r.total) * 12)}</div>
+      <div class="plan ${i === 0 ? "rec" : ""} ${r === stay ? "is-now" : ""}">
+        <div class="plan-head"><span class="carrier-head"><span class="rank">${i + 1}</span><span class="plan-name">${r.carrier.name}${r === stay ? '<span class="tag now">今のキャリア</span>' : ""}</span></span><span class="price">${yen(r.total)}</span></div>
+        <div class="ex">${r === stay ? "プランを見直すと" : "乗り換えると"} 今と比べて 月 ${signed(nowTotal - r.total)}・年 ${yen((nowTotal - r.total) * 12)}</div>
         <div class="bar"><span style="width:${Math.min(r.total / maxT, 1) * 100}%"></span></div>
         ${comboList(r)}
         ${r.mobile.parts.length ? `<details><summary>スマホ料金の内訳</summary><div class="breakdown">${r.mobile.parts.join(" / ")}</div></details>` : ""}
