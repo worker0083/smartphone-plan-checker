@@ -65,6 +65,44 @@
   .more { font-size: .88rem; font-weight: 600; color: var(--warn); }
   .disclaimer { color: var(--muted); font-size: .8rem; margin-top: 16px; }
   #result { display: none; }
+  .placeholder { display: none; }
+  .chips label, input[type=number], select, button { min-height: 44px; }
+  .chips label { display: inline-flex; align-items: center; -webkit-tap-highlight-color: transparent; }
+
+  /* タブレット（iPad mini 縦向き など） */
+  @media (min-width: 700px) {
+    main { max-width: 760px; padding: 32px 24px 64px; }
+    h1 { font-size: 1.9rem; }
+    .lead { font-size: 1.05rem; }
+    .card { padding: 24px; border-radius: 18px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 20px; margin-bottom: 24px; }
+    .grid .q { margin-bottom: 0; }
+    .grid .wide { grid-column: 1 / -1; }
+    .chips label { padding: 10px 18px; font-size: 1rem; }
+    .chips.fill { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .chips.fill label { justify-content: center; }
+    .chips.fill.two { grid-template-columns: 1fr 1fr; }
+    #list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    #list > .plan-head { grid-column: 1 / -1; }
+    .plan { margin-top: 0; }
+    .summary .big { font-size: 2.4rem; }
+  }
+
+  /* 横向き（iPad mini 横向き・PC）：入力と結果を左右に並べる */
+  @media (min-width: 1000px) {
+    main { max-width: 1120px; }
+    .layout { display: grid; grid-template-columns: 440px 1fr; gap: 24px; align-items: start; }
+    .layout > form { position: sticky; top: 24px; margin-bottom: 0; }
+    .grid { grid-template-columns: 1fr; gap: 20px; }
+    .chips.fill.two { grid-template-columns: 1fr 1fr; }
+    #result { display: block; }
+    #result.empty .card, #result.empty .disclaimer { display: none; }
+    #result.empty .placeholder { display: flex; }
+    .placeholder {
+      min-height: 420px; align-items: center; justify-content: center; text-align: center;
+      border: 2px dashed var(--line); border-radius: 18px; color: var(--muted); padding: 24px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -72,7 +110,9 @@
   <h1>スマホ料金診断</h1>
   <p class="lead">いくつかの質問に答えると、あなたに合うプランの種類と節約できる金額の目安がわかります。</p>
 
+  <div class="layout">
   <form id="form" class="card">
+    <div class="grid">
     <div class="q">
       <label for="current">今のスマホ代（1回線・月額・税込）</label>
       <input id="current" type="number" inputmode="numeric" min="0" step="100" placeholder="例：7500" required>
@@ -92,9 +132,9 @@
       </select>
     </div>
 
-    <div class="q">
+    <div class="q wide">
       <span class="label">電話のかけ方</span>
-      <div class="chips">
+      <div class="chips fill">
         <label><input type="radio" name="call" value="none" checked>ほぼかけない</label>
         <label><input type="radio" name="call" value="short">短い電話が多い</label>
         <label><input type="radio" name="call" value="long">長電話をよくする</label>
@@ -113,7 +153,7 @@
 
     <div class="q">
       <span class="label">自宅の光回線・電気などとのセット割</span>
-      <div class="chips">
+      <div class="chips fill two">
         <label><input type="radio" name="home" value="no" checked>使えない／わからない</label>
         <label><input type="radio" name="home" value="yes">使える</label>
       </div>
@@ -121,20 +161,23 @@
 
     <div class="q">
       <span class="label">重視すること（複数選択可）</span>
-      <div class="chips">
+      <div class="chips fill two">
         <label><input type="checkbox" name="prio" value="quality">いつでも速い通信</label>
         <label><input type="checkbox" name="prio" value="store">店舗で相談したい</label>
       </div>
     </div>
 
+    </div>
     <button type="submit">診断する</button>
   </form>
 
-  <section id="result">
+  <section id="result" class="empty">
+    <div class="placeholder">左の質問に答えて「診断する」を押すと、<br>ここに結果が表示されます。</div>
     <div class="card summary" id="summary"></div>
     <div class="card" id="list"></div>
     <p class="disclaimer">※ 料金は代表的なプランをもとにした参考値（税込）です。端末代・キャンペーン・各種手数料は含みません。実際の料金は各社の公式サイトでご確認ください。</p>
   </section>
+  </div>
 </main>
 
 <script src="plans.js"></script>
@@ -219,8 +262,10 @@ document.getElementById("form").addEventListener("submit", e => {
     }).join("");
 
   const res = document.getElementById("result");
+  res.classList.remove("empty");
   res.style.display = "block";
-  res.scrollIntoView({ behavior: "smooth" });
+  // 左右に並んでいる横向きレイアウトではスクロールしない
+  if (window.innerWidth < 1000) res.scrollIntoView({ behavior: "smooth" });
 });
 </script>
 </body>
