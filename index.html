@@ -157,11 +157,26 @@
   .chips label.fixed { opacity: .7; cursor: default; }
   fieldset.off { display: none; }
   .who { font-weight: 700; margin-right: 4px; }
+  .topbar { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .version { font-size: .8rem; color: var(--muted); white-space: nowrap; }
+  .update-bar {
+    display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    background: var(--accent-weak); border: 1px solid var(--accent); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: .92rem;
+  }
+  .update-bar.show { display: flex; }
+  .update-bar button { width: auto; padding: 8px 18px; min-height: 40px; font-size: .95rem; }
 </style>
 </head>
 <body>
 <main>
-  <h1>スマホ・ネット・でんき 料金診断</h1>
+  <div id="updateBar" class="update-bar" role="status">
+    <span id="updateText">新しいバージョンがあります</span>
+    <button type="button" id="updateBtn">最新版に更新</button>
+  </div>
+  <div class="topbar">
+    <h1>スマホ・ネット・でんき 料金診断</h1>
+    <span class="version" id="version"></span>
+  </div>
   <p class="lead">スマホ・自宅のインターネット・電気代をまとめて入力すると、各社ごとにいちばん安くなる組み合わせを計算して、家計全体で比べます（関西エリア向け）。</p>
 
   <div class="layout">
@@ -276,9 +291,44 @@
   </div>
 </main>
 
-<script src="plans.js"></script>
+<script>
+// ───── バージョン（更新するときは version.json と合わせて書き換える）─────
+const APP_VERSION = "1.6.0";
+const APP_DATE = "2026-11-10";
+</script>
+<script src="plans.js?v=1.6.0"></script>
 <script>
 const D = window.DATA;
+
+// ───── 更新チェック：公開中の version.json と比べて、古ければ更新ボタンを出す ─────
+document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新）`;
+const newer = (a, b) => { // a が b より新しいか
+  const x = a.split(".").map(Number), y = b.split(".").map(Number);
+  for (let i = 0; i < Math.max(x.length, y.length); i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); }
+  return false;
+};
+let latest = null;
+async function checkUpdate() {
+  try {
+    const r = await fetch(`version.json?t=${Date.now()}`, { cache: "no-store" });
+    if (!r.ok) return;
+    const v = await r.json();
+    if (v.version && newer(v.version, APP_VERSION)) {
+      latest = v.version;
+      document.getElementById("updateText").textContent = `新しいバージョン v${v.version} があります（今は v${APP_VERSION}）`;
+      document.getElementById("updateBar").classList.add("show");
+    }
+  } catch (e) { /* オフライン等は何もしない */ }
+}
+document.getElementById("updateBtn").addEventListener("click", () => {
+  // キャッシュを避けるため、URLに版番号を付けて読み込み直す
+  const u = new URL(location.href);
+  u.searchParams.set("v", latest || Date.now());
+  location.replace(u.toString());
+});
+checkUpdate();
+document.addEventListener("visibilitychange", () => { if (!document.hidden) checkUpdate(); });
+setInterval(checkUpdate, 10 * 60 * 1000);
 const yen = n => (n < 0 ? "-" : "") + "¥" + Math.round(Math.abs(n)).toLocaleString("ja-JP");
 const signed = n => n > 0 ? `<span class="plus">${yen(n)} おトク</span>` : n < 0 ? `<span class="minus">${yen(-n)} 高い</span>` : "変わらず";
 const val = id => document.getElementById(id).value;
