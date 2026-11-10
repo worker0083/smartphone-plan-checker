@@ -137,6 +137,11 @@
   .carrier-head { display: flex; align-items: center; }
   .ranking { display: grid; gap: 10px; }
   @media (min-width: 700px) { .ranking { grid-template-columns: 1fr 1fr; } .ranking .plan { margin-top: 0; } }
+  .ic { width: 1.15em; height: 1.15em; vertical-align: -0.2em; margin-right: 6px; color: var(--accent); flex: none; }
+  h2 .ic { width: 1.25em; height: 1.25em; }
+  .combo li { display: flex; align-items: baseline; flex-wrap: wrap; }
+  .combo li .ic { align-self: center; color: var(--muted); }
+  .rec .combo li .ic, .hero .combo li .ic { color: var(--brand); }
 </style>
 </head>
 <body>
@@ -285,6 +290,14 @@ const yen = n => (n < 0 ? "-" : "") + "¥" + Math.round(Math.abs(n)).toLocaleStr
 const signed = n => n > 0 ? `<span class="plus">${yen(n)} おトク</span>` : n < 0 ? `<span class="minus">${yen(-n)} 高い</span>` : "変わらず";
 const val = id => document.getElementById(id).value;
 const radio = name => document.querySelector(`input[name=${name}]:checked`).value;
+const svg = d => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const IC = {
+  phone: svg('<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>'),
+  net: svg('<path d="M2.5 9a14 14 0 0 1 19 0"/><path d="M5.5 12.5a9.5 9.5 0 0 1 13 0"/><path d="M8.7 16a5 5 0 0 1 6.6 0"/><circle cx="12" cy="19.5" r="1"/>'),
+  elec: svg('<path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/>'),
+  gift: svg('<rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8.5h14V12M12 8v12.5M12 8S10.5 3.5 8 4.5 9 8 12 8zm0 0s1.5-4.5 4-3.5S15 8 12 8z"/>'),
+  rank: svg('<path d="M4 20.5h16"/><rect x="5" y="12" width="4" height="8.5"/><rect x="10" y="7" width="4" height="13.5"/><rect x="15" y="14.5" width="4" height="6"/>'),
+};
 const gbText = gb => gb === Infinity ? "無制限" : gb + "GB";
 const E = D.electricity;
 const elecById = id => E.plans.find(p => p.id === id);
@@ -402,10 +415,10 @@ document.getElementById("form").addEventListener("submit", e => {
 
   const comboList = r => `
     <ul class="combo">
-      <li>📱 ${r.carrier.name} ${r.mobile.plan}（${gbText(r.mobile.gb)}）<span class="ex">${yen(r.mobile.cost)} × ${ctx.lines}回線</span></li>
-      <li>🌐 ${r.net.name}<span class="ex">${r.netCost ? yen(r.netCost) : "—"}${r.setNet && r.carrier.net.extra ? `（オプションパック ${yen(r.carrier.net.extra)} 込み）` : ""}</span></li>
-      <li>💡 ${r.el.name}<span class="ex">${yen(r.el.real)}${r.el.points ? `（ポイント ${r.el.points}pt 差引）` : ""}</span></li>
-      ${r.homeDisc ? `<li>🎁 ${r.homeLabel}<span class="ex">-${yen(r.homeDisc)}</span></li>` : ""}
+      <li>${IC.phone}${r.carrier.name} ${r.mobile.plan}（${gbText(r.mobile.gb)}）<span class="ex">${yen(r.mobile.cost)} × ${ctx.lines}回線</span></li>
+      <li>${IC.net}${r.net.name}<span class="ex">${r.netCost ? yen(r.netCost) : "—"}${r.setNet && r.carrier.net.extra ? `（オプションパック ${yen(r.carrier.net.extra)} 込み）` : ""}</span></li>
+      <li>${IC.elec}${r.el.name}<span class="ex">${yen(r.el.real)}${r.el.points ? `（ポイント ${r.el.points}pt 差引）` : ""}</span></li>
+      ${r.homeDisc ? `<li>${IC.gift}${r.homeLabel}<span class="ex">-${yen(r.homeDisc)}</span></li>` : ""}
     </ul>`;
 
   // まとめ
@@ -422,7 +435,7 @@ document.getElementById("form").addEventListener("submit", e => {
   // ランキング
   const maxT = Math.max(...results.map(r => r.total), nowTotal, 1);
   document.getElementById("ranking").innerHTML = `
-    <h2>🏆 各社の最安プランで比べた家計の合計（月額）</h2>
+    <h2>${IC.rank}各社の最安プランで比べた家計の合計（月額）</h2>
     <div class="ex">今：${yen(nowTotal)}（スマホ ${yen(current * ctx.lines)} ＋ ネット ${yen(netCurrent)} ＋ でんき ${yen(keepElec.real)}）</div>
     <div class="ranking" style="margin-top:10px">${results.map((r, i) => `
       <div class="plan ${i === 0 ? "rec" : ""}">
@@ -437,7 +450,7 @@ document.getElementById("form").addEventListener("submit", e => {
   const maxN = Math.max(...D.internet.map(n => n[house]), netCurrent, 1);
   const setNames = id => D.carriers.filter(c => c.net && c.net.ids.includes(id)).map(c => c.name).join("・");
   document.getElementById("internet").innerHTML = `
-    <h2>🌐 自宅のインターネット（${house === "home" ? "戸建て" : "マンション"}・月額）</h2>
+    <h2>${IC.net}自宅のインターネット（${house === "home" ? "戸建て" : "マンション"}・月額）</h2>
     <div class="ex">今：${netNow === "none" ? "回線なし" : yen(netCurrent)}</div>
     <div class="plans">${D.internet.map(n => {
       const cost = n.id === netNow && netFeeIn ? netFeeIn : n[house];
@@ -453,7 +466,7 @@ document.getElementById("form").addEventListener("submit", e => {
   const maxE = Math.max(...elecRows.map(r => r.real), elecCurrent, 1);
   const denkiSet = id => D.carriers.filter(c => c.denki && c.denki.id === id).map(c => `${c.name} -${yen(c.denki.amt)}/回線`).join("・");
   document.getElementById("elec").innerHTML = `
-    <h2>💡 でんき 切り替えシミュレーション（関西電力エリア）</h2>
+    <h2>${IC.elec}でんき 切り替えシミュレーション（関西電力エリア）</h2>
     <div class="ex">月の使用量：約 ${kwh}kWh${kwhIn ? "" : billIn ? "（電気代から推定）" : "（目安）"}　／　今：${yen(elecCurrent)}</div>
     <div class="plans">${elecRows.sort((a, b) => a.real - b.real).map(r => `
       <div class="plan">
@@ -466,7 +479,7 @@ document.getElementById("form").addEventListener("submit", e => {
     <div class="notice">電気代は燃料費調整額（楽天でんきは市場価格調整額）を含めずに比べています。月によって実際の差は変わります。</div>`;
 
   document.getElementById("disclaimer").innerHTML =
-    `※ 料金は${D.updated}時点で各社の公式サイトを確認した税込の目安です（一部は参考値。詳しくは plans.js の ✅/⚠ を参照）。端末代・工事費・事務手数料・解約金・期間限定キャンペーンは含みません。` +
+    `※ 料金は${D.updated}時点で各社の公式サイトを確認した税込の目安です（一部は参考値）。端末代・工事費・事務手数料・解約金・期間限定キャンペーンは含みません。` +
     `※ 本ツールは個人が作成した非公式の試算ツールで、特定の会社とは関係ありません。正式な料金は各社の公式サイト・店頭でご確認ください。`;
 
   const res = document.getElementById("result");
