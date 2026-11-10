@@ -9,12 +9,14 @@
     --bg: #f6f7f9; --card: #ffffff; --text: #1d2330; --muted: #6b7280;
     --line: #e3e6eb; --accent: #2563eb; --accent-weak: #e8efff;
     --good: #15803d; --good-weak: #e7f6ec; --warn: #b45309; --warn-weak: #fdf3e3;
+    --brand: #c2410c; --brand-weak: #fff1e8;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #12151b; --card: #1b2029; --text: #e7eaf0; --muted: #9aa3b2;
       --line: #2c3340; --accent: #6b9bff; --accent-weak: #1f2b45;
       --good: #4ade80; --good-weak: #173322; --warn: #fbbf24; --warn-weak: #3a2e14;
+      --brand: #fb923c; --brand-weak: #3a2414;
     }
   }
   * { box-sizing: border-box; }
@@ -25,11 +27,21 @@
   }
   main { max-width: 640px; margin: 0 auto; padding: 24px 16px 64px; }
   h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  h2 { font-size: 1.1rem; margin: 0 0 12px; }
   .lead { color: var(--muted); margin: 0 0 24px; font-size: .95rem; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
-  .q { margin-bottom: 20px; }
-  .q:last-child { margin-bottom: 0; }
+  fieldset { border: 0; padding: 0; margin: 0 0 28px; }
+  legend {
+    font-size: 1.05rem; font-weight: 800; padding: 0 0 12px; width: 100%;
+    display: flex; align-items: center; gap: 8px;
+  }
+  legend .num {
+    display: inline-flex; width: 26px; height: 26px; border-radius: 50%; align-items: center; justify-content: center;
+    background: var(--accent); color: #fff; font-size: .85rem;
+  }
+  .q { margin-bottom: 18px; }
   .q > label, .q > .label { display: block; font-weight: 600; margin-bottom: 8px; }
+  .hint { color: var(--muted); font-size: .82rem; font-weight: 400; }
   input[type=number], select {
     width: 100%; padding: 12px; font-size: 1rem; border-radius: 10px;
     border: 1px solid var(--line); background: var(--bg); color: var(--text);
@@ -38,36 +50,50 @@
   .chips label {
     border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px;
     cursor: pointer; user-select: none; font-size: .95rem; background: var(--bg);
+    display: inline-flex; align-items: center; -webkit-tap-highlight-color: transparent;
   }
   .chips input { display: none; }
   .chips label:has(input:checked) { background: var(--accent-weak); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .chips label, input[type=number], select, button { min-height: 44px; }
   button {
     width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border: 0;
     border-radius: 12px; background: var(--accent); color: #fff; cursor: pointer;
   }
-  .summary { text-align: center; }
-  .summary .big { font-size: 2rem; font-weight: 800; color: var(--good); }
-  .summary .big.none { color: var(--muted); font-size: 1.3rem; }
-  .plan { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-top: 12px; }
-  .plan.best { border-color: var(--good); background: var(--good-weak); }
+
+  /* 結果 */
+  .hero { border: 2px solid var(--brand); background: var(--brand-weak); }
+  .hero .tagline { font-size: .85rem; font-weight: 700; color: var(--brand); }
+  .hero .title { font-size: 1.25rem; font-weight: 800; margin: 4px 0 2px; }
+  .hero .items { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 14px; }
+  .hero .items span { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; font-size: .9rem; font-weight: 600; }
+  .big { font-size: 2rem; font-weight: 800; color: var(--good); line-height: 1.2; }
+  .big.bad { color: var(--warn); font-size: 1.4rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; margin-top: 12px; }
+  th, td { padding: 8px 6px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; white-space: normal; }
+  thead th { color: var(--muted); font-weight: 600; font-size: .82rem; }
+  tfoot td { font-weight: 800; border-bottom: 0; }
+  .plus { color: var(--good); font-weight: 700; }
+  .minus { color: var(--warn); font-weight: 700; }
+  .plan { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-top: 10px; }
+  .plan.rec { border-color: var(--brand); background: var(--brand-weak); }
   .plan-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
   .plan-name { font-weight: 700; }
   .price { font-weight: 800; white-space: nowrap; }
   .ex { color: var(--muted); font-size: .85rem; }
-  .bar { height: 8px; background: var(--line); border-radius: 4px; margin: 8px 0; overflow: hidden; }
-  .bar > span { display: block; height: 100%; background: var(--accent); }
-  .best .bar > span { background: var(--good); }
-  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-  .tag { font-size: .78rem; padding: 2px 8px; border-radius: 6px; background: var(--accent-weak); color: var(--accent); }
-  .tag.warn { background: var(--warn-weak); color: var(--warn); }
-  .note { font-size: .88rem; margin: 6px 0 0; }
-  .save { font-size: .88rem; font-weight: 600; color: var(--good); }
-  .more { font-size: .88rem; font-weight: 600; color: var(--warn); }
+  .bar { height: 8px; background: var(--line); border-radius: 4px; margin: 8px 0 4px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; background: var(--muted); }
+  .rec .bar > span { background: var(--brand); }
+  .tag { display: inline-block; font-size: .75rem; padding: 1px 8px; border-radius: 6px; background: var(--brand); color: #fff; margin-left: 6px; vertical-align: 2px; }
+  .breakdown { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+  .notice { font-size: .85rem; background: var(--warn-weak); color: var(--text); border-radius: 10px; padding: 10px 12px; margin-top: 12px; }
+  .elec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+  .elec-box { border: 1px solid var(--line); border-radius: 12px; padding: 12px; text-align: center; }
+  .elec-box.rec { border-color: var(--brand); background: var(--brand-weak); }
+  .elec-box .v { font-size: 1.3rem; font-weight: 800; }
   .disclaimer { color: var(--muted); font-size: .8rem; margin-top: 16px; }
   #result { display: none; }
   .placeholder { display: none; }
-  .chips label, input[type=number], select, button { min-height: 44px; }
-  .chips label { display: inline-flex; align-items: center; -webkit-tap-highlight-color: transparent; }
 
   /* タブレット（iPad mini 縦向き など） */
   @media (min-width: 700px) {
@@ -75,28 +101,25 @@
     h1 { font-size: 1.9rem; }
     .lead { font-size: 1.05rem; }
     .card { padding: 24px; border-radius: 18px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 20px; margin-bottom: 24px; }
-    .grid .q { margin-bottom: 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
     .grid .wide { grid-column: 1 / -1; }
     .chips label { padding: 10px 18px; font-size: 1rem; }
     .chips.fill { display: grid; grid-template-columns: repeat(3, 1fr); }
-    .chips.fill label { justify-content: center; }
+    .chips.fill label { justify-content: center; text-align: center; }
     .chips.fill.two { grid-template-columns: 1fr 1fr; }
-    #list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    #list > .plan-head { grid-column: 1 / -1; }
-    .plan { margin-top: 0; }
-    .summary .big { font-size: 2.4rem; }
+    .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .plans .plan { margin-top: 0; }
+    .big { font-size: 2.4rem; }
   }
 
   /* 横向き（iPad mini 横向き・PC）：入力と結果を左右に並べる */
   @media (min-width: 1000px) {
     main { max-width: 1120px; }
     .layout { display: grid; grid-template-columns: 440px 1fr; gap: 24px; align-items: start; }
-    .layout > form { position: sticky; top: 24px; margin-bottom: 0; }
-    .grid { grid-template-columns: 1fr; gap: 20px; }
-    .chips.fill.two { grid-template-columns: 1fr 1fr; }
+    .layout > form { position: sticky; top: 16px; margin-bottom: 0; max-height: calc(100vh - 32px); overflow-y: auto; }
+    .grid { grid-template-columns: 1fr; }
     #result { display: block; }
-    #result.empty .card, #result.empty .disclaimer { display: none; }
+    #result.empty > :not(.placeholder) { display: none; }
     #result.empty .placeholder { display: flex; }
     .placeholder {
       min-height: 420px; align-items: center; justify-content: center; text-align: center;
@@ -107,164 +130,318 @@
 </head>
 <body>
 <main>
-  <h1>スマホ料金診断</h1>
-  <p class="lead">いくつかの質問に答えると、あなたに合うプランの種類と節約できる金額の目安がわかります。</p>
+  <h1>スマホ・ネット・でんき 料金診断</h1>
+  <p class="lead">スマホ・自宅のインターネット・電気代をまとめて見直すと、毎月いくら変わるかを試算します（関西エリア向け）。</p>
 
   <div class="layout">
   <form id="form" class="card">
-    <div class="grid">
-    <div class="q">
-      <label for="current">今のスマホ代（1回線・月額・税込）</label>
-      <input id="current" type="number" inputmode="numeric" min="0" step="100" placeholder="例：7500" required>
-    </div>
-
-    <div class="q">
-      <label for="data">1か月に使うデータ量</label>
-      <select id="data">
-        <option value="1">1GB未満（Wi-Fiがメイン）</option>
-        <option value="3">1〜3GB</option>
-        <option value="7" selected>3〜7GB</option>
-        <option value="20">7〜20GB</option>
-        <option value="30">20〜30GB</option>
-        <option value="50">30〜50GB</option>
-        <option value="100">50〜100GB</option>
-        <option value="Infinity">100GB以上 / 無制限が必要</option>
-      </select>
-    </div>
-
-    <div class="q wide">
-      <span class="label">電話のかけ方</span>
-      <div class="chips fill">
-        <label><input type="radio" name="call" value="none" checked>ほぼかけない</label>
-        <label><input type="radio" name="call" value="short">短い電話が多い</label>
-        <label><input type="radio" name="call" value="long">長電話をよくする</label>
+    <fieldset>
+      <legend><span class="num">1</span>スマホ</legend>
+      <div class="grid">
+        <div class="q">
+          <label for="current">今のスマホ代 <span class="hint">（1回線・月額・税込）</span></label>
+          <input id="current" type="number" inputmode="numeric" min="0" step="1" placeholder="例：7500" required>
+        </div>
+        <div class="q">
+          <label for="data">1か月に使うデータ量</label>
+          <select id="data">
+            <option value="1">1GB未満（Wi-Fiがメイン）</option>
+            <option value="3">1〜3GB</option>
+            <option value="5" selected>3〜5GB</option>
+            <option value="20">5〜20GB</option>
+            <option value="30">20〜30GB</option>
+            <option value="50">30〜50GB</option>
+            <option value="Infinity">50GB以上 / 無制限が必要</option>
+          </select>
+        </div>
+        <div class="q wide">
+          <span class="label">電話のかけ方</span>
+          <div class="chips fill">
+            <label><input type="radio" name="call" value="none" checked>ほぼかけない</label>
+            <label><input type="radio" name="call" value="short">短い電話が多い</label>
+            <label><input type="radio" name="call" value="long">長電話をよくする</label>
+          </div>
+        </div>
+        <div class="q">
+          <label for="lines">家族で使う回線数</label>
+          <select id="lines">
+            <option value="1">1回線（自分だけ）</option>
+            <option value="2">2回線</option>
+            <option value="3">3回線</option>
+            <option value="4">4回線</option>
+            <option value="5">5回線</option>
+          </select>
+        </div>
+        <div class="q">
+          <span class="label">au PAY カード払い</span>
+          <div class="chips fill two">
+            <label><input type="radio" name="aupay" value="yes" checked>OK</label>
+            <label><input type="radio" name="aupay" value="no">使わない</label>
+          </div>
+        </div>
       </div>
-    </div>
+    </fieldset>
 
-    <div class="q">
-      <label for="lines">家族で同じ会社を使う回線数</label>
-      <select id="lines">
-        <option value="1">1回線（自分だけ）</option>
-        <option value="2">2回線</option>
-        <option value="3">3回線</option>
-        <option value="4">4回線以上</option>
-      </select>
-    </div>
-
-    <div class="q">
-      <span class="label">自宅の光回線・電気などとのセット割</span>
-      <div class="chips fill two">
-        <label><input type="radio" name="home" value="no" checked>使えない／わからない</label>
-        <label><input type="radio" name="home" value="yes">使える</label>
+    <fieldset>
+      <legend><span class="num">2</span>自宅のインターネット</legend>
+      <div class="grid">
+        <div class="q">
+          <label for="netNow">今の回線</label>
+          <select id="netNow">
+            <option value="none">インターネット回線なし</option>
+            <option value="eo">eo光</option>
+            <option value="auhikari">auひかり</option>
+            <option value="docomo" selected>ドコモ光</option>
+            <option value="softbank">ソフトバンク光</option>
+            <option value="nuro">NURO光</option>
+            <option value="other">その他（ケーブルTV・ホームルーターなど）</option>
+          </select>
+        </div>
+        <div class="q">
+          <label for="netFee">今のネット代 <span class="hint">（月額・税込）</span></label>
+          <input id="netFee" type="number" inputmode="numeric" min="0" step="1" placeholder="例：5720">
+        </div>
+        <div class="q wide">
+          <span class="label">お住まい</span>
+          <div class="chips fill two">
+            <label><input type="radio" name="house" value="home" checked>戸建て</label>
+            <label><input type="radio" name="house" value="mansion">マンション</label>
+          </div>
+        </div>
       </div>
-    </div>
+    </fieldset>
 
-    <div class="q">
-      <span class="label">重視すること（複数選択可）</span>
-      <div class="chips fill two">
-        <label><input type="checkbox" name="prio" value="quality">いつでも速い通信</label>
-        <label><input type="checkbox" name="prio" value="store">店舗で相談したい</label>
+    <fieldset>
+      <legend><span class="num">3</span>でんき・ガス</legend>
+      <div class="grid">
+        <div class="q wide">
+          <label for="elecNow">今の契約</label>
+          <select id="elecNow">
+            <option value="kepcoA" selected>関西電力 従量電灯A（電気だけ関電）</option>
+            <option value="kepcoNattoku">関西電力 なっトクパック（電気もガスも関電）</option>
+            <option value="audenki">すでに auでんき</option>
+            <option value="other">その他の電力会社</option>
+          </select>
+        </div>
+        <div class="q">
+          <label for="elecBill">今の電気代 <span class="hint">（月額・税込）</span></label>
+          <input id="elecBill" type="number" inputmode="numeric" min="0" step="1" placeholder="例：8000">
+        </div>
+        <div class="q">
+          <label for="kwh">使用量 <span class="hint">（kWh・検針票にあれば）</span></label>
+          <input id="kwh" type="number" inputmode="numeric" min="0" step="1" placeholder="例：260">
+        </div>
       </div>
-    </div>
+    </fieldset>
 
-    </div>
     <button type="submit">診断する</button>
   </form>
 
   <section id="result" class="empty">
     <div class="placeholder">左の質問に答えて「診断する」を押すと、<br>ここに結果が表示されます。</div>
-    <div class="card summary" id="summary"></div>
-    <div class="card" id="list"></div>
-    <p class="disclaimer">※ 料金は代表的なプランをもとにした参考値（税込）です。端末代・キャンペーン・各種手数料は含みません。実際の料金は各社の公式サイトでご確認ください。</p>
+    <div class="card hero" id="hero"></div>
+    <div class="card" id="mobile"></div>
+    <div class="card" id="internet"></div>
+    <div class="card" id="elec"></div>
+    <p class="disclaimer" id="disclaimer"></p>
   </section>
   </div>
 </main>
 
 <script src="plans.js"></script>
 <script>
-const yen = n => "¥" + Math.round(n).toLocaleString("ja-JP");
+const D = window.DATA;
+const yen = n => (n < 0 ? "-" : "") + "¥" + Math.round(Math.abs(n)).toLocaleString("ja-JP");
+const signed = n => n > 0 ? `<span class="plus">${yen(n)} おトク</span>` : n < 0 ? `<span class="minus">${yen(-n)} 高い</span>` : "変わらず";
+const val = id => document.getElementById(id).value;
+const radio = name => document.querySelector(`input[name=${name}]:checked`).value;
+const gbText = gb => gb === Infinity ? "無制限" : gb + "GB";
 
-function monthlyCost(plan, need, call, lines, home) {
-  const tier = plan.tiers.find(([gb]) => gb >= need);
+// ───── でんき ─────
+function energyCharge(plan, kwh) { // 最低料金＋電力量料金（税込）
+  let c = plan.min, rest = Math.max(kwh - 15, 0);
+  const bands = [105, 180, Infinity];
+  for (let i = 0; i < 3 && rest > 0; i++) { const u = Math.min(rest, bands[i]); c += u * plan.rates[i]; rest -= u; }
+  return c;
+}
+const elecBill = (plan, kwh) => Math.floor(energyCharge(plan, kwh) + D.electricity.renewable * kwh);
+function kwhFromBill(plan, bill) {
+  let lo = 0, hi = 3000;
+  for (let i = 0; i < 40; i++) { const m = (lo + hi) / 2; elecBill(plan, m) < bill ? lo = m : hi = m; }
+  return Math.round(lo);
+}
+function auPoints(kwh) {
+  const base = energyCharge(D.electricity.au, kwh) / 1.1; // 税抜
+  const rate = D.electricity.auPoint.find(([lim]) => base < lim)[1];
+  return { points: Math.ceil(base * rate), rate };
+}
+
+// ───── スマホ ─────
+function auCost(need, call, lines, netSet, aupay) {
+  const a = D.au;
+  let name, gb, base;
+  const tier = need <= 5 ? a.mini.tiers.find(([g]) => g >= need) : null;
+  if (tier) { name = a.mini.name; gb = tier[0]; base = tier[1]; }
+  else { name = a.unlimited.name; gb = Infinity; base = a.unlimited.base; }
+  const parts = [`基本 ${yen(base)}`];
+  let c = base;
+  if (netSet) { c -= a.smartValue; parts.push(`スマートバリュー -${yen(a.smartValue)}`); }
+  if (lines >= 2) { const f = lines >= 3 ? a.family3 : a.family2; c -= f; parts.push(`家族割プラス -${yen(f)}`); }
+  if (aupay) { c -= a.auPay; parts.push(`au PAYカード -${yen(a.auPay)}`); }
+  if (call === "short") { c += a.call5; parts.push(`5分かけ放題 +${yen(a.call5)}`); }
+  if (call === "long") { c += a.callFree; parts.push(`かけ放題 +${yen(a.callFree)}`); }
+  return { brand: "au", name, gb, cost: c, parts };
+}
+function uqCosts(need, call, lines, homeSet, aupay) {
+  const u = D.uq, out = [];
+  if (need <= u.tokutoku.gb) {
+    const t = u.tokutoku, parts = [`基本 ${yen(t.base)}`];
+    let c = t.base;
+    if (need <= t.smallGb) { c -= t.smallDiscount; parts.push(`${t.smallGb}GB以下 -${yen(t.smallDiscount)}`); }
+    if (homeSet) { c -= u.homeSet; parts.push(`自宅セット割 -${yen(u.homeSet)}`); }
+    else if (lines >= 2) { c -= u.familySet; parts.push(`家族セット割 -${yen(u.familySet)}`); }
+    if (aupay) { c -= u.auPay; parts.push(`au PAYカード -${yen(u.auPay)}`); }
+    if (call === "short") { c += u.call10; parts.push(`10分かけ放題 +${yen(u.call10)}`); }
+    if (call === "long") { c += u.callFree; parts.push(`かけ放題 +${yen(u.callFree)}`); }
+    out.push({ brand: "UQ mobile", name: t.name, gb: need <= t.smallGb ? t.smallGb : t.gb, cost: c, parts });
+  }
+  if (need <= u.komikomi.gb) {
+    const k = u.komikomi, parts = [`基本 ${yen(k.base)}（10分かけ放題込み）`];
+    let c = k.base;
+    if (call === "long") { const add = u.callFree - u.call10; c += add; parts.push(`かけ放題へ変更 +${yen(add)}`); }
+    out.push({ brand: "UQ mobile", name: k.name, gb: k.gb, cost: c, parts });
+  }
+  return out;
+}
+function otherCost(p, need, call, lines) {
+  const tier = p.tiers.find(([g]) => g >= need);
   if (!tier) return null;
-  let cost = tier[1];
-  if (call === "short") cost += plan.call5;
-  if (call === "long") cost += plan.callFree;
-  if (lines >= 2) cost -= plan.familyDiscount;
-  if (home) cost -= plan.homeSetDiscount;
-  const gb = tier[0] === Infinity ? "無制限" : tier[0] + "GB";
-  return { cost: Math.max(cost, 0), gb };
+  let c = tier[1];
+  if (call === "short") c += p.call5;
+  if (call === "long") c += p.callFree;
+  if (lines >= 2) c -= p.family;
+  return { brand: "他社", name: p.name, gb: tier[0], cost: Math.max(c, 0), parts: [] };
+}
+function planCard(r, max, rec, current) {
+  return `<div class="plan ${rec ? "rec" : ""}">
+    <div class="plan-head"><span class="plan-name">${r.name}${rec ? '<span class="tag">おすすめ</span>' : ""}</span><span class="price">${yen(r.cost)}</span></div>
+    <div class="ex">${gbText(r.gb)}${current ? "・今と比べて 月 " + signed(current - r.cost) : ""}</div>
+    <div class="bar"><span style="width:${Math.min(r.cost / max, 1) * 100}%"></span></div>
+    ${r.parts.length ? `<div class="breakdown">${r.parts.join(" / ")}</div>` : ""}
+  </div>`;
 }
 
 document.getElementById("form").addEventListener("submit", e => {
   e.preventDefault();
-  const current = Number(document.getElementById("current").value) || 0;
-  const need = Number(document.getElementById("data").value);
-  const call = document.querySelector("input[name=call]:checked").value;
-  const lines = Number(document.getElementById("lines").value);
-  const home = document.querySelector("input[name=home]:checked").value === "yes";
-  const prio = [...document.querySelectorAll("input[name=prio]:checked")].map(x => x.value);
-  const wantQuality = prio.includes("quality");
-  const wantStore = prio.includes("store");
+  const current = Number(val("current")) || 0;
+  const need = Number(val("data"));
+  const call = radio("call");
+  const lines = Number(val("lines"));
+  const aupay = radio("aupay") === "yes";
+  const netNow = val("netNow");
+  const house = radio("house");
+  const elecNow = val("elecNow");
 
-  const results = PLAN_CATEGORIES.map(p => {
-    const r = monthlyCost(p, need, call, lines, home);
-    if (!r) return null;
-    const warns = [];
-    if (wantQuality && p.quality === 1) warns.push("混雑時に遅くなりやすい");
-    if (wantQuality && p.quality === 2) warns.push("エリアによってつながりにくい");
-    if (wantStore && !p.store) warns.push("店舗サポートなし");
-    return { ...p, ...r, warns };
-  }).filter(Boolean)
-    // 希望に合うものを先に、その中で安い順
-    .sort((a, b) => (a.warns.length > 0) - (b.warns.length > 0) || a.cost - b.cost);
+  // ── 自宅ネット：au/UQのセット割対象回線ならそのまま、そうでなければ eo光 を提案
+  const netList = D.internet;
+  const nowNet = netList.find(n => n.id === netNow);
+  const netFeeIn = Number(val("netFee"));
+  const netCurrent = netNow === "none" ? 0 : (netFeeIn || (nowNet ? nowNet[house] : 0));
+  const keepNet = nowNet && nowNet.setOk;
+  const eo = netList.find(n => n.id === "eo");
+  const noNet = netNow === "none";
+  const netProposal = noNet ? { name: "ネット回線なし", short: null, cost: 0 }
+    : keepNet ? { name: nowNet.name + "（そのまま）", short: nowNet.name.split("（")[0], cost: netCurrent }
+    : { name: eo.name + " に乗り換え", short: "eo光", cost: eo[house] };
+  const netSet = !noNet; // au スマートバリューはネット回線が必要（UQ は auでんき でも可）
 
-  const best = results[0];
-  const saveMonth = (current - best.cost) * lines;
-  const summary = document.getElementById("summary");
-  if (saveMonth > 0) {
-    summary.innerHTML = `
-      <div>おすすめ：<strong>${best.name}</strong></div>
-      <div class="ex">${best.examples}</div>
-      <div style="margin-top:12px">年間で最大</div>
-      <div class="big">${yen(saveMonth * 12)} 節約</div>
-      <div class="ex">月 ${yen(saveMonth)}${lines > 1 ? `（${lines}回線合計）` : ""}</div>`;
-  } else {
-    summary.innerHTML = `
-      <div class="big none">今のプランは十分お得です</div>
-      <div class="ex" style="margin-top:8px">条件に合う中では <strong>${best.name}</strong>（月 ${yen(best.cost)}）が最安でした。</div>`;
-  }
+  // ── でんき
+  const E = D.electricity;
+  const nowPlan = elecNow === "kepcoNattoku" ? E.kepcoNattoku : elecNow === "audenki" ? E.au : E.kepcoA;
+  const billIn = Number(val("elecBill"));
+  const kwhIn = Number(val("kwh"));
+  const kwh = kwhIn || (billIn ? kwhFromBill(nowPlan, billIn) : 260);
+  const elecCurrent = billIn || elecBill(nowPlan, kwh);
+  const auBill = elecBill(E.au, kwh);
+  const pt = auPoints(kwh);
+  const auReal = auBill - pt.points;
 
-  const max = Math.max(...results.map(r => r.cost), current, 1);
-  document.getElementById("list").innerHTML =
-    `<div class="plan-head"><strong>プラン別の目安（1回線・月額）</strong><span class="ex">今：${yen(current)}</span></div>` +
-    results.map((r, i) => {
-      const diff = (current - r.cost) * 12 * lines;
-      const diffText = diff > 0
-        ? `<span class="save">年 ${yen(diff)} お得</span>`
-        : diff < 0 ? `<span class="more">年 ${yen(-diff)} 高い</span>` : "";
-      return `
-      <div class="plan ${i === 0 ? "best" : ""}">
-        <div class="plan-head">
-          <span class="plan-name">${i === 0 ? "🏆 " : ""}${r.name}</span>
-          <span class="price">${yen(r.cost)}</span>
-        </div>
-        <div class="ex">${r.examples}・${r.gb}</div>
-        <div class="bar"><span style="width:${(r.cost / max) * 100}%"></span></div>
-        ${diffText}
-        <div class="tags">
-          ${r.store ? '<span class="tag">店舗あり</span>' : ""}
-          ${r.quality === 3 ? '<span class="tag">大手回線品質</span>' : ""}
-          ${r.warns.map(w => `<span class="tag warn">${w}</span>`).join("")}
-        </div>
-        <p class="note">${r.note}</p>
-      </div>`;
-    }).join("");
+  // ── スマホ：au と UQ を計算して、条件に合う方をおすすめ
+  const au = auCost(need, call, lines, netSet, aupay);
+  const uqs = uqCosts(need, call, lines, true, aupay);
+  const uqBest = uqs.sort((a, b) => a.cost - b.cost)[0];
+  const rec = uqBest && uqBest.cost <= au.cost ? uqBest : au;
+  const others = D.otherMobile.map(p => otherCost(p, need, call, lines)).filter(Boolean);
+
+  // ── 合計
+  const nowTotal = current * lines + netCurrent + elecCurrent;
+  const newTotal = rec.cost * lines + netProposal.cost + auReal;
+  const diff = nowTotal - newTotal;
+
+  // ── まとめ
+  document.getElementById("hero").innerHTML = `
+    <div class="tagline">あなたへのおすすめ</div>
+    <div class="title">${[rec.brand, netProposal.short, "auでんき"].filter(Boolean).join(" × ")}</div>
+    <div class="items"><span>📱 ${rec.name}</span>${noNet ? "" : `<span>🌐 ${netProposal.name}</span>`}<span>💡 auでんき</span></div>
+    ${diff > 0
+      ? `<div>家計全体で 年間</div><div class="big">${yen(diff * 12)} おトク</div><div class="ex">月 ${yen(diff)}（auでんきのPontaポイント還元を含む）</div>`
+      : `<div class="big bad">今とほぼ同じか、月 ${yen(-diff)} 高くなります</div><div class="ex">ただし ${rec.brand} のセット割やポイント還元が受けられます。下の内訳をご確認ください。</div>`}
+    <table>
+      <thead><tr><th></th><th>今</th><th>おすすめ</th><th>差額/月</th></tr></thead>
+      <tbody>
+        <tr><td>スマホ（${lines}回線）</td><td>${yen(current * lines)}</td><td>${yen(rec.cost * lines)}</td><td>${signed(current * lines - rec.cost * lines)}</td></tr>
+        <tr><td>自宅ネット</td><td>${yen(netCurrent)}</td><td>${yen(netProposal.cost)}</td><td>${signed(netCurrent - netProposal.cost)}</td></tr>
+        <tr><td>でんき（実質）</td><td>${yen(elecCurrent)}</td><td>${yen(auReal)}</td><td>${signed(elecCurrent - auReal)}</td></tr>
+      </tbody>
+      <tfoot><tr><td>合計</td><td>${yen(nowTotal)}</td><td>${yen(newTotal)}</td><td>${signed(diff)}</td></tr></tfoot>
+    </table>`;
+
+  // ── スマホ詳細
+  const mobileAll = [rec, ...(rec === au ? uqs : [au, ...uqs.filter(x => x !== rec)]), ...others];
+  const maxM = Math.max(...mobileAll.map(r => r.cost), current, 1);
+  document.getElementById("mobile").innerHTML = `
+    <h2>📱 スマホ（1回線あたり・月額）</h2>
+    <div class="ex">今：${yen(current)}　／　au・UQ はセット割${lines >= 2 ? "・家族割" : ""}${aupay ? "・au PAYカード払い" : ""}を適用</div>
+    <div class="plans">${mobileAll.map(r => planCard(r, maxM, r === rec, current)).join("")}</div>
+    ${need > D.uq.komikomi.gb ? '<div class="notice">データを30GB以上使う方は、データ無制限の au 使い放題MAX＋ が安心です。</div>' : ""}`;
+
+  // ── 自宅ネット詳細
+  const maxN = Math.max(...netList.map(n => n[house]), netCurrent, 1);
+  document.getElementById("internet").innerHTML = `
+    <h2>🌐 自宅のインターネット（${house === "home" ? "戸建て" : "マンション"}・月額）</h2>
+    <div class="ex">今：${netNow === "none" ? "回線なし" : yen(netCurrent)}</div>
+    <div class="plans">${netList.map(n => {
+      const isRec = noNet ? false : keepNet ? n.id === netNow : n.id === "eo";
+      const cost = n.id === netNow && netFeeIn ? netFeeIn : n[house];
+      return `<div class="plan ${isRec ? "rec" : ""}">
+        <div class="plan-head"><span class="plan-name">${n.name}${isRec ? '<span class="tag">おすすめ</span>' : ""}</span><span class="price">${yen(cost)}</span></div>
+        <div class="ex">${n.setOk ? "✅ au / UQ のセット割 対象" : "au / UQ のセット割 対象外"}${netNow !== "none" ? "・今と比べて 月 " + signed(netCurrent - cost) : ""}</div>
+        <div class="bar"><span style="width:${Math.min(cost / maxN, 1) * 100}%"></span></div>
+        <div class="breakdown">${n.note}</div>
+      </div>`; }).join("")}</div>
+    ${keepNet || noNet ? "" : `<div class="notice">eo光にすると、スマホが1回線あたり 月${yen(rec.brand === "au" ? D.au.smartValue : D.uq.homeSet)} 安くなります（${rec.brand === "au" ? "auスマートバリュー" : "UQ自宅セット割"}）。${lines}回線なら 年${yen((rec.brand === "au" ? D.au.smartValue : D.uq.homeSet) * lines * 12)}。工事費・解約金は含みません。</div>`}`;
+
+  // ── でんき詳細
+  const nowLabel = elecNow === "other" ? "今の電力会社" : nowPlan.name;
+  document.getElementById("elec").innerHTML = `
+    <h2>💡 auでんき 切り替えシミュレーション（関西電力エリア）</h2>
+    <div class="ex">月の使用量：約 ${kwh}kWh${kwhIn ? "" : billIn ? "（電気代から推定）" : "（目安）"}</div>
+    <div class="elec-grid">
+      <div class="elec-box"><div class="ex">${nowLabel}</div><div class="v">${yen(elecCurrent)}</div><div class="ex">月額</div></div>
+      <div class="elec-box rec"><div class="ex">${E.au.name}</div><div class="v">${yen(auReal)}</div><div class="ex">電気代 ${yen(auBill)} − Ponta ${pt.points.toLocaleString()}pt（${Math.round(pt.rate * 100)}%）</div></div>
+    </div>
+    <p style="margin:12px 0 0">電気代の差：月 ${signed(elecCurrent - auReal)}（年 ${yen((elecCurrent - auReal) * 12)}）</p>
+    ${elecNow === "kepcoA" ? '<div class="notice">auでんきの電気料金単価は関西電力 従量電灯Aとほぼ同じです。そのうえで、電気代に応じてPontaポイントが毎月たまります。</div>' : ""}
+    ${elecNow === "kepcoNattoku" ? '<div class="notice">「なっトクパック」は電気とガスのセット割引が入っているため、電気代だけを比べると関西電力の方が安くなる場合があります。電気を切り替えるとガスの契約条件が変わることがあるので、ガスの料金は関西電力にご確認ください。</div>' : ""}
+    ${noNet ? `<div class="notice">ネット回線がなくても、auでんきに入ると UQ mobile の「自宅セット割（でんきコース）」で1回線あたり 月${yen(D.uq.homeSet)} 安くなります。</div>` : ""}`;
+
+  document.getElementById("disclaimer").innerHTML =
+    `※ 料金は${D.updated}時点で公式サイト等を確認した税込の目安です（一部は参考値）。電気代は燃料費調整額を含まず、再エネ賦課金を含めて計算しています。端末代・工事費・解約金・キャンペーンは含みません。` +
+    `※ 本ツールは個人が作成した非公式の試算ツールで、各社とは関係ありません。正式な料金は各社の公式サイト・店頭でご確認ください。`;
 
   const res = document.getElementById("result");
   res.classList.remove("empty");
   res.style.display = "block";
-  // 左右に並んでいる横向きレイアウトではスクロールしない
   if (window.innerWidth < 1000) res.scrollIntoView({ behavior: "smooth" });
 });
 </script>
