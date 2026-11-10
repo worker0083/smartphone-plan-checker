@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>スマホ料金診断</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1d2330; --muted: #6b7280;
+    --line: #e3e6eb; --accent: #2563eb; --accent-weak: #e8efff;
+    --good: #15803d; --good-weak: #e7f6ec; --warn: #b45309; --warn-weak: #fdf3e3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12151b; --card: #1b2029; --text: #e7eaf0; --muted: #9aa3b2;
+      --line: #2c3340; --accent: #6b9bff; --accent-weak: #1f2b45;
+      --good: #4ade80; --good-weak: #173322; --warn: #fbbf24; --warn-weak: #3a2e14;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+    line-height: 1.6;
+  }
+  main { max-width: 640px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  .lead { color: var(--muted); margin: 0 0 24px; font-size: .95rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  .q { margin-bottom: 20px; }
+  .q:last-child { margin-bottom: 0; }
+  .q > label, .q > .label { display: block; font-weight: 600; margin-bottom: 8px; }
+  input[type=number], select {
+    width: 100%; padding: 12px; font-size: 1rem; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--text);
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips label {
+    border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px;
+    cursor: pointer; user-select: none; font-size: .95rem; background: var(--bg);
+  }
+  .chips input { display: none; }
+  .chips label:has(input:checked) { background: var(--accent-weak); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  button {
+    width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border: 0;
+    border-radius: 12px; background: var(--accent); color: #fff; cursor: pointer;
+  }
+  .summary { text-align: center; }
+  .summary .big { font-size: 2rem; font-weight: 800; color: var(--good); }
+  .summary .big.none { color: var(--muted); font-size: 1.3rem; }
+  .plan { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-top: 12px; }
+  .plan.best { border-color: var(--good); background: var(--good-weak); }
+  .plan-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .plan-name { font-weight: 700; }
+  .price { font-weight: 800; white-space: nowrap; }
+  .ex { color: var(--muted); font-size: .85rem; }
+  .bar { height: 8px; background: var(--line); border-radius: 4px; margin: 8px 0; overflow: hidden; }
+  .bar > span { display: block; height: 100%; background: var(--accent); }
+  .best .bar > span { background: var(--good); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .tag { font-size: .78rem; padding: 2px 8px; border-radius: 6px; background: var(--accent-weak); color: var(--accent); }
+  .tag.warn { background: var(--warn-weak); color: var(--warn); }
+  .note { font-size: .88rem; margin: 6px 0 0; }
+  .save { font-size: .88rem; font-weight: 600; color: var(--good); }
+  .more { font-size: .88rem; font-weight: 600; color: var(--warn); }
+  .disclaimer { color: var(--muted); font-size: .8rem; margin-top: 16px; }
+  #result { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>スマホ料金診断</h1>
+  <p class="lead">いくつかの質問に答えると、あなたに合うプランの種類と節約できる金額の目安がわかります。</p>
+
+  <form id="form" class="card">
+    <div class="q">
+      <label for="current">今のスマホ代（1回線・月額・税込）</label>
+      <input id="current" type="number" inputmode="numeric" min="0" step="100" placeholder="例：7500" required>
+    </div>
+
+    <div class="q">
+      <label for="data">1か月に使うデータ量</label>
+      <select id="data">
+        <option value="1">1GB未満（Wi-Fiがメイン）</option>
+        <option value="3">1〜3GB</option>
+        <option value="7" selected>3〜7GB</option>
+        <option value="20">7〜20GB</option>
+        <option value="30">20〜30GB</option>
+        <option value="50">30〜50GB</option>
+        <option value="100">50〜100GB</option>
+        <option value="Infinity">100GB以上 / 無制限が必要</option>
+      </select>
+    </div>
+
+    <div class="q">
+      <span class="label">電話のかけ方</span>
+      <div class="chips">
+        <label><input type="radio" name="call" value="none" checked>ほぼかけない</label>
+        <label><input type="radio" name="call" value="short">短い電話が多い</label>
+        <label><input type="radio" name="call" value="long">長電話をよくする</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <label for="lines">家族で同じ会社を使う回線数</label>
+      <select id="lines">
+        <option value="1">1回線（自分だけ）</option>
+        <option value="2">2回線</option>
+        <option value="3">3回線</option>
+        <option value="4">4回線以上</option>
+      </select>
+    </div>
+
+    <div class="q">
+      <span class="label">自宅の光回線・電気などとのセット割</span>
+      <div class="chips">
+        <label><input type="radio" name="home" value="no" checked>使えない／わからない</label>
+        <label><input type="radio" name="home" value="yes">使える</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="label">重視すること（複数選択可）</span>
+      <div class="chips">
+        <label><input type="checkbox" name="prio" value="quality">いつでも速い通信</label>
+        <label><input type="checkbox" name="prio" value="store">店舗で相談したい</label>
+      </div>
+    </div>
+
+    <button type="submit">診断する</button>
+  </form>
+
+  <section id="result">
+    <div class="card summary" id="summary"></div>
+    <div class="card" id="list"></div>
+    <p class="disclaimer">※ 料金は代表的なプランをもとにした参考値（税込）です。端末代・キャンペーン・各種手数料は含みません。実際の料金は各社の公式サイトでご確認ください。</p>
+  </section>
+</main>
+
+<script src="plans.js"></script>
+<script>
+const yen = n => "¥" + Math.round(n).toLocaleString("ja-JP");
+
+function monthlyCost(plan, need, call, lines, home) {
+  const tier = plan.tiers.find(([gb]) => gb >= need);
+  if (!tier) return null;
+  let cost = tier[1];
+  if (call === "short") cost += plan.call5;
+  if (call === "long") cost += plan.callFree;
+  if (lines >= 2) cost -= plan.familyDiscount;
+  if (home) cost -= plan.homeSetDiscount;
+  const gb = tier[0] === Infinity ? "無制限" : tier[0] + "GB";
+  return { cost: Math.max(cost, 0), gb };
+}
+
+document.getElementById("form").addEventListener("submit", e => {
+  e.preventDefault();
+  const current = Number(document.getElementById("current").value) || 0;
+  const need = Number(document.getElementById("data").value);
+  const call = document.querySelector("input[name=call]:checked").value;
+  const lines = Number(document.getElementById("lines").value);
+  const home = document.querySelector("input[name=home]:checked").value === "yes";
+  const prio = [...document.querySelectorAll("input[name=prio]:checked")].map(x => x.value);
+  const wantQuality = prio.includes("quality");
+  const wantStore = prio.includes("store");
+
+  const results = PLAN_CATEGORIES.map(p => {
+    const r = monthlyCost(p, need, call, lines, home);
+    if (!r) return null;
+    const warns = [];
+    if (wantQuality && p.quality === 1) warns.push("混雑時に遅くなりやすい");
+    if (wantQuality && p.quality === 2) warns.push("エリアによってつながりにくい");
+    if (wantStore && !p.store) warns.push("店舗サポートなし");
+    return { ...p, ...r, warns };
+  }).filter(Boolean)
+    // 希望に合うものを先に、その中で安い順
+    .sort((a, b) => (a.warns.length > 0) - (b.warns.length > 0) || a.cost - b.cost);
+
+  const best = results[0];
+  const saveMonth = (current - best.cost) * lines;
+  const summary = document.getElementById("summary");
+  if (saveMonth > 0) {
+    summary.innerHTML = `
+      <div>おすすめ：<strong>${best.name}</strong></div>
+      <div class="ex">${best.examples}</div>
+      <div style="margin-top:12px">年間で最大</div>
+      <div class="big">${yen(saveMonth * 12)} 節約</div>
+      <div class="ex">月 ${yen(saveMonth)}${lines > 1 ? `（${lines}回線合計）` : ""}</div>`;
+  } else {
+    summary.innerHTML = `
+      <div class="big none">今のプランは十分お得です</div>
+      <div class="ex" style="margin-top:8px">条件に合う中では <strong>${best.name}</strong>（月 ${yen(best.cost)}）が最安でした。</div>`;
+  }
+
+  const max = Math.max(...results.map(r => r.cost), current, 1);
+  document.getElementById("list").innerHTML =
+    `<div class="plan-head"><strong>プラン別の目安（1回線・月額）</strong><span class="ex">今：${yen(current)}</span></div>` +
+    results.map((r, i) => {
+      const diff = (current - r.cost) * 12 * lines;
+      const diffText = diff > 0
+        ? `<span class="save">年 ${yen(diff)} お得</span>`
+        : diff < 0 ? `<span class="more">年 ${yen(-diff)} 高い</span>` : "";
+      return `
+      <div class="plan ${i === 0 ? "best" : ""}">
+        <div class="plan-head">
+          <span class="plan-name">${i === 0 ? "🏆 " : ""}${r.name}</span>
+          <span class="price">${yen(r.cost)}</span>
+        </div>
+        <div class="ex">${r.examples}・${r.gb}</div>
+        <div class="bar"><span style="width:${(r.cost / max) * 100}%"></span></div>
+        ${diffText}
+        <div class="tags">
+          ${r.store ? '<span class="tag">店舗あり</span>' : ""}
+          ${r.quality === 3 ? '<span class="tag">大手回線品質</span>' : ""}
+          ${r.warns.map(w => `<span class="tag warn">${w}</span>`).join("")}
+        </div>
+        <p class="note">${r.note}</p>
+      </div>`;
+    }).join("");
+
+  const res = document.getElementById("result");
+  res.style.display = "block";
+  res.scrollIntoView({ behavior: "smooth" });
+});
+</script>
+</body>
+</html>
