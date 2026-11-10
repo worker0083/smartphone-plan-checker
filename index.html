@@ -152,8 +152,10 @@
   .remove { background: none; border: 0; color: var(--muted); font-size: .85rem; width: auto; min-height: 32px; padding: 4px 8px; cursor: pointer; }
   .sub-btn { background: var(--card); color: var(--accent); border: 1px dashed var(--accent); font-size: .95rem; }
   .sub-btn:disabled { opacity: .4; cursor: default; }
-  @media (min-width: 700px) { .member-fields { grid-template-columns: 1fr 1fr 1fr; } }
-  @media (min-width: 1000px) { .member-fields { grid-template-columns: 1fr 1fr; } .member-fields > :first-child { grid-column: 1 / -1; } }
+  @media (min-width: 700px) { .member-fields { grid-template-columns: 1fr 1fr; } }
+  .scope { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+  .chips label.fixed { opacity: .7; cursor: default; }
+  fieldset.off { display: none; }
   .who { font-weight: 700; margin-right: 4px; }
 </style>
 </head>
@@ -164,24 +166,17 @@
 
   <div class="layout">
   <form id="form" class="card">
+    <div class="q scope">
+      <span class="label">比較する項目</span>
+      <div class="chips fill">
+        <label class="fixed"><input type="checkbox" checked disabled>スマホ</label>
+        <label><input type="checkbox" id="useNet" checked>自宅ネット</label>
+        <label><input type="checkbox" id="useElec" checked>でんき</label>
+      </div>
+    </div>
     <fieldset>
       <legend><span class="num">1</span>スマホ</legend>
       <div class="grid">
-        <div class="q">
-          <label for="carrierNow">今のキャリア</label>
-          <select id="carrierNow">
-            <option value="docomo">ドコモ・ahamo</option>
-            <option value="au" selected>au</option>
-            <option value="uq">UQ mobile</option>
-            <option value="softbank">ソフトバンク</option>
-            <option value="ymobile">ワイモバイル</option>
-            <option value="linemo">LINEMO</option>
-            <option value="rakuten">楽天モバイル</option>
-            <option value="mineo">mineo</option>
-            <option value="iij">IIJmio</option>
-            <option value="other">その他の格安SIM</option>
-          </select>
-        </div>
         <div class="q wide">
           <span class="label">使う人ごとのスマホ代・データ量・通話 <span class="hint">（月額・税込）</span></span>
           <div id="members"></div>
@@ -197,7 +192,7 @@
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset id="fsNet">
       <legend><span class="num">2</span>自宅のインターネット</legend>
       <div class="grid">
         <div class="q">
@@ -234,7 +229,7 @@
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset id="fsElec">
       <legend><span class="num">3</span>でんき・ガス</legend>
       <div class="grid">
         <div class="q wide">
@@ -349,43 +344,85 @@ function linePrice(c, plan, ctx, setNet, setDenki, mem) {
   return { plan: plan.name, gb: tier[0], cost: Math.max(cost, 0), parts };
 }
 
-// ───── 各社ごとに「ネット × でんき × プラン」の全組み合わせから最安を探す ─────
+// ───── あるキャリアで、指定した人たちが一番安くなるプランを一人ずつ選ぶ ─────
+function mobileFor(c, mems, ctx, setNet, setDenki) {
+  const sub = { ...ctx, lines: mems.length }; // 家族割はそのキャリアの回線数で数える
+  const out = mems.map(mem => {
+    const opts = c.plans.map(p => linePrice(c, p, sub, setNet, setDenki, mem)).filter(Boolean);
+    return opts.length ? { who: mem.who, carrier: c.name, ...opts.sort((a, b) => a.cost - b.cost)[0] } : null;
+  });
+  return out.some(x => !x) ? null : out;
+}
+function setExtras(c, setNet) {
+  return {
+    extra: setNet && c.net && c.net.extra ? c.net.extra : 0,
+    homeDisc: setNet && c.net && c.net.per === "home" ? c.net.amt : 0,
+    homeLabel: setNet && c.net && c.net.per === "home" ? c.net.label : "",
+  };
+}
+const flags = (c, net, el) => ({
+  setNet: !!(c.net && net.id && c.net.ids.includes(net.id)),
+  setDenki: !!(c.denki && el.id === c.denki.id),
+});
+
+// ───── 家族全員で1つのキャリアに乗り換える場合の最安（ネット × でんき × プラン）─────
 function bestFor(c, ctx) {
   let best = null;
-  for (const net of ctx.netOptions) {
-    for (const el of ctx.elecOptions) {
-      const setNet = !!(c.net && net.id && c.net.ids.includes(net.id));
-      const setDenki = !!(c.denki && el.id === c.denki.id);
-      // 一人ずつ、そのキャリアで一番安いプランを選ぶ
-      const members = ctx.members.map(mem => {
-        const opts = c.plans.map(p => linePrice(c, p, ctx, setNet, setDenki, mem)).filter(Boolean);
-        return opts.length ? { who: mem.who, ...opts.sort((a, b) => a.cost - b.cost)[0] } : null;
-      });
-      if (members.some(x => !x)) continue;
-      const m = { cost: members.reduce((t, x) => t + x.cost, 0), plan: [...new Set(members.map(x => x.plan))].join("・"), members };
-      let netCost = net.cost, homeDisc = 0, homeLabel = "";
-      if (setNet && c.net.extra) netCost += c.net.extra;
-      if (setNet && c.net.per === "home") { homeDisc += c.net.amt; homeLabel = c.net.label; }
-      const total = m.cost + netCost + el.real - homeDisc;
-      if (!best || total < best.total) best = { carrier: c, mobile: m, net, netCost, el, setNet, setDenki, homeDisc, homeLabel, total };
-    }
+  for (const net of ctx.netOptions) for (const el of ctx.elecOptions) {
+    const f = flags(c, net, el);
+    const members = mobileFor(c, ctx.members, ctx, f.setNet, f.setDenki);
+    if (!members) continue;
+    const x = setExtras(c, f.setNet);
+    const mobile = members.reduce((t, m) => t + m.cost, 0);
+    const total = mobile + net.cost + x.extra + el.real - x.homeDisc;
+    if (!best || total < best.total) best = { name: c.name, ids: [c.id], members, net, netCost: net.cost + x.extra, extra: x.extra, el, homeDisc: x.homeDisc, homeLabel: x.homeLabel, total };
   }
   return best;
 }
 
+// ───── 家族それぞれ今のキャリアのまま、プランだけ見直す場合の最安 ─────
+function stayFor(ctx) {
+  const groups = {};
+  ctx.members.forEach(m => (groups[m.carrierId] ||= []).push(m));
+  let best = null;
+  for (const net of ctx.netOptions) for (const el of ctx.elecOptions) {
+    let total = net.cost + el.real, extra = 0, homeDisc = 0, labels = [], members = [], ok = true;
+    for (const [id, mems] of Object.entries(groups)) {
+      const c = D.carriers.find(x => x.id === id);
+      if (!c) { // 一覧にない格安SIMは今の料金のまま
+        mems.forEach(m => { members.push({ who: m.who, carrier: "今の格安SIM", plan: "今のプラン", gb: m.need, cost: m.current, parts: ["今の料金のまま"] }); total += m.current; });
+        continue;
+      }
+      const f = flags(c, net, el);
+      const ms = mobileFor(c, mems, ctx, f.setNet, f.setDenki);
+      if (!ms) { ok = false; break; }
+      const x = setExtras(c, f.setNet);
+      extra = Math.max(extra, x.extra); homeDisc += x.homeDisc; if (x.homeLabel) labels.push(x.homeLabel);
+      ms.forEach(m => { members.push(m); total += m.cost; });
+    }
+    if (!ok) continue;
+    total += extra - homeDisc;
+    members.sort((a, b) => ctx.members.findIndex(m => m.who === a.who) - ctx.members.findIndex(m => m.who === b.who));
+    if (!best || total < best.total) best = { name: "今のキャリアのまま", ids: Object.keys(groups), members, net, netCost: net.cost + extra, extra, el, homeDisc, homeLabel: labels.join("・"), total, stay: true };
+  }
+  return best;
+}
 // ───── 使う人ごとの入力欄 ─────
 const DATA_OPTS = [["1","1GB未満"],["3","1〜3GB"],["5","3〜5GB"],["10","5〜10GB"],["20","10〜20GB"],["30","20〜30GB"],["50","30〜50GB"],["Infinity","50GB以上・無制限"]];
 const CALL_OPTS = [["none","ほぼかけない"],["short","短い電話が多い"],["long","長電話をよくする"]];
 const MAX_MEMBERS = 6;
+const CARRIER_OPTS = [["docomo","ドコモ・ahamo"],["au","au"],["uq","UQ mobile"],["softbank","ソフトバンク"],["ymobile","ワイモバイル"],["linemo","LINEMO"],["rakuten","楽天モバイル"],["mineo","mineo"],["iij","IIJmio"],["other","その他の格安SIM"]];
 const opts = (list, sel) => list.map(([v, t]) => `<option value="${v}"${v === sel ? " selected" : ""}>${t}</option>`).join("");
 function addMember(preset = {}) {
   const box = document.getElementById("members");
   if (box.children.length >= MAX_MEMBERS) return;
+  const prev = box.lastElementChild ? box.lastElementChild.querySelector(".m-carrier").value : "au"; // 前の人と同じキャリアを初期値に
   const div = document.createElement("div");
   div.className = "member";
   div.innerHTML = `
     <div class="member-head"><span class="who-label"></span><button type="button" class="remove">削除</button></div>
     <div class="member-fields">
+      <div><label>今のキャリア</label><select class="m-carrier">${opts(CARRIER_OPTS, preset.carrier || prev)}</select></div>
       <div><label>今のスマホ代</label><input class="m-cost" type="number" inputmode="numeric" min="0" step="1" placeholder="例：7500" value="${preset.cost ?? ""}"></div>
       <div><label>データ量</label><select class="m-data">${opts(DATA_OPTS, preset.data || "5")}</select></div>
       <div><label>電話</label><select class="m-call">${opts(CALL_OPTS, preset.call || "none")}</select></div>
@@ -406,18 +443,28 @@ function relabel() {
 function readMembers() {
   return [...document.querySelectorAll("#members .member")].map((r, i) => ({
     who: i === 0 ? "あなた" : `家族${i}`,
+    carrierId: r.querySelector(".m-carrier").value,
     current: Number(r.querySelector(".m-cost").value) || 0,
     need: Number(r.querySelector(".m-data").value),
     call: r.querySelector(".m-call").value,
   }));
 }
 document.getElementById("addMember").addEventListener("click", () => addMember());
+// 比較する項目のオン・オフで入力欄を出し入れ
+function syncScope() {
+  document.getElementById("fsNet").classList.toggle("off", !document.getElementById("useNet").checked);
+  document.getElementById("fsElec").classList.toggle("off", !document.getElementById("useElec").checked);
+}
+["useNet", "useElec"].forEach(id => document.getElementById(id).addEventListener("change", syncScope));
+syncScope();
 addMember();
 
 document.getElementById("form").addEventListener("submit", e => {
   e.preventDefault();
   const members = readMembers();
   const ctx = { members, lines: members.length, card: radio("card") === "yes" };
+  const useNet = document.getElementById("useNet").checked;
+  const useElec = document.getElementById("useElec").checked;
   const current = members.reduce((t, m) => t + m.current, 0); // 家族全員の今のスマホ代
   const house = radio("house");
   const netNow = val("netNow");
@@ -431,7 +478,8 @@ document.getElementById("form").addEventListener("submit", e => {
   const netCurrent = netNow === "none" ? 0 : (netFeeIn || (nowNetData ? nowNetData[house] : 0));
   const keepNet = { id: netNow === "none" || netNow === "other" ? null : netNow, name: netNow === "none" ? "ネット回線なし" : (nowNetData ? nowNetData.name : "今の回線") + "（そのまま）", cost: netCurrent, keep: true };
   ctx.netOptions = [keepNet];
-  if (netMove && netNow !== "none") {
+  if (!useNet) ctx.netOptions = [{ id: null, name: "", cost: 0, keep: true }];
+  else if (netMove && netNow !== "none") {
     for (const n of D.internet) if (n.id !== netNow) ctx.netOptions.push({ id: n.id, name: n.name + " に乗り換え", cost: n[house], keep: false });
   }
 
@@ -447,62 +495,79 @@ document.getElementById("form").addEventListener("submit", e => {
   const keepElec = { id: elecNow === "other" ? null : elecNow, name: (elecNow === "other" ? "今の電力会社" : nowPlan.name) + "（そのまま）", real: elecCurrent, bill: elecCurrent, points: 0, keep: true };
   if (elecNow !== "other") { const pt = elecPoints(nowPlan, kwh); keepElec.points = pt.points; keepElec.real = elecCurrent - pt.points; }
   ctx.elecOptions = [keepElec];
-  if (elecMove) for (const r of elecRows) if (r.id !== elecNow && r.id !== "kepcoNattoku") ctx.elecOptions.push({ ...r, name: r.name + " に切り替え", keep: false });
+  if (!useElec) ctx.elecOptions = [{ id: null, name: "", real: 0, bill: 0, points: 0, keep: true }];
+  else if (elecMove) for (const r of elecRows) if (r.id !== elecNow && r.id !== "kepcoNattoku") ctx.elecOptions.push({ ...r, name: r.name + " に切り替え", keep: false });
 
-  // 各社の最安
-  const nowTotal = current + netCurrent + keepElec.real;
+  // 各社の最安（家族全員で乗り換え）と、今のキャリアのまま見直す場合
+  const netNowCost = useNet ? netCurrent : 0, elecNowCost = useElec ? keepElec.real : 0;
+  const nowTotal = current + netNowCost + elecNowCost;
   const results = D.carriers.map(c => bestFor(c, ctx)).filter(Boolean).sort((a, b) => a.total - b.total);
-  const top = results[0];
-  const diff = nowTotal - top.total;
-  const carrierNow = val("carrierNow");
-  const nowCarrier = D.carriers.find(c => c.id === carrierNow);
-  const nowName = nowCarrier ? nowCarrier.name : "今の格安SIM";
-  const stay = results.find(r => r.carrier.id === carrierNow); // 今のキャリアのまま見直した場合
-  const topIsStay = stay && stay === top;
+  const stay = stayFor(ctx);
+  const nowIds = [...new Set(members.map(m => m.carrierId))];
+  const nameOf = id => (D.carriers.find(c => c.id === id) || { name: "今の格安SIM" }).name;
+  const nowName = nowIds.map(nameOf).join("・");
+  const single = nowIds.length === 1 && D.carriers.some(c => c.id === nowIds[0]);
+  const topSwitch = results[0];
+  const topIsStay = stay && stay.total <= topSwitch.total;
+  const best = topIsStay ? stay : topSwitch;
+  const diff = nowTotal - best.total;
+  const scopeLabel = ["スマホ", useNet && "ネット", useElec && "でんき"].filter(Boolean).join("・");
 
   const comboList = r => `
     <ul class="combo">
-      ${r.mobile.members.map(x => `<li>${IC.phone}<span class="who">${x.who}</span>${r.carrier.name} ${x.plan}（${gbText(x.gb)}）<span class="ex">${yen(x.cost)}</span></li>`).join("")}
-      <li>${IC.net}${r.net.name}<span class="ex">${r.netCost ? yen(r.netCost) : "—"}${r.setNet && r.carrier.net.extra ? `（オプションパック ${yen(r.carrier.net.extra)} 込み）` : ""}</span></li>
-      <li>${IC.elec}${r.el.name}<span class="ex">${yen(r.el.real)}${r.el.points ? `（ポイント ${r.el.points}pt 差引）` : ""}</span></li>
+      ${r.members.map(x => `<li>${IC.phone}<span class="who">${x.who}</span>${x.carrier} ${x.plan}（${gbText(x.gb)}）<span class="ex">${yen(x.cost)}</span></li>`).join("")}
+      ${useNet ? `<li>${IC.net}${r.net.name}<span class="ex">${r.netCost ? yen(r.netCost) : "—"}${r.extra ? `（オプションパック ${yen(r.extra)} 込み）` : ""}</span></li>` : ""}
+      ${useElec ? `<li>${IC.elec}${r.el.name}<span class="ex">${yen(r.el.real)}${r.el.points ? `（ポイント ${r.el.points}pt 差引）` : ""}</span></li>` : ""}
       ${r.homeDisc ? `<li>${IC.gift}${r.homeLabel}<span class="ex">-${yen(r.homeDisc)}</span></li>` : ""}
     </ul>`;
-
-  const partsDetail = r => `<details><summary>スマホ料金の内訳</summary>${r.mobile.members.map(x => `<div class="breakdown"><span class="who">${x.who}</span>${x.parts.join(" / ")}</div>`).join("")}</details>`;
+  const partsDetail = r => `<details><summary>スマホ料金の内訳</summary>${r.members.map(x => `<div class="breakdown"><span class="who">${x.who}</span>${x.parts.join(" / ")}</div>`).join("")}</details>`;
+  const planNames = r => [...new Set(r.members.map(x => x.plan))].join("・");
+  const extrasTitle = r => (useNet && !r.net.keep ? " × " + r.net.name.replace(" に乗り換え", "") : "") + (useElec && !r.el.keep ? " × " + r.el.name.replace(" に切り替え", "") : "");
 
   // まとめ
   document.getElementById("hero").innerHTML = `
     <div class="tagline">${topIsStay ? `今の${nowName}のまま見直すのがいちばんお得` : `${nowName} から乗り換えると、いちばん安いのは`}</div>
-    <div class="title">${topIsStay ? "" : nowName + " → "}${top.carrier.name}${top.net.keep ? "" : " × " + top.net.name.replace(" に乗り換え", "")}${top.el.keep ? "" : " × " + top.el.name.replace(" に切り替え", "")}</div>
-    ${comboList(top)}
-    <div style="margin-top:12px">${diff > 0 ? "家計全体で 年間" : ""}</div>
+    <div class="title">${topIsStay ? nowName + "のまま" : nowName + " → " + best.name}${extrasTitle(best)}</div>
+    ${comboList(best)}
+    <div style="margin-top:12px">${diff > 0 ? `${scopeLabel}の合計で 年間` : ""}</div>
     ${diff > 0
-      ? `<div class="big">${yen(diff * 12)} おトク</div><div class="ex">月 ${yen(nowTotal)} → ${yen(top.total)}（月 ${yen(diff)} 安くなります）</div>`
-      : `<div class="big bad">今の契約がいちばんお得です</div><div class="ex">試算した中で最安は 月 ${yen(top.total)}（今は 月 ${yen(nowTotal)}）</div>`}
-    ${partsDetail(top)}
+      ? `<div class="big">${yen(diff * 12)} おトク</div><div class="ex">月 ${yen(nowTotal)} → ${yen(best.total)}（月 ${yen(diff)} 安くなります）</div>`
+      : `<div class="big bad">今の契約がいちばんお得です</div><div class="ex">試算した中で最安は 月 ${yen(best.total)}（今は 月 ${yen(nowTotal)}）</div>`}
+    ${partsDetail(best)}
     <table>
       <thead><tr><th></th><th>月額</th><th>今と比べて/年</th></tr></thead>
       <tbody>
         <tr><td>今の契約（${nowName}）</td><td>${yen(nowTotal)}</td><td>—</td></tr>
-        ${stay && !topIsStay ? `<tr><td>${nowName}のまま見直し<div class="breakdown">${stay.mobile.plan}</div></td><td>${yen(stay.total)}</td><td>${signed((nowTotal - stay.total) * 12)}</td></tr>` : ""}
-        <tr><td>${topIsStay ? `${nowName}のまま見直し` : `${top.carrier.name}に乗り換え`}<div class="breakdown">${top.mobile.plan}</div></td><td>${yen(top.total)}</td><td>${signed(diff * 12)}</td></tr>
+        ${stay ? `<tr><td>${nowName}のまま見直し<div class="breakdown">${planNames(stay)}</div></td><td>${yen(stay.total)}</td><td>${signed((nowTotal - stay.total) * 12)}</td></tr>` : ""}
+        <tr><td>${topSwitch.name}に乗り換え<div class="breakdown">${planNames(topSwitch)}</div></td><td>${yen(topSwitch.total)}</td><td>${signed((nowTotal - topSwitch.total) * 12)}</td></tr>
       </tbody>
     </table>
-    ${stay && !topIsStay ? `<div class="ex" style="margin-top:8px">${nowName}のまま見直すより、${top.carrier.name}に乗り換えた方が 年 ${yen((stay.total - top.total) * 12)} 安くなります。</div>` : ""}`;
+    ${stay && !topIsStay ? `<div class="ex" style="margin-top:8px">${nowName}のまま見直すより、家族みんなで${topSwitch.name}に乗り換えた方が 年 ${yen((stay.total - topSwitch.total) * 12)} 安くなります。</div>` : ""}`;
 
-  // ランキング
-  const maxT = Math.max(...results.map(r => r.total), nowTotal, 1);
-  document.getElementById("ranking").innerHTML = `
-    <h2>${IC.rank}各社の最安プランで比べた家計の合計（月額）</h2>
-    <div class="ex">今：${yen(nowTotal)}（${nowName} ${yen(current)} ＋ ネット ${yen(netCurrent)} ＋ でんき ${yen(keepElec.real)}）</div>
-    <div class="ranking" style="margin-top:10px">${results.map((r, i) => `
-      <div class="plan ${i === 0 ? "rec" : ""} ${r === stay ? "is-now" : ""}">
-        <div class="plan-head"><span class="carrier-head"><span class="rank">${i + 1}</span><span class="plan-name">${r.carrier.name}${r === stay ? '<span class="tag now">今のキャリア</span>' : ""}</span></span><span class="price">${yen(r.total)}</span></div>
-        <div class="ex">${r === stay ? "プランを見直すと" : "乗り換えると"} 今と比べて 月 ${signed(nowTotal - r.total)}・年 ${yen((nowTotal - r.total) * 12)}</div>
+  // ランキング（家族みんなで乗り換えた場合）＋ 今のキャリアのまま
+  const maxT = Math.max(...results.map(r => r.total), nowTotal, stay ? stay.total : 0, 1);
+  const isNow = r => single && r.ids[0] === nowIds[0];
+  const card = (r, label, cls) => `
+      <div class="plan ${cls}">
+        <div class="plan-head"><span class="carrier-head">${label}</span><span class="price">${yen(r.total)}</span></div>
+        <div class="ex">今と比べて 月 ${signed(nowTotal - r.total)}・年 ${yen((nowTotal - r.total) * 12)}</div>
         <div class="bar"><span style="width:${Math.min(r.total / maxT, 1) * 100}%"></span></div>
         ${comboList(r)}
         ${partsDetail(r)}
-      </div>`).join("")}</div>`;
+      </div>`;
+  document.getElementById("ranking").innerHTML = `
+    <h2>${IC.rank}${scopeLabel}の合計で比べる（月額）</h2>
+    <div class="ex">今：${yen(nowTotal)}（スマホ ${yen(current)}${useNet ? ` ＋ ネット ${yen(netNowCost)}` : ""}${useElec ? ` ＋ でんき ${yen(elecNowCost)}` : ""}）</div>
+    <div class="ranking" style="margin-top:10px">
+      ${stay && !single ? card(stay, `<span class="plan-name">今のキャリアのまま見直し<span class="tag now">${nowName}</span></span>`, "is-now" + (topIsStay ? " rec" : "")) : ""}
+      ${results.map((r, i) => card(r,
+        `<span class="rank">${i + 1}</span><span class="plan-name">${r.name}${isNow(r) ? '<span class="tag now">今のキャリア</span>' : ""}</span>`,
+        ((i === 0 && !topIsStay) || (isNow(r) && topIsStay) ? "rec " : "") + (isNow(r) ? "is-now" : ""))).join("")}
+    </div>
+    ${nowIds.length > 1 ? '<div class="ex" style="margin-top:8px">ランキングは家族みんなで同じ会社に乗り換えた場合です。</div>' : ""}`;
+
+  document.getElementById("internet").style.display = useNet ? "" : "none";
+  document.getElementById("elec").style.display = useElec ? "" : "none";
 
   // 自宅ネット
   const maxN = Math.max(...D.internet.map(n => n[house]), netCurrent, 1);
