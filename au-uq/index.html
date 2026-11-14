@@ -89,6 +89,13 @@
   summary { cursor: pointer; color: var(--accent); font-size: .88rem; }
   .disclaimer { color: var(--muted); font-size: .8rem; margin-top: 16px; }
   .version { color: var(--muted); font-size: .8rem; }
+  .update-bar {
+    display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    background: var(--accent-weak); border: 1px solid var(--accent); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: .92rem;
+  }
+  .update-bar.show { display: flex; }
+  .update-bar button { width: auto; padding: 8px 18px; min-height: 40px; font-size: .95rem; }
+  .linkbtn { background: none; border: 0; color: var(--accent); padding: 0 4px; width: auto; min-height: 0; font-size: .8rem; font-weight: 600; text-decoration: underline; cursor: pointer; }
   .person .chips { margin-top: 8px; }
   .person .chips label { padding: 6px 14px; font-size: .9rem; }
   .famtotal { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); font-size: .95rem; }
@@ -121,11 +128,15 @@
 </head>
 <body>
 <main>
+  <div id="updateBar" class="update-bar" role="status">
+    <span id="updateText">新しいバージョンがあります</span>
+    <button type="button" id="updateBtn">最新版に更新</button>
+  </div>
   <h1>au・UQ mobile 乗り換え診断</h1>
-  <p class="lead">今のスマホ代を入れるだけで、auとUQ mobileに乗り換えたときの月額と節約額がわかります。家族割・自宅セット割・カード払い割もまとめて計算します。<br><span class="version" id="version"></span></p>
+  <p class="lead">今のスマホ代を入れるだけで、auとUQ mobileに乗り換えたときの月額と節約額がわかります。家族割・自宅セット割・カード払い割もまとめて計算します。<br><span class="version" id="version"></span><button type="button" class="linkbtn" id="checkBtn">更新を確認</button></p>
 
   <div class="layout">
-  <form id="form" class="card">
+  <form id="form" class="card" novalidate>
     <fieldset>
       <legend><span class="num">1</span>今のスマホ</legend>
       <div class="q">
@@ -151,7 +162,7 @@
       </div>
       <div class="q">
         <label for="current">今のスマホ代（乗り換える人の合計）<span class="hint">　税込・円/月。端末代の分割は除く</span></label>
-        <input type="number" id="current" inputmode="numeric" min="0" step="100" placeholder="例：15000">
+        <input type="number" id="current" inputmode="numeric" min="0" step="any" placeholder="例：15000">
       </div>
     </fieldset>
 
@@ -173,7 +184,7 @@
         <div class="label">乗り換えない家族<span class="hint">　スマホ代を入れると、家族全体の合計で比べます</span></div>
         <div class="row2">
           <div><span class="label">他社のままの人</span><select id="exOther"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
-          <div><span class="label">乗り換えない家族のスマホ代 合計（円/月）</span><input type="number" id="othersCost" inputmode="numeric" min="0" step="100" placeholder="例：6000"></div>
+          <div><span class="label">乗り換えない家族のスマホ代 合計（円/月）</span><input type="number" id="othersCost" inputmode="numeric" min="0" step="any" placeholder="例：6000"></div>
         </div>
         <p class="hint">すでに au / UQ の家族と、他社のままの家族の分をまとめて入れてください。</p>
       </div>
@@ -198,7 +209,7 @@
         <p class="hint" id="netSetNote"></p>
       </div>
       <div class="row2 q">
-        <div><span class="label">今のネット代（円/月）</span><input type="number" id="netCost" inputmode="numeric" min="0" step="100" placeholder="例：5500"></div>
+        <div><span class="label">今のネット代（円/月）</span><input type="number" id="netCost" inputmode="numeric" min="0" step="any" placeholder="例：5500"></div>
         <div><span class="label">住まい</span><select id="house"><option value="home">戸建て</option><option value="mansion">マンション</option></select></div>
       </div>
       <div class="q">
@@ -222,7 +233,7 @@
       </div>
       <div class="q">
         <label for="elec">電気代（円/月・1年の平均）<span class="hint">　入れるとauでんきに変えた場合を比較します</span></label>
-        <input type="number" id="elec" inputmode="numeric" min="0" step="100" placeholder="例：9000">
+        <input type="number" id="elec" inputmode="numeric" min="0" step="any" placeholder="例：9000">
       </div>
     </fieldset>
 
@@ -233,11 +244,60 @@
   </div>
 </main>
 
-<script src="plans.js?v=1.5.0"></script>
+<script src="plans.js?v=1.6.0"></script>
 <script>
-const APP_VERSION = "1.5.0";
+const APP_VERSION = "1.6.0";
 const APP_DATE = "2026-11-14";
-document.getElementById("version").textContent = `v${APP_VERSION}（料金は${DATA.updated}時点）`;
+document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金は${DATA.updated}時点）`;
+
+// ───── 更新チェック：公開中の version.json と比べて、古ければ「最新版に更新」ボタンを出す ─────
+const newer = (a, b) => { // a が b より新しいか
+  const x = a.split(".").map(Number), y = b.split(".").map(Number);
+  for (let i = 0; i < Math.max(x.length, y.length); i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); }
+  return false;
+};
+let latest = null;
+async function checkUpdate(manual) {
+  try {
+    const r = await fetch(`version.json?t=${Date.now()}`, { cache: "no-store" });
+    if (!r.ok) throw new Error();
+    const v = await r.json();
+    if (v.version && newer(v.version, APP_VERSION)) {
+      latest = v.version;
+      document.getElementById("updateText").textContent = `新しいバージョン v${v.version} があります（今は v${APP_VERSION}）${v.notes ? "：" + v.notes : ""}`;
+      document.getElementById("updateBar").classList.add("show");
+    } else if (manual) alert(`最新版（v${APP_VERSION}）です。`);
+  } catch (e) { if (manual) alert("更新を確認できませんでした。通信状態を確かめてください。"); }
+}
+// 入力内容を一時保存して、更新後に戻す
+const FORM_KEY = "auuq-form";
+function saveForm() {
+  const f = document.getElementById("form");
+  const vals = [...f.querySelectorAll("input, select")].map(el => el.type === "radio" || el.type === "checkbox" ? el.checked : el.value);
+  try { sessionStorage.setItem(FORM_KEY, JSON.stringify({ people: (document.querySelector("input[name=people]:checked") || {}).value, vals, shown: !!document.getElementById("result").innerHTML })); } catch (e) {}
+}
+function restoreForm() {
+  let d; try { d = JSON.parse(sessionStorage.getItem(FORM_KEY)); sessionStorage.removeItem(FORM_KEY); } catch (e) {}
+  if (!d) return;
+  const pr = document.querySelector(`input[name=people][value="${d.people}"]`);
+  if (pr) { pr.checked = true; renderPersons(); }
+  const els = [...document.getElementById("form").querySelectorAll("input, select")];
+  if (els.length !== d.vals.length) return;
+  els.forEach((el, i) => { if (el.type === "radio" || el.type === "checkbox") el.checked = d.vals[i]; else el.value = d.vals[i]; });
+  if (d.vals.some((v, i) => els[i].id === "netCost" && v !== "")) netCostTouched = true;
+  onNetChange();
+  if (d.shown) diagnose();
+}
+document.getElementById("updateBtn").addEventListener("click", () => {
+  saveForm();
+  const u = new URL(location.href);
+  u.searchParams.set("v", latest || Date.now()); // キャッシュを避けるため版番号付きで読み込み直す
+  location.replace(u.toString());
+});
+document.getElementById("checkBtn").addEventListener("click", () => checkUpdate(true));
+checkUpdate();
+document.addEventListener("visibilitychange", () => { if (!document.hidden) checkUpdate(); });
+setInterval(checkUpdate, 10 * 60 * 1000);
 
 const yen = n => n.toLocaleString("ja-JP") + "円";
 const $ = s => document.querySelector(s);
@@ -656,6 +716,7 @@ $("#result").addEventListener("click", e => {
 });
 document.querySelectorAll("input[name=netPhone]").forEach(r => r.addEventListener("change", onNetChange));
 onNetChange();
+restoreForm();
 document.querySelectorAll("input[name=netPlan]").forEach(r => r.addEventListener("change", () => {
   if ($("#result").innerHTML) diagnose();
 }));
