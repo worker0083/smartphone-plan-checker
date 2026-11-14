@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>au・UQ乗り換え診断</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1d2330; --muted: #6b7280;
+    --line: #e3e6eb; --accent: #2563eb; --accent-weak: #e8efff;
+    --good: #15803d; --good-weak: #e7f6ec; --warn: #b45309; --warn-weak: #fdf3e3;
+    --au: #ea5504; --au-weak: #fff1e8; --uq: #d6006f; --uq-weak: #fde8f2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151b; --card: #1b2029; --text: #e7eaf0; --muted: #9aa3b2;
+      --line: #2c3340; --accent: #6b9bff; --accent-weak: #1f2b45;
+      --good: #4ade80; --good-weak: #173322; --warn: #fbbf24; --warn-weak: #3a2e14;
+      --au: #fb923c; --au-weak: #3a2414; --uq: #f472b6; --uq-weak: #3a1a2b;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12151b; --card: #1b2029; --text: #e7eaf0; --muted: #9aa3b2;
+    --line: #2c3340; --accent: #6b9bff; --accent-weak: #1f2b45;
+    --good: #4ade80; --good-weak: #173322; --warn: #fbbf24; --warn-weak: #3a2e14;
+    --au: #fb923c; --au-weak: #3a2414; --uq: #f472b6; --uq-weak: #3a1a2b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+    line-height: 1.6;
+  }
+  main { max-width: 640px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  h2 { font-size: 1.1rem; margin: 0 0 12px; }
+  .lead { color: var(--muted); margin: 0 0 24px; font-size: .95rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  fieldset { border: 0; padding: 0; margin: 0 0 28px; }
+  legend { font-size: 1.05rem; font-weight: 800; padding: 0 0 12px; width: 100%; display: flex; align-items: center; gap: 8px; }
+  legend .num { display: inline-flex; width: 26px; height: 26px; border-radius: 50%; align-items: center; justify-content: center; background: var(--accent); color: #fff; font-size: .85rem; }
+  .q { margin-bottom: 18px; }
+  .q > label, .q > .label { display: block; font-weight: 600; margin-bottom: 8px; }
+  .hint { color: var(--muted); font-size: .82rem; font-weight: 400; }
+  input[type=number], select { width: 100%; padding: 12px; font-size: 1rem; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips label { border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; user-select: none; font-size: .95rem; background: var(--bg); display: inline-flex; align-items: center; -webkit-tap-highlight-color: transparent; }
+  .chips input { display: none; }
+  .chips label:has(input:checked) { background: var(--accent-weak); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .chips label, input[type=number], select, button { min-height: 44px; }
+  button { width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border: 0; border-radius: 12px; background: var(--accent); color: #fff; cursor: pointer; }
+  .person { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+  .person-title { font-weight: 700; margin-bottom: 8px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .row2 .label { font-size: .82rem; color: var(--muted); display: block; margin-bottom: 4px; }
+
+  /* 結果 */
+  #result { display: none; }
+  .hero { border: 2px solid var(--good); background: var(--good-weak); }
+  .hero.bad { border-color: var(--warn); background: var(--warn-weak); }
+  .tagline { font-size: .85rem; font-weight: 700; color: var(--muted); }
+  .hero .title { font-size: 1.3rem; font-weight: 800; margin: 4px 0 6px; }
+  .big { font-size: 2.2rem; font-weight: 800; color: var(--good); line-height: 1.2; }
+  .hero.bad .big { color: var(--warn); font-size: 1.5rem; }
+  .sub { font-size: .95rem; margin-top: 4px; }
+  .opt { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-top: 12px; }
+  .opt.best { border-width: 2px; }
+  .opt.au { border-left: 6px solid var(--au); }
+  .opt.uq { border-left: 6px solid var(--uq); }
+  .opt.mix { border-left: 6px solid var(--accent); }
+  .opt-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .opt-name { font-weight: 800; font-size: 1.05rem; }
+  .price { font-weight: 800; font-size: 1.3rem; white-space: nowrap; }
+  .diff { font-size: .9rem; font-weight: 700; }
+  .diff.plus { color: var(--good); } .diff.minus { color: var(--warn); }
+  .badge { display: inline-block; font-size: .75rem; padding: 1px 8px; border-radius: 6px; background: var(--good); color: #fff; margin-left: 6px; vertical-align: 2px; }
+  .pill { display: inline-block; font-size: .75rem; padding: 0 8px; border-radius: 6px; color: #fff; margin-right: 6px; vertical-align: 1px; }
+  .pill.au { background: var(--au); } .pill.uq { background: var(--uq); }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; margin-top: 10px; }
+  th, td { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: right; vertical-align: top; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { color: var(--muted); font-weight: 600; font-size: .8rem; }
+  .disc { color: var(--muted); font-size: .8rem; display: block; }
+  .notice { font-size: .88rem; background: var(--warn-weak); border-radius: 10px; padding: 10px 12px; margin-top: 12px; }
+  .tip { font-size: .88rem; background: var(--accent-weak); border-radius: 10px; padding: 10px 12px; margin-top: 10px; }
+  ul.check { padding-left: 1.2em; margin: 6px 0 0; }
+  ul.check li { margin-bottom: 6px; }
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--accent); font-size: .88rem; }
+  .disclaimer { color: var(--muted); font-size: .8rem; margin-top: 16px; }
+  .version { color: var(--muted); font-size: .8rem; }
+
+  @media (min-width: 700px) {
+    main { max-width: 760px; padding: 32px 24px 64px; }
+    h1 { font-size: 1.9rem; }
+    .card { padding: 24px; border-radius: 18px; }
+    .chips label { padding: 10px 18px; font-size: 1rem; }
+  }
+  @media (min-width: 1000px) {
+    main { max-width: 1120px; }
+    .layout { display: grid; grid-template-columns: 460px 1fr; gap: 24px; align-items: start; }
+    .layout > form { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; margin-bottom: 0; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>au・UQ mobile 乗り換え診断</h1>
+  <p class="lead">今のスマホ代を入れるだけで、auとUQ mobileに乗り換えたときの月額と節約額がわかります。家族割・自宅セット割・カード払い割もまとめて計算します。<br><span class="version" id="version"></span></p>
+
+  <div class="layout">
+  <form id="form" class="card">
+    <fieldset>
+      <legend><span class="num">1</span>今のスマホ</legend>
+      <div class="q">
+        <div class="label">今のキャリア</div>
+        <div class="chips" id="carrier">
+          <label><input type="radio" name="carrier" value="docomo" checked>ドコモ</label>
+          <label><input type="radio" name="carrier" value="softbank">ソフトバンク</label>
+          <label><input type="radio" name="carrier" value="ymobile">ワイモバイル</label>
+          <label><input type="radio" name="carrier" value="rakuten">楽天モバイル</label>
+          <label><input type="radio" name="carrier" value="online">ahamo・LINEMO</label>
+          <label><input type="radio" name="carrier" value="mvno">格安SIM</label>
+        </div>
+      </div>
+      <div class="q">
+        <label for="people">乗り換える人数</label>
+        <div class="chips" id="peopleChips">
+          <label><input type="radio" name="people" value="1" checked>1人</label>
+          <label><input type="radio" name="people" value="2">2人</label>
+          <label><input type="radio" name="people" value="3">3人</label>
+          <label><input type="radio" name="people" value="4">4人</label>
+          <label><input type="radio" name="people" value="5">5人</label>
+        </div>
+      </div>
+      <div class="q">
+        <label for="current">今のスマホ代（乗り換える人の合計）<span class="hint">　税込・円/月。端末代の分割は除く</span></label>
+        <input type="number" id="current" inputmode="numeric" min="0" step="100" placeholder="例：15000">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="num">2</span>使い方（1人ずつ）</legend>
+      <div id="persons"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="num">3</span>割引の条件</legend>
+      <div class="q">
+        <div class="label">家族ですでに au / UQ mobile を使っている人<span class="hint">　家族割の回線数に入ります</span></div>
+        <div class="row2">
+          <div><span class="label">au</span><select id="exAu"><option>0</option><option>1</option><option>2</option><option>3</option></select></div>
+          <div><span class="label">UQ mobile</span><select id="exUq"><option>0</option><option>1</option><option>2</option><option>3</option></select></div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="label">自宅のインターネット</div>
+        <div class="chips">
+          <label><input type="radio" name="net" value="yes">eo光・auひかり</label>
+          <label><input type="radio" name="net" value="other" checked>ほかの光回線</label>
+          <label><input type="radio" name="net" value="none">なし</label>
+        </div>
+      </div>
+      <div class="q">
+        <div class="label">auでんき</div>
+        <div class="chips">
+          <label><input type="radio" name="denki" value="yes">使っている・切り替えてもいい</label>
+          <label><input type="radio" name="denki" value="no" checked>使わない</label>
+        </div>
+      </div>
+      <div class="q">
+        <div class="label">au PAYカード</div>
+        <div class="chips">
+          <label><input type="radio" name="card" value="yes">持っている・作ってもいい</label>
+          <label><input type="radio" name="card" value="no" checked>使わない</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <button type="submit">診断する</button>
+  </form>
+
+  <section id="result"></section>
+  </div>
+</main>
+
+<script src="plans.js?v=1.0.0"></script>
+<script>
+const APP_VERSION = "1.0.0";
+const APP_DATE = "2026-11-14";
+document.getElementById("version").textContent = `v${APP_VERSION}（料金は${DATA.updated}時点）`;
+
+const yen = n => n.toLocaleString("ja-JP") + "円";
+const $ = s => document.querySelector(s);
+const val = name => (document.querySelector(`input[name=${name}]:checked`) || {}).value;
+const AU = DATA.carriers.find(c => c.id === "au");
+const UQ = DATA.carriers.find(c => c.id === "uq");
+
+const GB_OPTS = [[1, "〜1GB"], [3, "〜3GB"], [5, "〜5GB"], [10, "〜10GB"], [20, "〜20GB"], [30, "〜30GB"], [35, "〜35GB"], [Infinity, "それ以上・無制限"]];
+const CALL_OPTS = [["none", "ほぼしない"], ["short", "短い通話が多い"], ["long", "長電話する"]];
+
+// ───── 1人ずつの入力欄 ─────
+function renderPersons() {
+  const n = +val("people");
+  const box = $("#persons");
+  const prev = [...box.querySelectorAll(".person")].map(p => ({ gb: p.querySelector(".gb").value, call: p.querySelector(".call").value }));
+  box.innerHTML = "";
+  for (let i = 0; i < n; i++) {
+    const d = prev[i] || { gb: "5", call: "none" };
+    box.insertAdjacentHTML("beforeend", `
+      <div class="person">
+        <div class="person-title">${n > 1 ? `${i + 1}人目` : "あなた"}</div>
+        <div class="row2">
+          <div><span class="label">データ（1か月）</span>
+            <select class="gb">${GB_OPTS.map(([v, t]) => `<option value="${v}" ${String(v) === d.gb ? "selected" : ""}>${t}</option>`).join("")}</select></div>
+          <div><span class="label">通話</span>
+            <select class="call">${CALL_OPTS.map(([v, t]) => `<option value="${v}" ${v === d.call ? "selected" : ""}>${t}</option>`).join("")}</select></div>
+        </div>
+      </div>`);
+  }
+}
+document.querySelectorAll("input[name=people]").forEach(r => r.addEventListener("change", renderPersons));
+renderPersons();
+
+// ───── 料金計算 ─────
+// 1人分：その会社のプランの中でいちばん安いものを選ぶ
+function bestPlan(c, person, ctx, famCount) {
+  let best = null;
+  for (const p of c.plans) {
+    const tier = p.tiers.find(([cap]) => person.gb <= cap);
+    if (!tier) continue;
+    const base = tier[1];
+    const lines = [];
+    // 自宅セット割
+    let set = 0, setLabel = "";
+    if (p.set !== false) {
+      const netD = ctx.net && c.net ? c.net.amt : 0;
+      const denD = ctx.denki && c.denki ? c.denki.amt : 0;
+      if (c.stack) { set = netD + denD; setLabel = [netD && c.net.label, denD && c.denki.label].filter(Boolean).join("・"); }
+      else if (netD || denD) { set = Math.max(netD, denD); setLabel = netD >= denD ? c.net.label : c.denki.label; }
+    }
+    // 家族割
+    const fam = p.fam2 ? (famCount >= 3 ? p.fam3 : famCount >= 2 ? p.fam2 : 0) : 0;
+    if (c.famWithSet) {
+      if (set) lines.push([setLabel, set]);
+      if (fam) lines.push([`${c.famName}（${famCount}回線）`, fam]);
+    } else if (set >= fam) { if (set) lines.push([setLabel, set]); }
+    else lines.push([`${c.famName}`, fam]);
+    // カード払い
+    if (ctx.card && p.card !== false && c.card) lines.push([c.cardName, c.card]);
+    const call = person.call === "short" ? p.callShort : person.call === "long" ? p.callLong : 0;
+    const discount = lines.reduce((s, [, a]) => s + a, 0);
+    const total = base - discount + call;
+    const capLabel = tier[0] === Infinity ? "無制限" : `${tier[0]}GB`;
+    const callLabel = person.call === "none" ? "" : person.call === "short" ? (call ? `＋短時間かけ放題 ${yen(call)}` : "（10分かけ放題込み）") : (call ? `＋かけ放題 ${yen(call)}` : "（かけ放題込み）");
+    if (!best || total < best.total) best = { carrier: c, plan: p, capLabel, base, lines, call, callLabel, total };
+  }
+  return best;
+}
+
+// 回線の割り当て（全員au / 全員UQ / 組み合わせ）を計算
+function calcAssign(assign, persons, ctx) {
+  const famAu = assign.filter(a => a === "au").length + ctx.exAu;
+  const famUq = assign.filter(a => a === "uq").length + ctx.exUq;
+  const rows = [];
+  for (let i = 0; i < persons.length; i++) {
+    const c = assign[i] === "au" ? AU : UQ;
+    const r = bestPlan(c, persons[i], ctx, assign[i] === "au" ? famAu : famUq);
+    if (!r) return null; // 容量が足りない
+    rows.push(r);
+  }
+  return { rows, total: rows.reduce((s, r) => s + r.total, 0) };
+}
+
+function diagnose(e) {
+  e && e.preventDefault();
+  const persons = [...document.querySelectorAll(".person")].map(p => ({ gb: Number(p.querySelector(".gb").value), call: p.querySelector(".call").value }));
+  const ctx = {
+    net: val("net") === "yes", denki: val("denki") === "yes", card: val("card") === "yes",
+    exAu: +$("#exAu").value, exUq: +$("#exUq").value,
+  };
+  const current = Number($("#current").value) || 0;
+  const n = persons.length;
+
+  const allAu = calcAssign(Array(n).fill("au"), persons, ctx);
+  const allUq = calcAssign(Array(n).fill("uq"), persons, ctx);
+  let mix = null;
+  for (let m = 1; m < (1 << n) - 1; m++) {
+    const a = persons.map((_, i) => (m >> i) & 1 ? "au" : "uq");
+    const r = calcAssign(a, persons, ctx);
+    if (r && (!mix || r.total < mix.total)) mix = r;
+  }
+  const opts = [];
+  if (allUq) opts.push({ key: "uq", name: "全員 UQ mobile", ...allUq });
+  if (allAu) opts.push({ key: "au", name: "全員 au", ...allAu });
+  if (mix && mix.total < Math.min(allAu ? allAu.total : Infinity, allUq ? allUq.total : Infinity)) opts.push({ key: "mix", name: "au と UQ mobile を組み合わせ", ...mix });
+  opts.sort((a, b) => a.total - b.total);
+  const best = opts[0];
+
+  // ヒント：まだ使っていない割引でさらに安くなるか
+  const tips = [];
+  const tryCtx = (patch, label) => {
+    const c2 = { ...ctx, ...patch };
+    const a = best.rows.map(r => r.carrier.id);
+    const r = calcAssign(a, persons, c2);
+    if (r && best.total - r.total > 0) tips.push(`${label}と、さらに<b>月 ${yen(best.total - r.total)}</b>安くなります。`);
+  };
+  if (!ctx.card) tryCtx({ card: true }, "au PAYカード払いにする");
+  if (!ctx.net) tryCtx({ net: true }, "自宅のネットを eo光 か auひかり にする（ネット代そのものの差額は別に確認）");
+  if (!ctx.denki && best.rows.some(r => r.carrier.id === "uq") && !ctx.net) tryCtx({ denki: true }, "auでんきに切り替える");
+
+  const out = $("#result");
+  let html = "";
+
+  // 結論
+  if (current > 0) {
+    const save = current - best.total;
+    if (save > 0) {
+      html += `<div class="card hero">
+        <div class="tagline">いちばんおトクな乗り換え</div>
+        <div class="title">${best.name}</div>
+        <div class="big">月 ${yen(save)} 節約</div>
+        <div class="sub">1年で <b>${yen(save * 12)}</b>・2年で <b>${yen(save * 24)}</b> おトク</div>
+        <div class="sub">今 ${yen(current)} → 乗り換え後 <b>${yen(best.total)}</b>/月</div>
+      </div>`;
+    } else {
+      html += `<div class="card hero bad">
+        <div class="tagline">診断結果</div>
+        <div class="title">今のままのほうが安いかもしれません</div>
+        <div class="big">いちばん安くても月 ${yen(-save)} 高くなります</div>
+        <div class="sub">乗り換え後のいちばん安い形：${best.name}（${yen(best.total)}/月）</div>
+        <div class="sub">データ量を見直す・割引の条件をそろえると逆転することがあります。下のヒントも見てください。</div>
+      </div>`;
+    }
+  } else {
+    html += `<div class="card hero">
+      <div class="tagline">いちばん安い乗り換え</div>
+      <div class="title">${best.name}</div>
+      <div class="big">月 ${yen(best.total)}</div>
+      <div class="sub">今のスマホ代を入れると、節約額も計算します。</div>
+    </div>`;
+  }
+
+  // 比較
+  html += `<div class="card"><h2>乗り換え先の比較</h2>`;
+  opts.forEach((o, idx) => {
+    const d = current > 0 ? current - o.total : null;
+    html += `<div class="opt ${o.key} ${idx === 0 ? "best" : ""}">
+      <div class="opt-head">
+        <span class="opt-name">${o.name}${idx === 0 ? '<span class="badge">おすすめ</span>' : ""}</span>
+        <span><span class="price">${yen(o.total)}</span><span class="ex">/月</span></span>
+      </div>
+      ${d !== null ? `<div class="diff ${d > 0 ? "plus" : "minus"}">${d > 0 ? `今より月 ${yen(d)} 安い（年 ${yen(d * 12)}）` : `今より月 ${yen(-d)} 高い`}</div>` : ""}
+      <table><thead><tr><th>人・プラン</th><th>月額</th></tr></thead><tbody>
+      ${o.rows.map((r, i) => `<tr><td>${n > 1 ? `${i + 1}人目 ` : ""}<span class="pill ${r.carrier.id}">${r.carrier.name}</span>${r.plan.name}（${r.capLabel}）
+        <span class="disc">基本 ${yen(r.base)}${r.lines.map(([l, a]) => `／${l} −${yen(a)}`).join("")}${r.callLabel ? `／${r.callLabel}` : ""}</span></td>
+        <td><b>${yen(r.total)}</b></td></tr>`).join("")}
+      </tbody></table>
+    </div>`;
+  });
+  if (!allUq) html += `<div class="notice">データを35GBより多く使う人がいるため、全員UQ mobileにはできません（UQ mobileは最大35GB）。</div>`;
+  if (tips.length) html += tips.map(t => `<div class="tip">${t}</div>`).join("");
+  html += `</div>`;
+
+  // 乗り換えの流れ
+  const from = val("carrier");
+  const fromNotes = {
+    docomo: "ドコモの解約金は今のプランならほぼかかりません。dポイントは解約前に使い切りましょう。",
+    softbank: "ソフトバンクの解約金は今のプランならほぼかかりません。「新トクするサポート」で機種を買った人は端末の返却時期を確認しましょう。",
+    ymobile: "ワイモバイルは解約金なし。PayPayカード割・おうち割がなくなる分も含めて比較できています。",
+    rakuten: "楽天モバイルはもともと安いので、通話やエリアの安定を重視する場合に乗り換えを検討しましょう。",
+    online: "ahamo・LINEMOはもともと安いので、店舗サポートや家族割・セット割を使えるかがポイントです。",
+    mvno: "格安SIMはもともと安いので、通信速度や店舗サポートを重視する場合に乗り換えを検討しましょう。",
+  };
+  html += `<div class="card"><h2>乗り換えの流れ</h2>
+    <ul class="check">
+      <li><b>MNPワンストップ</b>に対応しているので、多くの場合は予約番号なしでそのまま申し込めます。</li>
+      <li>今のスマホをそのまま使うなら、<b>SIMロック解除</b>と対応機種かどうかを確認しましょう（2021年10月以降に買った機種は原則ロックなし）。</li>
+      <li>端末代の分割が残っている場合、乗り換え後も支払いは続きます（この診断の金額には入っていません）。</li>
+      <li>キャリアメール（@docomo.ne.jp など）は使えなくなります。必要なら「メールアドレス持ち運び」を利用しましょう。</li>
+      <li>${fromNotes[from]}</li>
+    </ul>
+    <details><summary>持っていくもの</summary>
+      <ul class="check"><li>本人確認書類（マイナンバーカード・運転免許証など）</li><li>支払い用のクレジットカードまたはキャッシュカード</li><li>今使っているスマホ</li></ul>
+    </details>
+  </div>`;
+
+  html += `<p class="disclaimer">※ 料金は${DATA.updated}時点の税込の目安です。キャンペーン・端末代・ユニバーサルサービス料などは含みません。最新の料金と条件は au・UQ mobile 公式サイトや店頭で確認してください。</p>`;
+
+  out.innerHTML = html;
+  out.style.display = "block";
+  if (window.innerWidth < 1000) out.scrollIntoView({ behavior: "smooth" });
+}
+$("#form").addEventListener("submit", diagnose);
+</script>
+</body>
+</html>
