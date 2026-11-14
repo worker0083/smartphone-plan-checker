@@ -35,6 +35,31 @@ window.DATA = {
     },
   ],
 
+  // ───────── 今のネット（関西）─────────
+  // set : "phone" = ネット＋電話で au/UQ のセット割の対象 / "any" = 対象プランならそのまま対象 / false = 対象外
+  //       ✅ 2026年11月 auスマートバリュー公式ページの対象一覧で確認
+  // home / mansion : 月額の目安（入力欄に自動で入る値。空欄 = 目安なし）
+  netCompanies: [
+    { id: "eo",       name: "eo光",                     set: "phone", home: 5814, mansion: 4400 },  // ✅戸建て / マンション⚠
+    { id: "auhikari", name: "auひかり",                 set: "phone", home: 6380, mansion: 5000 },  // ✅戸建て / マンション⚠
+    { id: "plus",     name: "auひかりプラス",           set: "phone", home: 6578, mansion: 5500 },  // ✅ ルーター込み・2年毎月割なし
+    { id: "biglobe",  name: "ビッグローブ光",           set: "phone" },
+    { id: "sonet",    name: "So-net光",                 set: "phone" },
+    { id: "nifty",    name: "@nifty光",                 set: "phone" },
+    { id: "jcom",     name: "J:COM",                    set: "phone" },
+    { id: "auhome",   name: "au ホームルーター 5G・WiMAX", set: "any" },
+    { id: "docomo",   name: "ドコモ光",                 set: false, home: 5720, mansion: 4400 },    // ✅
+    { id: "softbank", name: "ソフトバンク光",           set: false, home: 6050, mansion: 4510 },    // ✅
+    { id: "nuro",     name: "NURO光",                   set: false, home: 3980, mansion: 2980 },    // ✅ 2年割
+    { id: "rakuten",  name: "楽天ひかり",               set: false, home: 5280, mansion: 4180 },    // ✅
+    { id: "flets",    name: "フレッツ光（NTT西日本）",  set: false },
+    { id: "ahamo",    name: "ahamo光",                  set: false },
+    { id: "home5g",   name: "ドコモ home 5G",           set: false },
+    { id: "sbair",    name: "ソフトバンク エアー",      set: false },
+    { id: "other",    name: "そのほかの回線",           set: false },
+    { id: "none",     name: "ネットなし",               set: false, home: 0, mansion: 0 },
+  ],
+
   // ───────── auひかりプラス（1ギガ・2年契約・プロバイダBIGLOBE）✅ 2026年11月 au公式 ─────────
   // ネット料金にハイブリッドホームルーターのレンタル料（858円・必須）を足した額
   // 2年毎月割：光回線開通後24か月の割引（対象窓口・BIGLOBEの場合）

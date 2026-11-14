@@ -189,12 +189,13 @@
     <fieldset>
       <legend><span class="num">4</span>自宅のインターネット</legend>
       <div class="q">
-        <div class="label">今のネット</div>
-        <div class="chips">
-          <label><input type="radio" name="net" value="yes">eo光・auひかり（ネット＋電話）</label>
-          <label><input type="radio" name="net" value="other" checked>ほかの光回線・ネットのみ</label>
-          <label><input type="radio" name="net" value="none">なし</label>
+        <label for="netCo">今のネット会社</label>
+        <select id="netCo"></select>
+        <div class="chips" id="netPhoneBox" style="margin-top:8px">
+          <label><input type="radio" name="netPhone" value="yes">固定電話も契約している</label>
+          <label><input type="radio" name="netPhone" value="no" checked>ネットのみ</label>
         </div>
+        <p class="hint" id="netSetNote"></p>
       </div>
       <div class="row2 q">
         <div><span class="label">今のネット代（円/月）</span><input type="number" id="netCost" inputmode="numeric" min="0" step="100" placeholder="例：5500"></div>
@@ -232,9 +233,9 @@
   </div>
 </main>
 
-<script src="plans.js?v=1.4.0"></script>
+<script src="plans.js?v=1.5.0"></script>
 <script>
-const APP_VERSION = "1.4.0";
+const APP_VERSION = "1.5.0";
 const APP_DATE = "2026-11-14";
 document.getElementById("version").textContent = `v${APP_VERSION}（料金は${DATA.updated}時点）`;
 
@@ -246,6 +247,29 @@ const UQ = DATA.carriers.find(c => c.id === "uq");
 
 const GB_OPTS = [[1, "〜1GB"], [3, "〜3GB"], [5, "〜5GB"], [10, "〜10GB"], [20, "〜20GB"], [30, "〜30GB"], [35, "〜35GB"], [Infinity, "それ以上・無制限"]];
 const CALL_OPTS = [["none", "ほぼしない"], ["short", "短い通話が多い"], ["long", "長電話する"]];
+
+// ───── 今のネット会社 ─────
+const netCoSel = $("#netCo");
+netCoSel.innerHTML = [["セット割の対象", c => c.set], ["セット割の対象外", c => !c.set]].map(([g, f]) =>
+  `<optgroup label="${g}">${DATA.netCompanies.filter(f).map(c => `<option value="${c.id}">${c.name}</option>`).join("")}</optgroup>`).join("");
+netCoSel.value = "other";
+const curNetCo = () => DATA.netCompanies.find(c => c.id === netCoSel.value);
+// 今のネットで au / UQ のセット割が付くか
+const curNetSet = () => { const c = curNetCo(); return c.set === "any" || (c.set === "phone" && val("netPhone") === "yes"); };
+let netCostTouched = false;
+$("#netCost").addEventListener("input", () => { netCostTouched = true; });
+function onNetChange() {
+  const c = curNetCo();
+  $("#netPhoneBox").style.display = c.set === "phone" ? "flex" : "none";
+  $("#netSetNote").textContent = c.set === "phone" ? (val("netPhone") === "yes" ? "au / UQ のセット割の対象です。" : "ネットのみだとセット割の対象外です（固定電話も契約すると対象）。")
+    : c.set === "any" ? "au / UQ のセット割の対象です（対象の料金プランの場合）。" : c.id === "none" ? "" : "au / UQ のセット割の対象外です。";
+  if (!netCostTouched) {
+    const v = c[$("#house").value];
+    $("#netCost").value = v === undefined ? "" : v;
+  }
+  if ($("#result").innerHTML) diagnose();
+}
+[netCoSel, $("#house")].forEach(el => el.addEventListener("change", onNetChange));
 
 // ───── 1人ずつの入力欄 ─────
 function renderPersons() {
@@ -410,7 +434,7 @@ function diagnose(e) {
   e && e.preventDefault();
   const persons = [...document.querySelectorAll(".person")].map(p => ({ gb: Number(p.querySelector(".gb").value), call: p.querySelector(".call").value, fix: p.querySelector(".fix:checked").value }));
   const ctx = {
-    net: val("netPlan") === "plusPhone" ? true : val("netPlan") === "plusOnly" ? false : val("net") === "yes", denki: val("denki") === "yes", card: val("card") === "yes",
+    net: val("netPlan") === "plusPhone" ? true : val("netPlan") === "plusOnly" ? false : curNetSet(), denki: val("denki") === "yes", card: val("card") === "yes",
     exAu: +$("#exAu").value, exUq: +$("#exUq").value,
   };
   const current = Number($("#current").value) || 0;
@@ -452,6 +476,7 @@ function diagnose(e) {
     if (r && best.total - r.total > 0) tips.push(`${label}と、さらに<b>月 ${yen(best.total - r.total)}</b>安くなります。`);
   };
   if (!ctx.card) tryCtx({ card: true }, "au PAYカード払いにする");
+  if (val("netPlan") === "keep" && curNetCo().set === "phone" && val("netPhone") !== "yes") tryCtx({ net: true }, `今の${curNetCo().name}に固定電話も付ける（電話の料金は別にかかります）`);
 
   const out = $("#result");
   let html = "";
@@ -555,8 +580,8 @@ function netCard(persons, ctx, current, best) {
   const a2 = avg(onlyNet, 1, 24), b2 = avg(withPh, 1, 24);
   const rows = [];
   if (current > 0) rows.push(["今のまま", current, netNow, current + netNow, ""]);
-  const keep = compare(persons, { ...ctx, net: val("net") === "yes" }).best;  // ネットは今のまま
-  rows.push([`乗り換え・ネットは今のまま`, keep.total, netNow, keep.total + netNow, ""]);
+  const keep = compare(persons, { ...ctx, net: curNetSet() }).best;  // ネットは今のまま
+  rows.push([`乗り換え・ネットは今のまま（${curNetCo().name}）`, keep.total, netNow, keep.total + netNow, ""]);
   rows.push([`auひかりプラス <b>ネットのみ</b>`, pA.total, a2, pA.total + a2, "a"]);
   rows.push([`auひかりプラス <b>ネット＋電話</b>`, pB.total, b2, pB.total + b2, "b"]);
   const base = rows[0][3];
@@ -629,6 +654,8 @@ $("#result").addEventListener("click", e => {
   diagnose();
   $("#result").scrollIntoView({ behavior: "smooth" });
 });
+document.querySelectorAll("input[name=netPhone]").forEach(r => r.addEventListener("change", onNetChange));
+onNetChange();
 document.querySelectorAll("input[name=netPlan]").forEach(r => r.addEventListener("change", () => {
   if ($("#result").innerHTML) diagnose();
 }));
