@@ -198,7 +198,7 @@
         <label><input type="checkbox" id="useNet" checked>自宅ネット</label>
         <label><input type="checkbox" id="useElec" checked>でんき</label>
       </div>
-      <span class="label" style="margin-top:14px">キャンペーン <span class="hint">（乗り換え・新規の特典）</span></span>
+      <span class="label" style="margin-top:14px">キャンペーン <span class="hint">（乗り換え・新規の月額割引）</span></span>
       <div class="chips fill two">
         <label><input type="radio" name="promo" value="yes" checked>含めて2年間で比べる</label>
         <label><input type="radio" name="promo" value="no">含めない（通常料金）</label>
@@ -308,10 +308,10 @@
 
 <script>
 // ───── バージョン（更新するときは version.json と合わせて書き換える）─────
-const APP_VERSION = "1.7.0";
+const APP_VERSION = "1.7.1";
 const APP_DATE = "2026-11-14";
 </script>
-<script src="plans.js?v=1.7.0"></script>
+<script src="plans.js?v=1.7.1"></script>
 <script>
 const D = window.DATA;
 
@@ -365,7 +365,7 @@ const netById = id => D.internet.find(n => n.id === id);
 const H = 24; // キャンペーン込みで比べる期間（か月）
 const TODAY = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })();
 const livePromos = list => (list || []).filter(p => !p.until || p.until >= TODAY);
-const promoValue = list => list.reduce((t, p) => t + (p.amt || 0) * Math.min(p.months || 0, H) + (p.once || 0), 0);
+const promoValue = list => list.reduce((t, p) => t + (p.amt || 0) * Math.min(p.months || 0, H), 0);
 const dateText = d => d.replace(/-/g, "/");
 // スマホ1回線ぶんのキャンペーン（今と同じキャリアなら対象外）
 function linePromos(c, plan, tier, mem) {
@@ -379,7 +379,7 @@ function linePromos(c, plan, tier, mem) {
       if (p.tiers && !p.tiers.includes(tier[0])) amt = 0;
       return { ...p, amt, who: mem.who };
     })
-    .filter(p => p.amt > 0 || p.once > 0);
+    .filter(p => p.amt > 0);
 }
 
 // ───── でんき ─────
@@ -625,7 +625,7 @@ document.getElementById("form").addEventListener("submit", e => {
   const partsDetail = r => `<details><summary>スマホ料金の内訳</summary>${r.members.map(x => `<div class="breakdown"><span class="who">${x.who}</span>${x.parts.join(" / ")}</div>`).join("")}</details>`;
   // キャンペーンの一覧（期間・申込期限つき）
   const promoLine = p => {
-    const what = p.amt ? `-${yen(p.amt)}/月 × ${p.months}か月` : `${yen(p.once)}相当（1回）`;
+    const what = `-${yen(p.amt)}/月 × ${p.months}か月`;
     const when = p.until ? `申込 〜${dateText(p.until)}` : "終了日未定";
     return `<li><span class="who">${p.who}</span>${p.label}：<b>${what}</b>${p.src === "⚠" ? '<span class="ref">参考</span>' : ""}<div class="when">${when}${p.note ? "・" + p.note : ""}</div></li>`;
   };
@@ -650,8 +650,7 @@ document.getElementById("form").addEventListener("submit", e => {
       start = end + 1;
     }
     out.push(`${start}か月目〜 ${yen(r.total)}`);
-    const once = (r.promos || []).reduce((t, p) => t + (p.once || 0), 0);
-    return `<div class="timeline">毎月の支払い：${out.join(" → ")}${once ? `　＋ ポイント等 ${yen(once)}（1回）` : ""}</div>`;
+    return `<div class="timeline">毎月の支払い：${out.join(" → ")}</div>`;
   };
   const priceNote = r => usePromo && r.promos.length ? `<div class="breakdown">2年間の実質月額（キャンペーン後の通常は 月 ${yen(r.total)}）</div>` : "";
   const planNames = r => [...new Set(r.members.map(x => x.plan))].join("・");
@@ -678,7 +677,7 @@ document.getElementById("form").addEventListener("submit", e => {
         <tr><td>${topSwitch.name}に乗り換え<div class="breakdown">${planNames(topSwitch)}</div></td><td>${yen(topSwitch.score)}</td><td>${signed((nowTotal - topSwitch.score) * P)}</td></tr>
       </tbody>
     </table>
-    ${usePromo ? `<div class="breakdown">実質月額＝キャンペーン（ポイント・月額割引）を2年間で割って月額から引いた金額です。</div>` : ""}
+    ${usePromo ? `<div class="breakdown">実質月額＝キャンペーンの月額割引を2年間の平均にならした金額です。</div>` : ""}
     ${stay && !topIsStay ? `<div class="ex" style="margin-top:8px">${nowName}のまま見直すより、家族みんなで${topSwitch.name}に乗り換えた方が ${pLabel} ${yen((stay.score - topSwitch.score) * P)} 安くなります。</div>` : ""}`;
 
   // ランキング（家族みんなで乗り換えた場合）＋ 今のキャリアのまま
@@ -745,7 +744,7 @@ document.getElementById("form").addEventListener("submit", e => {
 
   document.getElementById("disclaimer").innerHTML =
     `※ 料金は${D.updated}時点で各社の公式サイトを確認した税込の目安です（一部は参考値）。端末代・工事費・事務手数料・解約金は含みません。` +
-    `※ キャンペーンは${D.promoChecked}に確認した、各社の公式キャンペーン（月額割引・ポイント還元。1pt＝1円で計算）です。「参考」は公式で条件を確認できていない値です。代理店のキャッシュバックや端末割引は含みません。申込期限を過ぎたものは自動で外れます。乗り換え元のキャリアや申込窓口によって対象外になることがあります。` +
+    `※ キャンペーンは${D.promoChecked}に確認した、各社の月額料金の割引キャンペーンです。「参考」は公式で条件を確認できていない値です。ポイント還元・キャッシュバック・端末割引は含みません。申込期限を過ぎたものは自動で外れます。乗り換え元のキャリアや申込窓口によって対象外になることがあります。` +
     `※ 本ツールは個人が作成した非公式の試算ツールで、特定の会社とは関係ありません。正式な料金は各社の公式サイト・店頭でご確認ください。`;
 
   const res = document.getElementById("result");
