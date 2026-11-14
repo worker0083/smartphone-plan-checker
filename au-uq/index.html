@@ -72,7 +72,7 @@
   .opt-name { font-weight: 800; font-size: 1.05rem; }
   .price { font-weight: 800; font-size: 1.3rem; white-space: nowrap; }
   .diff { font-size: .9rem; font-weight: 700; }
-  .diff.plus { color: var(--good); } .diff.minus { color: var(--warn); }
+  .diff.plus, .plus { color: var(--good); } .diff.minus, .minus { color: var(--warn); }
   .badge { display: inline-block; font-size: .75rem; padding: 1px 8px; border-radius: 6px; background: var(--good); color: #fff; margin-left: 6px; vertical-align: 2px; }
   .pill { display: inline-block; font-size: .75rem; padding: 0 8px; border-radius: 6px; color: #fff; margin-right: 6px; vertical-align: 1px; }
   .pill.au { background: var(--au); } .pill.uq { background: var(--uq); }
@@ -154,26 +154,43 @@
         </div>
       </div>
       <div class="q">
-        <div class="label">自宅のインターネット</div>
-        <div class="chips">
-          <label><input type="radio" name="net" value="yes">eo光・auひかり</label>
-          <label><input type="radio" name="net" value="other" checked>ほかの光回線</label>
-          <label><input type="radio" name="net" value="none">なし</label>
-        </div>
-      </div>
-      <div class="q">
-        <div class="label">auでんき</div>
-        <div class="chips">
-          <label><input type="radio" name="denki" value="yes">使っている・切り替えてもいい</label>
-          <label><input type="radio" name="denki" value="no" checked>使わない</label>
-        </div>
-      </div>
-      <div class="q">
         <div class="label">au PAYカード</div>
         <div class="chips">
           <label><input type="radio" name="card" value="yes">持っている・作ってもいい</label>
           <label><input type="radio" name="card" value="no" checked>使わない</label>
         </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="num">4</span>自宅のインターネット</legend>
+      <div class="q">
+        <div class="label">今のネット</div>
+        <div class="chips">
+          <label><input type="radio" name="net" value="yes">eo光・auひかり（ネット＋電話）</label>
+          <label><input type="radio" name="net" value="other" checked>ほかの光回線・ネットのみ</label>
+          <label><input type="radio" name="net" value="none">なし</label>
+        </div>
+      </div>
+      <div class="row2 q">
+        <div><span class="label">今のネット代（円/月）</span><input type="number" id="netCost" inputmode="numeric" min="0" step="100" placeholder="例：5500"></div>
+        <div><span class="label">住まい</span><select id="house"><option value="home">戸建て</option><option value="mansion">マンション</option></select></div>
+      </div>
+      <p class="hint">auひかりプラス（関西）に変えた場合も、ネットのみ／ネット＋電話の2通りで比較します。</p>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="num">5</span>でんき</legend>
+      <div class="q">
+        <div class="label">今の電気</div>
+        <div class="chips">
+          <label><input type="radio" name="denki" value="kepco" checked>関西電力など</label>
+          <label><input type="radio" name="denki" value="yes">auでんきを使っている</label>
+        </div>
+      </div>
+      <div class="q">
+        <label for="elec">電気代（円/月・1年の平均）<span class="hint">　入れるとauでんきに変えた場合を比較します</span></label>
+        <input type="number" id="elec" inputmode="numeric" min="0" step="100" placeholder="例：9000">
       </div>
     </fieldset>
 
@@ -184,9 +201,9 @@
   </div>
 </main>
 
-<script src="plans.js?v=1.0.0"></script>
+<script src="plans.js?v=1.1.0"></script>
 <script>
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.1.0";
 const APP_DATE = "2026-11-14";
 document.getElementById("version").textContent = `v${APP_VERSION}（料金は${DATA.updated}時点）`;
 
@@ -272,16 +289,9 @@ function calcAssign(assign, persons, ctx) {
   return { rows, total: rows.reduce((s, r) => s + r.total, 0) };
 }
 
-function diagnose(e) {
-  e && e.preventDefault();
-  const persons = [...document.querySelectorAll(".person")].map(p => ({ gb: Number(p.querySelector(".gb").value), call: p.querySelector(".call").value }));
-  const ctx = {
-    net: val("net") === "yes", denki: val("denki") === "yes", card: val("card") === "yes",
-    exAu: +$("#exAu").value, exUq: +$("#exUq").value,
-  };
-  const current = Number($("#current").value) || 0;
+// 全員au / 全員UQ / 組み合わせ の中でいちばん安い形
+function compare(persons, ctx) {
   const n = persons.length;
-
   const allAu = calcAssign(Array(n).fill("au"), persons, ctx);
   const allUq = calcAssign(Array(n).fill("uq"), persons, ctx);
   let mix = null;
@@ -295,7 +305,57 @@ function diagnose(e) {
   if (allAu) opts.push({ key: "au", name: "全員 au", ...allAu });
   if (mix && mix.total < Math.min(allAu ? allAu.total : Infinity, allUq ? allUq.total : Infinity)) opts.push({ key: "mix", name: "au と UQ mobile を組み合わせ", ...mix });
   opts.sort((a, b) => a.total - b.total);
-  const best = opts[0];
+  return { opts, best: opts[0], allAu, allUq };
+}
+
+// ───── auひかりプラス：月ごとの料金（開通後 m か月目）─────
+function hikariMonth(type, withPhone, denki, m) {
+  const H = DATA.hikariPlus, t = H[type];
+  let v = t.net + t.router - (m <= 24 ? t.twoYear : 0);
+  if (withPhone) {
+    v += m <= H.phoneFreeMonths ? 0 : H.phone;
+    if (denki && m > H.phoneFreeMonths) v -= m <= H.denkiSet.to ? H.denkiSet.amt : H.denkiSet.after;
+  }
+  return v;
+}
+const avg = (f, a, b) => { let s = 0; for (let m = a; m <= b; m++) s += f(m); return Math.round(s / (b - a + 1)); };
+
+// ───── でんき（関西）：電気代 → 使用量 → 各社の料金 ─────
+function elecBill(p, kwh) {
+  const E = DATA.electricity;
+  const [r1, r2, r3] = p.rates;
+  let v = p.min;
+  if (kwh > 15) v += (Math.min(kwh, 120) - 15) * r1;
+  if (kwh > 120) v += (Math.min(kwh, 300) - 120) * r2;
+  if (kwh > 300) v += (kwh - 300) * r3;
+  return v + kwh * E.renewable;
+}
+function kwhFromBill(bill) {
+  let lo = 0, hi = 3000;
+  for (let i = 0; i < 40; i++) { const mid = (lo + hi) / 2; elecBill(DATA.electricity.kepco, mid) < bill ? lo = mid : hi = mid; }
+  return lo;
+}
+function auDenkiPoint(kwh) {
+  const A = DATA.electricity.audenki;
+  const [r1, r2, r3] = A.ratesEx;
+  let ex = A.minEx;
+  if (kwh > 15) ex += (Math.min(kwh, 120) - 15) * r1;
+  if (kwh > 120) ex += (Math.min(kwh, 300) - 120) * r2;
+  if (kwh > 300) ex += (kwh - 300) * r3;
+  const rate = A.point.find(([cap]) => ex < cap)[1];
+  return { pt: Math.ceil(Math.floor(ex) * rate), rate };
+}
+
+function diagnose(e) {
+  e && e.preventDefault();
+  const persons = [...document.querySelectorAll(".person")].map(p => ({ gb: Number(p.querySelector(".gb").value), call: p.querySelector(".call").value }));
+  const ctx = {
+    net: val("net") === "yes", denki: val("denki") === "yes", card: val("card") === "yes",
+    exAu: +$("#exAu").value, exUq: +$("#exUq").value,
+  };
+  const current = Number($("#current").value) || 0;
+  const n = persons.length;
+  const { opts, best, allUq } = compare(persons, ctx);
 
   // ヒント：まだ使っていない割引でさらに安くなるか
   const tips = [];
@@ -306,8 +366,6 @@ function diagnose(e) {
     if (r && best.total - r.total > 0) tips.push(`${label}と、さらに<b>月 ${yen(best.total - r.total)}</b>安くなります。`);
   };
   if (!ctx.card) tryCtx({ card: true }, "au PAYカード払いにする");
-  if (!ctx.net) tryCtx({ net: true }, "自宅のネットを eo光 か auひかり にする（ネット代そのものの差額は別に確認）");
-  if (!ctx.denki && best.rows.some(r => r.carrier.id === "uq") && !ctx.net) tryCtx({ denki: true }, "auでんきに切り替える");
 
   const out = $("#result");
   let html = "";
@@ -362,6 +420,9 @@ function diagnose(e) {
   if (tips.length) html += tips.map(t => `<div class="tip">${t}</div>`).join("");
   html += `</div>`;
 
+  html += netCard(persons, ctx, current, best);
+  html += denkiCard(persons, ctx, best);
+
   // 乗り換えの流れ
   const from = val("carrier");
   const fromNotes = {
@@ -391,6 +452,79 @@ function diagnose(e) {
   out.style.display = "block";
   if (window.innerWidth < 1000) out.scrollIntoView({ behavior: "smooth" });
 }
+// ───── ネットを auひかりプラス にした場合 ─────
+function netCard(persons, ctx, current, best) {
+  const H = DATA.hikariPlus, type = $("#house").value, t = H[type];
+  const netNow = Number($("#netCost").value) || 0;
+  const onlyNet = m => hikariMonth(type, false, ctx.denki, m);
+  const withPh = m => hikariMonth(type, true, ctx.denki, m);
+  const pA = compare(persons, { ...ctx, net: false }).best;  // ネットのみ → セット割なし
+  const pB = compare(persons, { ...ctx, net: true }).best;   // ネット＋電話 → セット割あり
+  const a2 = avg(onlyNet, 1, 24), b2 = avg(withPh, 1, 24);
+  const rows = [];
+  if (current > 0) rows.push(["今のまま", current, netNow, current + netNow, ""]);
+  rows.push([`乗り換え・ネットは今のまま`, best.total, netNow, best.total + netNow, ""]);
+  rows.push([`auひかりプラス <b>ネットのみ</b>`, pA.total, a2, pA.total + a2, "a"]);
+  rows.push([`auひかりプラス <b>ネット＋電話</b>`, pB.total, b2, pB.total + b2, "b"]);
+  const base = rows[0][3];
+  const minTotal = Math.min(...rows.map(r => r[3]));
+  const setGain = pA.total - pB.total;
+  const yr = f => [avg(f, 1, 12), avg(f, 13, 24), avg(f, 25, 36)];
+  const [a1, a2y, a3] = yr(onlyNet), [b1, b2y, b3] = yr(withPh);
+
+  return `<div class="card"><h2>ネットも auひかりプラス（関西）にした場合</h2>
+    <p class="ex">${t.name}・2年契約（BIGLOBE）・ルーター代込み。ネット代は2年間の平均です。${netNow ? "" : "今のネット代を入れると、家計全体の差額も出ます。"}</p>
+    <table><thead><tr><th>パターン</th><th>スマホ</th><th>ネット</th><th>合計/月</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td>${r[0]}${r[3] === minTotal ? '<span class="badge">最安</span>' : ""}</td><td>${yen(r[1])}</td><td>${r[2] ? yen(r[2]) : "—"}</td><td><b>${yen(r[3])}</b>${r !== rows[0] && current > 0 ? `<span class="disc ${base - r[3] > 0 ? "plus" : "minus"}">${base - r[3] > 0 ? `月${yen(base - r[3])}安い` : `月${yen(r[3] - base)}高い`}</span>` : ""}</td></tr>`).join("")}
+    </tbody></table>
+    <table><thead><tr><th>auひかりプラスの月額</th><th>1年目</th><th>2年目</th><th>3年目</th></tr></thead><tbody>
+      <tr><td>ネットのみ</td><td>${yen(a1)}</td><td>${yen(a2y)}</td><td>${yen(a3)}</td></tr>
+      <tr><td>ネット＋電話（Wi-Fiパック）${ctx.denki ? "<span class=\"disc\">auでんきセット割込み</span>" : ""}</td><td>${yen(b1)}</td><td>${yen(b2y)}</td><td>${yen(b3)}</td></tr>
+    </tbody></table>
+    ${setGain > 0 ? `<div class="tip"><b>ネットのみだとスマホのセット割が受けられません。</b>電話（Wi-Fiパック 月770円・最初の12か月は0円）を付けると、スマホが<b>月${yen(setGain)}</b>安くなります。</div>` : ""}
+    <ul class="check" style="margin-top:12px">
+      <li>auスマートバリュー・UQの自宅セット割は「ネット＋電話」のセットが条件です。</li>
+      <li>初期費用：登録料 ${yen(H.signup)}。工事費 39,600円は24か月の割引で実質0円（途中で解約すると残りを請求）。</li>
+      <li>2年契約の途中解約は ${yen(H.cancel)}。2年毎月割はBIGLOBE・対象窓口での申し込みが条件です。</li>
+      <li>光回線の工事までは届いたルーターの5G通信で使えます。提供エリアは住所で確認してください。</li>
+      <li>他社からの乗り換えは、解約違約金相当額の還元（最大30,000円分）などの特典があります。</li>
+    </ul>
+  </div>`;
+}
+
+// ───── auでんきに変えた場合 ─────
+function denkiCard(persons, ctx, best) {
+  const bill = Number($("#elec").value) || 0;
+  const E = DATA.electricity;
+  if (!bill) return `<div class="card"><h2>auでんきに変えた場合</h2><p class="ex">左の「電気代」を入れると、auでんきに変えた場合の差額を計算します。</p></div>`;
+  const kwh = kwhFromBill(bill);
+  const kepco = Math.round(elecBill(E.kepco, kwh)), au = Math.round(elecBill(E.audenki, kwh));
+  const { pt, rate } = auDenkiPoint(kwh);
+  if (ctx.denki) {
+    return `<div class="card"><h2>auでんき</h2><p>すでにauでんきなので、スマホの計算にもでんきのセット割を入れています。Pontaポイントは毎月 約<b>${pt}ポイント</b>（${rate * 100}%）です。</p></div>`;
+  }
+  const withD = compare(persons, { ...ctx, denki: true }).best;
+  const phoneGain = best.total - withD.total;
+  const billDiff = kepco - au;
+  const total = phoneGain + pt + billDiff;
+  const H = DATA.hikariPlus;
+  return `<div class="card"><h2>auでんきに変えた場合</h2>
+    <p class="ex">電気代 ${yen(bill)}/月 → 使用量 約${Math.round(kwh)}kWh として計算（燃料費調整額は両社同じなので除外）</p>
+    <table><thead><tr><th>項目</th><th>差額/月</th></tr></thead><tbody>
+      <tr><td>電気代（${E.kepco.name} → ${E.audenki.name}）<span class="disc">${yen(kepco)} → ${yen(au)}</span></td><td>${billDiff >= 0 ? "−" : "＋"}${yen(Math.abs(billDiff))}</td></tr>
+      <tr><td>Pontaポイント還元（${rate * 100}%）</td><td>−${pt}円相当</td></tr>
+      <tr><td>スマホのセット割<span class="disc">${phoneGain > 0 ? withD.name + "で UQの自宅セット割（でんきコース）" : ctx.net ? "ネットのセット割と併用できないため増えません" : "auのスマホはでんきだけではセット割の対象外"}</span></td><td>−${yen(phoneGain)}</td></tr>
+    </tbody><tfoot><tr><td><b>合計</b></td><td><b class="${total > 0 ? "plus" : ""}">月${yen(total)}おトク</b></td></tr></tfoot></table>
+    <div class="sub" style="margin-top:8px">1年で約 <b>${yen(total * 12)}</b> おトク</div>
+    <div class="tip">auひかりプラスを「ネット＋電話」で使う場合は、さらに auひかりプラス でんきセット割（13〜36か月目 月${yen(H.denkiSet.amt)}、以降 月${yen(H.denkiSet.after)}）も付きます（上のネットの表には入っていません）。</div>
+    <ul class="check" style="margin-top:12px">
+      <li>auでんき（関西）の単価は関西電力の従量電灯Aとほぼ同じです。おトク分は主にポイントとセット割です。</li>
+      <li>UQ mobile の自宅セット割は「インターネットコース」か「でんきコース」のどちらか1つです。</li>
+      <li>切り替えは工事不要。今の電力会社の解約手続きもいりません。</li>
+    </ul>
+  </div>`;
+}
+
 $("#form").addEventListener("submit", diagnose);
 </script>
 </body>
