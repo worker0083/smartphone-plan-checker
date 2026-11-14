@@ -89,6 +89,13 @@
   summary { cursor: pointer; color: var(--accent); font-size: .88rem; }
   .disclaimer { color: var(--muted); font-size: .8rem; margin-top: 16px; }
   .version { color: var(--muted); font-size: .8rem; }
+  .fam { margin-top: 10px; border-radius: 10px; padding: 10px 12px; background: var(--good-weak); font-size: .9rem; }
+  .fam.none { background: var(--warn-weak); }
+  .fam-title { font-weight: 800; margin-bottom: 2px; }
+  .fam-row { display: flex; justify-content: space-between; gap: 8px; }
+  .fam-row b { white-space: nowrap; }
+  .fam-val { text-align: right; flex: none; max-width: 50%; }
+  .hero .fam { background: var(--card); border: 1px solid var(--line); }
   .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0 4px; }
   .seg button { min-height: 44px; padding: 8px 6px; font-size: .88rem; font-weight: 700; border-radius: 10px;
     background: var(--bg); color: var(--text); border: 1px solid var(--line); line-height: 1.3; }
@@ -214,9 +221,9 @@
   </div>
 </main>
 
-<script src="plans.js?v=1.2.0"></script>
+<script src="plans.js?v=1.3.0"></script>
 <script>
-const APP_VERSION = "1.2.0";
+const APP_VERSION = "1.3.0";
 const APP_DATE = "2026-11-14";
 document.getElementById("version").textContent = `v${APP_VERSION}（料金は${DATA.updated}時点）`;
 
@@ -299,7 +306,7 @@ function calcAssign(assign, persons, ctx) {
     if (!r) return null; // 容量が足りない
     rows.push(r);
   }
-  return { rows, total: rows.reduce((s, r) => s + r.total, 0) };
+  return { rows, total: rows.reduce((s, r) => s + r.total, 0), fam: { au: famAu, uq: famUq } };
 }
 
 // 全員au / 全員UQ / 組み合わせ の中でいちばん安い形
@@ -359,6 +366,27 @@ function auDenkiPoint(kwh) {
   return { pt: Math.ceil(Math.floor(ex) * rate), rate };
 }
 
+// ───── 家族割のまとめ ─────
+function famSummary(o, ctx) {
+  const parts = [];
+  let sum = 0;
+  for (const c of [AU, UQ]) {
+    const rows = o.rows.filter(r => r.carrier === c);
+    if (!rows.length) continue;
+    const count = o.fam[c.id], ex = c.id === "au" ? ctx.exAu : ctx.exUq;
+    const disc = rows.reduce((s, r) => s + r.lines.filter(([l]) => l.startsWith(c.famName)).reduce((a, [, v]) => a + v, 0), 0);
+    sum += disc;
+    const who = `乗り換え${rows.length}人${ex ? `＋家族${ex}人` : ""}＝${count}回線`;
+    let note;
+    if (disc) note = `<b>−${yen(disc)}/月</b>`;
+    else if (count < 2) note = `<b>なし</b>（2回線から）`;
+    else if (rows.every(r => r.plan.fam2 === undefined)) note = `<b>なし</b>（コミコミプランバリューは対象外）`;
+    else note = `<b>自宅セット割を優先</b>（併用不可）`;
+    parts.push(`<div class="fam-row"><span>${c.name} ${c.famName}（${who}）</span><span class="fam-val">${note}</span></div>`);
+  }
+  return { sum, html: `<div class="fam ${sum ? "" : "none"}"><div class="fam-title">家族割 ${sum ? `合計 月${yen(sum)}引き` : "なし"}</div>${parts.join("")}</div>` };
+}
+
 function diagnose(e) {
   e && e.preventDefault();
   const persons = [...document.querySelectorAll(".person")].map(p => ({ gb: Number(p.querySelector(".gb").value), call: p.querySelector(".call").value }));
@@ -403,7 +431,7 @@ function diagnose(e) {
         <div class="big">月 ${yen(save)} 節約</div>
         <div class="sub">1年で <b>${yen(save * 12)}</b>・2年で <b>${yen(save * 24)}</b> おトク</div>
         <div class="sub">今 ${yen(current)} → 乗り換え後 <b>${yen(best.total)}</b>/月</div>
-      ${netLine}</div>`;
+      ${famSummary(best, ctx).html}${netLine}</div>`;
     } else {
       html += `<div class="card hero bad">
         <div class="tagline">診断結果</div>
@@ -411,7 +439,7 @@ function diagnose(e) {
         <div class="big">いちばん安くても月 ${yen(-save)} 高くなります</div>
         <div class="sub">乗り換え後のいちばん安い形：${best.name}（${yen(best.total)}/月）</div>
         <div class="sub">データ量を見直す・割引の条件をそろえると逆転することがあります。下のヒントも見てください。</div>
-      ${netLine}</div>`;
+      ${famSummary(best, ctx).html}${netLine}</div>`;
     }
   } else {
     html += `<div class="card hero">
@@ -419,7 +447,7 @@ function diagnose(e) {
       <div class="title">${best.name}</div>
       <div class="big">月 ${yen(best.total)}</div>
       <div class="sub">今のスマホ代を入れると、節約額も計算します。</div>
-    ${netLine}</div>`;
+    ${famSummary(best, ctx).html}${netLine}</div>`;
   }
 
   // 比較
@@ -438,8 +466,13 @@ function diagnose(e) {
         <span class="disc">基本 ${yen(r.base)}${r.lines.map(([l, a]) => `／${l} −${yen(a)}`).join("")}${r.callLabel ? `／${r.callLabel}` : ""}</span></td>
         <td><b>${yen(r.total)}</b></td></tr>`).join("")}
       </tbody></table>
+      ${famSummary(o, ctx).html}
     </div>`;
   });
+  if (best.key === "mix") {
+    const lost = best.rows.some(r => r.carrier === AU) && best.fam.au < 2;
+    if (lost) html += `<div class="tip">組み合わせだと au が1回線だけになり、au の家族割は付きません。それでも組み合わせのほうが安くなっています。</div>`;
+  }
   if (!allUq) html += `<div class="notice">データを35GBより多く使う人がいるため、全員UQ mobileにはできません（UQ mobileは最大35GB）。</div>`;
   if (tips.length) html += tips.map(t => `<div class="tip">${t}</div>`).join("");
   html += `</div>`;
