@@ -164,6 +164,16 @@
     background: var(--accent-weak); border: 1px solid var(--accent); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: .92rem;
   }
   .update-bar.show { display: flex; }
+  .promo { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; background: var(--good-weak); font-size: .85rem; }
+  .promo-title { font-weight: 700; color: var(--good); display: flex; align-items: center; }
+  details.promo { margin-top: 8px; }
+  details.promo summary.promo-title { cursor: pointer; display: list-item; }
+  .promo-title .ic { color: var(--good); }
+  .promo ul { list-style: none; padding: 0; margin: 4px 0 0; }
+  .promo li { padding: 2px 0; }
+  .promo .when { color: var(--muted); font-size: .8rem; }
+  .ref { display: inline-block; font-size: .7rem; padding: 0 6px; border-radius: 5px; border: 1px solid var(--warn); color: var(--warn); margin-left: 4px; vertical-align: 1px; }
+  .timeline { font-size: .82rem; margin-top: 4px; }
   .update-bar button { width: auto; padding: 8px 18px; min-height: 40px; font-size: .95rem; }
 </style>
 </head>
@@ -187,6 +197,11 @@
         <label class="fixed"><input type="checkbox" checked disabled>スマホ</label>
         <label><input type="checkbox" id="useNet" checked>自宅ネット</label>
         <label><input type="checkbox" id="useElec" checked>でんき</label>
+      </div>
+      <span class="label" style="margin-top:14px">キャンペーン <span class="hint">（乗り換え・新規の特典）</span></span>
+      <div class="chips fill two">
+        <label><input type="radio" name="promo" value="yes" checked>含めて2年間で比べる</label>
+        <label><input type="radio" name="promo" value="no">含めない（通常料金）</label>
       </div>
     </div>
     <fieldset>
@@ -293,10 +308,10 @@
 
 <script>
 // ───── バージョン（更新するときは version.json と合わせて書き換える）─────
-const APP_VERSION = "1.6.0";
-const APP_DATE = "2026-11-10";
+const APP_VERSION = "1.7.0";
+const APP_DATE = "2026-11-14";
 </script>
-<script src="plans.js?v=1.6.0"></script>
+<script src="plans.js?v=1.7.0"></script>
 <script>
 const D = window.DATA;
 
@@ -346,6 +361,27 @@ const E = D.electricity;
 const elecById = id => E.plans.find(p => p.id === id);
 const netById = id => D.internet.find(n => n.id === id);
 
+// ───── キャンペーン ─────
+const H = 24; // キャンペーン込みで比べる期間（か月）
+const TODAY = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })();
+const livePromos = list => (list || []).filter(p => !p.until || p.until >= TODAY);
+const promoValue = list => list.reduce((t, p) => t + (p.amt || 0) * Math.min(p.months || 0, H) + (p.once || 0), 0);
+const dateText = d => d.replace(/-/g, "/");
+// スマホ1回線ぶんのキャンペーン（今と同じキャリアなら対象外）
+function linePromos(c, plan, tier, mem) {
+  if (mem.carrierId === c.id) return [];
+  return livePromos(plan.promos || c.promos)
+    .filter(p => !(p.excludeFrom || []).includes(mem.carrierId))
+    .map(p => {
+      let amt = p.amt || 0;
+      if (p.rate) amt = Math.floor(tier[1] * p.rate);
+      if (p.byTier) amt = p.byTier[tier[0]] || 0;
+      if (p.tiers && !p.tiers.includes(tier[0])) amt = 0;
+      return { ...p, amt, who: mem.who };
+    })
+    .filter(p => p.amt > 0 || p.once > 0);
+}
+
 // ───── でんき ─────
 function energyCharge(p, kwh) { // 最低料金＋電力量料金（税込）
   if (p.flat) return p.flat * kwh;
@@ -391,7 +427,9 @@ function linePrice(c, plan, ctx, setNet, setDenki, mem) {
   if (ctx.card && c.card && plan.card !== false) { cost -= c.card; parts.push(`${c.cardName} -${yen(c.card)}`); }
   const add = mem.call === "short" ? plan.callShort : mem.call === "long" ? plan.callLong : 0;
   if (add) { cost += add; parts.push(`${mem.call === "short" ? "短時間かけ放題" : "かけ放題"} +${yen(add)}`); }
-  return { plan: plan.name, gb: tier[0], cost: Math.max(cost, 0), parts };
+  cost = Math.max(cost, 0);
+  const promos = linePromos(c, plan, tier, mem);
+  return { plan: plan.name, gb: tier[0], cost, parts, promos, eff: cost - promoValue(promos) / H };
 }
 
 // ───── あるキャリアで、指定した人たちが一番安くなるプランを一人ずつ選ぶ ─────
@@ -399,7 +437,8 @@ function mobileFor(c, mems, ctx, setNet, setDenki) {
   const sub = { ...ctx, lines: mems.length }; // 家族割はそのキャリアの回線数で数える
   const out = mems.map(mem => {
     const opts = c.plans.map(p => linePrice(c, p, sub, setNet, setDenki, mem)).filter(Boolean);
-    return opts.length ? { who: mem.who, carrier: c.name, ...opts.sort((a, b) => a.cost - b.cost)[0] } : null;
+    const key = o => ctx.promo ? o.eff : o.cost;
+    return opts.length ? { who: mem.who, carrier: c.name, ...opts.sort((a, b) => key(a) - key(b))[0] } : null;
   });
   return out.some(x => !x) ? null : out;
 }
@@ -415,6 +454,14 @@ const flags = (c, net, el) => ({
   setDenki: !!(c.denki && el.id === c.denki.id),
 });
 
+// 組み合わせのキャンペーンをまとめて、2年間の実質月額（score）を出す
+function finish(r, ctx) {
+  r.promos = [...r.members.flatMap(m => m.promos || []), ...(r.net.promos || []), ...(r.el.promos || [])];
+  r.eff = r.total - promoValue(r.promos) / H;
+  r.score = ctx.promo ? r.eff : r.total;
+  return r;
+}
+
 // ───── 家族全員で1つのキャリアに乗り換える場合の最安（ネット × でんき × プラン）─────
 function bestFor(c, ctx) {
   let best = null;
@@ -425,7 +472,8 @@ function bestFor(c, ctx) {
     const x = setExtras(c, f.setNet);
     const mobile = members.reduce((t, m) => t + m.cost, 0);
     const total = mobile + net.cost + x.extra + el.real - x.homeDisc;
-    if (!best || total < best.total) best = { name: c.name, ids: [c.id], members, net, netCost: net.cost + x.extra, extra: x.extra, el, homeDisc: x.homeDisc, homeLabel: x.homeLabel, total };
+    const r = finish({ name: c.name, ids: [c.id], members, net, netCost: net.cost + x.extra, extra: x.extra, el, homeDisc: x.homeDisc, homeLabel: x.homeLabel, total }, ctx);
+    if (!best || r.score < best.score) best = r;
   }
   return best;
 }
@@ -453,7 +501,8 @@ function stayFor(ctx) {
     if (!ok) continue;
     total += extra - homeDisc;
     members.sort((a, b) => ctx.members.findIndex(m => m.who === a.who) - ctx.members.findIndex(m => m.who === b.who));
-    if (!best || total < best.total) best = { name: "今のキャリアのまま", ids: Object.keys(groups), members, net, netCost: net.cost + extra, extra, el, homeDisc, homeLabel: labels.join("・"), total, stay: true };
+    const r = finish({ name: "今のキャリアのまま", ids: Object.keys(groups), members, net, netCost: net.cost + extra, extra, el, homeDisc, homeLabel: labels.join("・"), total, stay: true }, ctx);
+    if (!best || r.score < best.score) best = r;
   }
   return best;
 }
@@ -512,7 +561,9 @@ addMember();
 document.getElementById("form").addEventListener("submit", e => {
   e.preventDefault();
   const members = readMembers();
-  const ctx = { members, lines: members.length, card: radio("card") === "yes" };
+  const usePromo = radio("promo") === "yes";
+  const ctx = { members, lines: members.length, card: radio("card") === "yes", promo: usePromo };
+  const P = usePromo ? 24 : 12, pLabel = usePromo ? "2年" : "年"; // 「今と比べて」を何か月ぶんで見せるか
   const useNet = document.getElementById("useNet").checked;
   const useElec = document.getElementById("useElec").checked;
   const current = members.reduce((t, m) => t + m.current, 0); // 家族全員の今のスマホ代
@@ -525,12 +576,13 @@ document.getElementById("form").addEventListener("submit", e => {
   // 自宅ネット：今のまま＋（乗り換え検討なら）各社の回線
   const netFeeIn = Number(val("netFee"));
   const nowNetData = netById(netNow);
+  const netPromos = n => livePromos(n.promos).filter(p => !p.house || p.house === house).map(p => ({ ...p, who: n.name }));
   const netCurrent = netNow === "none" ? 0 : (netFeeIn || (nowNetData ? nowNetData[house] : 0));
   const keepNet = { id: netNow === "none" || netNow === "other" ? null : netNow, name: netNow === "none" ? "ネット回線なし" : (nowNetData ? nowNetData.name : "今の回線") + "（そのまま）", cost: netCurrent, keep: true };
   ctx.netOptions = [keepNet];
   if (!useNet) ctx.netOptions = [{ id: null, name: "", cost: 0, keep: true }];
   else if (netMove && netNow !== "none") {
-    for (const n of D.internet) if (n.id !== netNow) ctx.netOptions.push({ id: n.id, name: n.name + " に乗り換え", cost: n[house], keep: false });
+    for (const n of D.internet) if (n.id !== netNow) ctx.netOptions.push({ id: n.id, name: n.name + " に乗り換え", cost: n[house], keep: false, promos: netPromos(n) });
   }
 
   // でんき：今のまま＋（切り替え検討なら）各社のでんき
@@ -540,7 +592,7 @@ document.getElementById("form").addEventListener("submit", e => {
   const elecCurrent = billIn || elecBill(nowPlan, kwh);
   const elecRows = E.plans.filter(p => !p.needsGas || elecNow === "kepcoNattoku").map(p => {
     const bill = elecBill(p, kwh), pt = elecPoints(p, kwh);
-    return { id: p.id, name: p.name, note: p.note, bill, points: pt.points, rate: pt.rate, real: bill - pt.points };
+    return { id: p.id, name: p.name, note: p.note, bill, points: pt.points, rate: pt.rate, real: bill - pt.points, promos: livePromos(p.promos).map(x => ({ ...x, who: p.name.split("（")[0] })) };
   });
   const keepElec = { id: elecNow === "other" ? null : elecNow, name: (elecNow === "other" ? "今の電力会社" : nowPlan.name) + "（そのまま）", real: elecCurrent, bill: elecCurrent, points: 0, keep: true };
   if (elecNow !== "other") { const pt = elecPoints(nowPlan, kwh); keepElec.points = pt.points; keepElec.real = elecCurrent - pt.points; }
@@ -551,16 +603,16 @@ document.getElementById("form").addEventListener("submit", e => {
   // 各社の最安（家族全員で乗り換え）と、今のキャリアのまま見直す場合
   const netNowCost = useNet ? netCurrent : 0, elecNowCost = useElec ? keepElec.real : 0;
   const nowTotal = current + netNowCost + elecNowCost;
-  const results = D.carriers.map(c => bestFor(c, ctx)).filter(Boolean).sort((a, b) => a.total - b.total);
+  const results = D.carriers.map(c => bestFor(c, ctx)).filter(Boolean).sort((a, b) => a.score - b.score);
   const stay = stayFor(ctx);
   const nowIds = [...new Set(members.map(m => m.carrierId))];
   const nameOf = id => (D.carriers.find(c => c.id === id) || { name: "今の格安SIM" }).name;
   const nowName = nowIds.map(nameOf).join("・");
   const single = nowIds.length === 1 && D.carriers.some(c => c.id === nowIds[0]);
   const topSwitch = results[0];
-  const topIsStay = stay && stay.total <= topSwitch.total;
+  const topIsStay = stay && stay.score <= topSwitch.score;
   const best = topIsStay ? stay : topSwitch;
-  const diff = nowTotal - best.total;
+  const diff = nowTotal - best.score;
   const scopeLabel = ["スマホ", useNet && "ネット", useElec && "でんき"].filter(Boolean).join("・");
 
   const comboList = r => `
@@ -571,6 +623,37 @@ document.getElementById("form").addEventListener("submit", e => {
       ${r.homeDisc ? `<li>${IC.gift}${r.homeLabel}<span class="ex">-${yen(r.homeDisc)}</span></li>` : ""}
     </ul>`;
   const partsDetail = r => `<details><summary>スマホ料金の内訳</summary>${r.members.map(x => `<div class="breakdown"><span class="who">${x.who}</span>${x.parts.join(" / ")}</div>`).join("")}</details>`;
+  // キャンペーンの一覧（期間・申込期限つき）
+  const promoLine = p => {
+    const what = p.amt ? `-${yen(p.amt)}/月 × ${p.months}か月` : `${yen(p.once)}相当（1回）`;
+    const when = p.until ? `申込 〜${dateText(p.until)}` : "終了日未定";
+    return `<li><span class="who">${p.who}</span>${p.label}：<b>${what}</b>${p.src === "⚠" ? '<span class="ref">参考</span>' : ""}<div class="when">${when}${p.note ? "・" + p.note : ""}</div></li>`;
+  };
+  const promoBox = (list, fold = false) => {
+    if (!list || !list.length) return "";
+    const head = `${IC.gift}キャンペーン${usePromo ? `（2年間で ${yen(promoValue(list))} おトク）` : "（この比較では計算に入れていません）"}`;
+    const body = `<ul>${list.map(promoLine).join("")}</ul>`;
+    return fold
+      ? `<details class="promo"><summary class="promo-title">${head}</summary>${body}</details>`
+      : `<div class="promo"><div class="promo-title">${head}</div>${body}</div>`;
+  };
+  // 月ごとの支払いの変化（例：1〜3か月目 ¥5,000 → 4〜12か月目 ¥6,000 → 13か月目〜 ¥8,000）
+  const timeline = r => {
+    if (!usePromo) return "";
+    const m = (r.promos || []).filter(p => p.amt && p.months);
+    if (!m.length) return "";
+    const cuts = [...new Set(m.map(p => Math.min(p.months, H)))].sort((a, b) => a - b);
+    let start = 1; const out = [];
+    for (const end of cuts) {
+      const disc = m.filter(p => p.months >= end).reduce((t, p) => t + p.amt, 0);
+      out.push(`${start === end ? start : start + "〜" + end}か月目 ${yen(r.total - disc)}`);
+      start = end + 1;
+    }
+    out.push(`${start}か月目〜 ${yen(r.total)}`);
+    const once = (r.promos || []).reduce((t, p) => t + (p.once || 0), 0);
+    return `<div class="timeline">毎月の支払い：${out.join(" → ")}${once ? `　＋ ポイント等 ${yen(once)}（1回）` : ""}</div>`;
+  };
+  const priceNote = r => usePromo && r.promos.length ? `<div class="breakdown">2年間の実質月額（キャンペーン後の通常は 月 ${yen(r.total)}）</div>` : "";
   const planNames = r => [...new Set(r.members.map(x => x.plan))].join("・");
   const extrasTitle = r => (useNet && !r.net.keep ? " × " + r.net.name.replace(" に乗り換え", "") : "") + (useElec && !r.el.keep ? " × " + r.el.name.replace(" に切り替え", "") : "");
 
@@ -579,34 +662,41 @@ document.getElementById("form").addEventListener("submit", e => {
     <div class="tagline">${topIsStay ? `今の${nowName}のまま見直すのがいちばんお得` : `${nowName} から乗り換えると、いちばん安いのは`}</div>
     <div class="title">${topIsStay ? nowName + "のまま" : nowName + " → " + best.name}${extrasTitle(best)}</div>
     ${comboList(best)}
-    <div style="margin-top:12px">${diff > 0 ? `${scopeLabel}の合計で 年間` : ""}</div>
+    <div style="margin-top:12px">${diff > 0 ? `${scopeLabel}の合計で ${usePromo ? "2年間（キャンペーン込み）" : "年間"}` : ""}</div>
     ${diff > 0
-      ? `<div class="big">${yen(diff * 12)} おトク</div><div class="ex">月 ${yen(nowTotal)} → ${yen(best.total)}（月 ${yen(diff)} 安くなります）</div>`
-      : `<div class="big bad">今の契約がいちばんお得です</div><div class="ex">試算した中で最安は 月 ${yen(best.total)}（今は 月 ${yen(nowTotal)}）</div>`}
+      ? `<div class="big">${yen(diff * P)} おトク</div><div class="ex">月 ${yen(nowTotal)} → ${usePromo && best.promos.length ? "実質 " : ""}${yen(best.score)}（月 ${yen(diff)} 安くなります）</div>`
+      : `<div class="big bad">今の契約がいちばんお得です</div><div class="ex">試算した中で最安は 月 ${yen(best.score)}（今は 月 ${yen(nowTotal)}）</div>`}
+    ${usePromo && best.promos.length && nowTotal - best.total !== diff ? `<div class="ex">キャンペーンが終わった後は 月 ${yen(best.total)}（今と比べて 月 ${signed(nowTotal - best.total)}）</div>` : ""}
+    ${timeline(best)}
+    ${promoBox(best.promos)}
     ${partsDetail(best)}
     <table>
-      <thead><tr><th></th><th>月額</th><th>今と比べて/年</th></tr></thead>
+      <thead><tr><th></th><th>${usePromo ? "実質月額" : "月額"}</th><th>今と比べて/${pLabel}</th></tr></thead>
       <tbody>
         <tr><td>今の契約（${nowName}）</td><td>${yen(nowTotal)}</td><td>—</td></tr>
-        ${stay ? `<tr><td>${nowName}のまま見直し<div class="breakdown">${planNames(stay)}</div></td><td>${yen(stay.total)}</td><td>${signed((nowTotal - stay.total) * 12)}</td></tr>` : ""}
-        <tr><td>${topSwitch.name}に乗り換え<div class="breakdown">${planNames(topSwitch)}</div></td><td>${yen(topSwitch.total)}</td><td>${signed((nowTotal - topSwitch.total) * 12)}</td></tr>
+        ${stay ? `<tr><td>${nowName}のまま見直し<div class="breakdown">${planNames(stay)}</div></td><td>${yen(stay.score)}</td><td>${signed((nowTotal - stay.score) * P)}</td></tr>` : ""}
+        <tr><td>${topSwitch.name}に乗り換え<div class="breakdown">${planNames(topSwitch)}</div></td><td>${yen(topSwitch.score)}</td><td>${signed((nowTotal - topSwitch.score) * P)}</td></tr>
       </tbody>
     </table>
-    ${stay && !topIsStay ? `<div class="ex" style="margin-top:8px">${nowName}のまま見直すより、家族みんなで${topSwitch.name}に乗り換えた方が 年 ${yen((stay.total - topSwitch.total) * 12)} 安くなります。</div>` : ""}`;
+    ${usePromo ? `<div class="breakdown">実質月額＝キャンペーン（ポイント・月額割引）を2年間で割って月額から引いた金額です。</div>` : ""}
+    ${stay && !topIsStay ? `<div class="ex" style="margin-top:8px">${nowName}のまま見直すより、家族みんなで${topSwitch.name}に乗り換えた方が ${pLabel} ${yen((stay.score - topSwitch.score) * P)} 安くなります。</div>` : ""}`;
 
   // ランキング（家族みんなで乗り換えた場合）＋ 今のキャリアのまま
-  const maxT = Math.max(...results.map(r => r.total), nowTotal, stay ? stay.total : 0, 1);
+  const maxT = Math.max(...results.map(r => r.score), nowTotal, stay ? stay.score : 0, 1);
   const isNow = r => single && r.ids[0] === nowIds[0];
   const card = (r, label, cls) => `
       <div class="plan ${cls}">
-        <div class="plan-head"><span class="carrier-head">${label}</span><span class="price">${yen(r.total)}</span></div>
-        <div class="ex">今と比べて 月 ${signed(nowTotal - r.total)}・年 ${yen((nowTotal - r.total) * 12)}</div>
-        <div class="bar"><span style="width:${Math.min(r.total / maxT, 1) * 100}%"></span></div>
+        <div class="plan-head"><span class="carrier-head">${label}</span><span class="price">${yen(r.score)}</span></div>
+        ${priceNote(r)}
+        <div class="ex">今と比べて 月 ${signed(nowTotal - r.score)}・${pLabel} ${yen((nowTotal - r.score) * P)}</div>
+        <div class="bar"><span style="width:${Math.min(r.score / maxT, 1) * 100}%"></span></div>
         ${comboList(r)}
+        ${timeline(r)}
+        ${promoBox(r.promos, true)}
         ${partsDetail(r)}
       </div>`;
   document.getElementById("ranking").innerHTML = `
-    <h2>${IC.rank}${scopeLabel}の合計で比べる（月額）</h2>
+    <h2>${IC.rank}${scopeLabel}の合計で比べる（${usePromo ? "キャンペーン込み・2年間の実質月額" : "月額"}）</h2>
     <div class="ex">今：${yen(nowTotal)}（スマホ ${yen(current)}${useNet ? ` ＋ ネット ${yen(netNowCost)}` : ""}${useElec ? ` ＋ でんき ${yen(elecNowCost)}` : ""}）</div>
     <div class="ranking" style="margin-top:10px">
       ${stay && !single ? card(stay, `<span class="plan-name">今のキャリアのまま見直し<span class="tag now">${nowName}</span></span>`, "is-now" + (topIsStay ? " rec" : "")) : ""}
@@ -633,6 +723,7 @@ document.getElementById("form").addEventListener("submit", e => {
         <div class="ex">${s ? "セット割：" + s : "スマホのセット割なし"}${netNow !== "none" ? "・今と比べて 月 " + signed(netCurrent - cost) : ""}</div>
         <div class="bar"><span style="width:${Math.min(cost / maxN, 1) * 100}%"></span></div>
         <div class="breakdown">${n.note}</div>
+        ${n.id !== netNow ? promoBox(netPromos(n).map(p => ({ ...p, who: "" }))) : ""}
       </div>`; }).join("")}</div>`;
 
   // でんき
@@ -647,12 +738,14 @@ document.getElementById("form").addEventListener("submit", e => {
         <div class="ex">電気代 ${yen(r.bill)}${r.points ? ` − ポイント ${r.points}pt（${(r.rate * 100).toFixed(1).replace(".0", "")}%）` : ""}・今と比べて 月 ${signed(elecCurrent - r.real)}</div>
         <div class="bar"><span style="width:${Math.min(r.real / maxE, 1) * 100}%"></span></div>
         <div class="breakdown">${denkiSet(r.id) ? "スマホのセット割：" + denkiSet(r.id) + "　" : ""}${r.note}</div>
+        ${r.id !== elecNow ? promoBox(r.promos.map(p => ({ ...p, who: "" }))) : ""}
       </div>`).join("")}</div>
     ${elecNow === "kepcoNattoku" ? '<div class="notice">「なっトクパック」は電気とガスのセット割引が入っています。電気を他社に切り替えるとガスの契約条件が変わることがあるため、ガス料金は関西電力にご確認ください（この試算ではガス代は変わらない前提です）。</div>' : ""}
     <div class="notice">電気代は燃料費調整額（楽天でんきは市場価格調整額）を含めずに比べています。月によって実際の差は変わります。</div>`;
 
   document.getElementById("disclaimer").innerHTML =
-    `※ 料金は${D.updated}時点で各社の公式サイトを確認した税込の目安です（一部は参考値）。端末代・工事費・事務手数料・解約金・期間限定キャンペーンは含みません。` +
+    `※ 料金は${D.updated}時点で各社の公式サイトを確認した税込の目安です（一部は参考値）。端末代・工事費・事務手数料・解約金は含みません。` +
+    `※ キャンペーンは${D.promoChecked}に確認した、各社の公式キャンペーン（月額割引・ポイント還元。1pt＝1円で計算）です。「参考」は公式で条件を確認できていない値です。代理店のキャッシュバックや端末割引は含みません。申込期限を過ぎたものは自動で外れます。乗り換え元のキャリアや申込窓口によって対象外になることがあります。` +
     `※ 本ツールは個人が作成した非公式の試算ツールで、特定の会社とは関係ありません。正式な料金は各社の公式サイト・店頭でご確認ください。`;
 
   const res = document.getElementById("result");
