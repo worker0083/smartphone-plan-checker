@@ -69,6 +69,8 @@ window.DATA = {
   hikariPlus: {
     home:    { name: "auひかりプラス ホーム（1ギガ）",    net: 5720, router: 858, twoYear: 1188 },
     mansion: { name: "auひかりプラス マンション（1ギガ）", net: 4642, router: 858, twoYear: 627 },
+    home10:    { name: "auひかりプラス ホーム（10ギガ）",    net: 6380, router: 858, twoYear: 1848 },  // ✅ 10ギガは一部エリア
+    mansion10: { name: "auひかりプラス マンション（10ギガ）", net: 6380, router: 858, twoYear: 1848 }, // ✅ 対応設備のある建物のみ
     phone: 770, phoneFreeMonths: 12,
     denkiSet: { amt: 330, from: 13, to: 36, after: 110 },
     signup: 4950,             // サービス登録料（初回のみ）
@@ -79,11 +81,20 @@ window.DATA = {
   // 最低料金（〜15kWh）＋ 15〜120 / 120〜300 / 300kWh超 の1kWh単価（税込 / 税抜）
   electricity: {
     renewable: 4.18, // 再エネ賦課金 2026年度 ✅
+    fuel: 4.36,      // 燃料費調整額（税込・1kWhあたり）⚠ 毎月変わります。auでんき料金表の計算例（税抜3.96円）を仮置き
     kepco:   { name: "関西電力 従量電灯A",       min: 763.81, rates: [20.89, 26.29, 29.27] },                 // ✅
     audenki: { name: "auでんき でんきMプラン（関西）", min: 763.80, rates: [20.88, 26.29, 29.26],              // ✅ 2026年11月改定後
                minEx: 694.37, ratesEx: [18.99, 23.90, 26.60],                                                // ✅ 税抜（ポイント計算用）
                // Pontaポイント還元（基本料金・電力量料金の税抜合計に対して）
                // 8,000円以上 1% ✅（公式の計算例）/ 8,000円未満 0.5% ⚠
                point: [[8000, 0.005], [Infinity, 0.01]] },
+
+    // 電気代の目安（使用量 kWh/月）⚠ 一般的な家庭の平均をもとにした目安
+    estimate: {
+      people: { 1: 180, 2: 290, 3: 340, 4: 380, 5: 430, 6: 480 },
+      house: { home: 1.1, mansion: 0.9 },
+      season: { year: [1, "1年の平均"], summer: [1.15, "夏（7〜9月）"], winter: [1.35, "冬（12〜3月）"], mild: [0.8, "春・秋"] },
+      stay: { out: [0.9, "日中はほぼ留守"], normal: [1, "ふつう"], home: [1.15, "日中も家にいることが多い"] },
+    },
   },
 };

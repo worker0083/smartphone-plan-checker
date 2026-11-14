@@ -89,6 +89,11 @@
   summary { cursor: pointer; color: var(--accent); font-size: .88rem; }
   .disclaimer { color: var(--muted); font-size: .8rem; margin-top: 16px; }
   .version { color: var(--muted); font-size: .8rem; }
+  .est { margin-top: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: var(--bg); }
+  .est .row2 { row-gap: 10px; }
+  .est-out { margin: 12px 0 8px; font-size: .95rem; }
+  .est-out .v { font-size: 1.5rem; font-weight: 800; }
+  .est-use { padding: 10px; font-size: .95rem; min-height: 44px; }
   .update-bar {
     display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
     background: var(--accent-weak); border: 1px solid var(--accent); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: .92rem;
@@ -213,6 +218,13 @@
         <div><span class="label">住まい</span><select id="house"><option value="home">戸建て</option><option value="mansion">マンション</option></select></div>
       </div>
       <div class="q">
+        <div class="label">auひかりプラスの速さ<span class="hint">　10ギガは一部エリア・対応マンションのみ</span></div>
+        <div class="chips">
+          <label><input type="radio" name="speed" value="1" checked>1ギガ</label>
+          <label><input type="radio" name="speed" value="10">10ギガ</label>
+        </div>
+      </div>
+      <div class="q">
         <div class="label">ネットを変える？<span class="hint">　選んだ内容がスマホ料金のセット割にも反映されます</span></div>
         <div class="chips">
           <label><input type="radio" name="netPlan" value="keep" checked>今のネットのまま</label>
@@ -234,6 +246,18 @@
       <div class="q">
         <label for="elec">電気代（円/月・1年の平均）<span class="hint">　入れるとauでんきに変えた場合を比較します</span></label>
         <input type="number" id="elec" inputmode="numeric" min="0" step="any" placeholder="例：9000">
+        <details id="estBox" class="est">
+          <summary>電気代がわからないときは、目安を計算</summary>
+          <div class="row2" style="margin-top:10px">
+            <div><span class="label">家族の人数</span><select id="estPeople"></select></div>
+            <div><span class="label">住まい</span><select id="estHouse"><option value="home">戸建て</option><option value="mansion">マンション</option></select></div>
+            <div><span class="label">時期</span><select id="estSeason"></select></div>
+            <div><span class="label">日中の過ごし方</span><select id="estStay"></select></div>
+          </div>
+          <div class="est-out" id="estOut"></div>
+          <button type="button" class="est-use" id="estUse">この金額を電気代に入れる</button>
+          <p class="hint">関西電力 従量電灯Aで計算した目安です。オール電化の家は対象外です。</p>
+        </details>
       </div>
     </fieldset>
 
@@ -244,9 +268,9 @@
   </div>
 </main>
 
-<script src="plans.js?v=1.6.0"></script>
+<script src="plans.js?v=1.7.0"></script>
 <script>
-const APP_VERSION = "1.6.0";
+const APP_VERSION = "1.7.0";
 const APP_DATE = "2026-11-14";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金は${DATA.updated}時点）`;
 
@@ -431,6 +455,8 @@ function compare(persons, ctx) {
   return { opts, best: opts[0], allAu, allUq };
 }
 
+// 住まい × 速さ → auひかりプラスのタイプ
+const plusType = () => $("#house").value + (val("speed") === "10" ? "10" : "");
 // ───── auひかりプラス：月ごとの料金（開通後 m か月目）─────
 function hikariMonth(type, withPhone, denki, m) {
   const H = DATA.hikariPlus, t = H[type];
@@ -451,7 +477,7 @@ function elecBill(p, kwh) {
   if (kwh > 15) v += (Math.min(kwh, 120) - 15) * r1;
   if (kwh > 120) v += (Math.min(kwh, 300) - 120) * r2;
   if (kwh > 300) v += (kwh - 300) * r3;
-  return v + kwh * E.renewable;
+  return v + kwh * (E.renewable + E.fuel);
 }
 function kwhFromBill(bill) {
   let lo = 0, hi = 3000;
@@ -520,9 +546,10 @@ function diagnose(e) {
   // ネットを変えた場合：家計（スマホ＋ネット）の合計
   const netPlan = val("netPlan");
   const netNow = Number($("#netCost").value) || 0;
-  const house = $("#house").value;
+  const house = plusType();
   const netNew = netPlan === "keep" ? netNow : avg(m => hikariMonth(house, netPlan === "plusPhone", ctx.denki, m), 1, 24);
-  const NET_LABEL = { keep: "", plusOnly: "auひかりプラス ネットのみ", plusPhone: "auひかりプラス ネット＋電話" };
+  const sp = val("speed") === "10" ? "10ギガ" : "1ギガ";
+  const NET_LABEL = { keep: "", plusOnly: `auひかりプラス（${sp}）ネットのみ`, plusPhone: `auひかりプラス（${sp}）ネット＋電話` };
   const netLine = netPlan === "keep" ? "" : `<div class="netline">ネット：${netNow ? `今 ${yen(netNow)} → ` : ""}${NET_LABEL[netPlan]} <b>${yen(netNew)}</b>（2年平均）
       ${current > 0 && netNow ? `<br>スマホ＋ネット：今 ${yen(current + netNow)} → <b>${yen(best.total + netNew)}</b>
       <b class="${current + netNow - best.total - netNew > 0 ? "plus" : "minus"}">（月${yen(Math.abs(current + netNow - best.total - netNew))}${current + netNow - best.total - netNew > 0 ? "安い" : "高い"}）</b>` : ""}</div>`;
@@ -631,7 +658,7 @@ function diagnose(e) {
 }
 // ───── ネットを auひかりプラス にした場合 ─────
 function netCard(persons, ctx, current, best) {
-  const H = DATA.hikariPlus, type = $("#house").value, t = H[type];
+  const H = DATA.hikariPlus, type = plusType(), t = H[type];
   const netNow = Number($("#netCost").value) || 0;
   const onlyNet = m => hikariMonth(type, false, ctx.denki, m);
   const withPh = m => hikariMonth(type, true, ctx.denki, m);
@@ -655,6 +682,8 @@ function netCard(persons, ctx, current, best) {
     <div class="label" style="font-weight:700">ボタンで選ぶと、上のスマホ料金にも反映されます</div>
     <div class="seg">${[["keep", "今のネットのまま"], ["plusOnly", "auひかりプラス<br>ネットのみ"], ["plusPhone", "auひかりプラス<br>ネット＋電話"]]
       .map(([v, l]) => `<button type="button" data-netplan="${v}" class="${val("netPlan") === v ? "on" : ""}">${l}</button>`).join("")}</div>
+    <div class="seg" style="grid-template-columns:1fr 1fr">${[["1", "1ギガ"], ["10", "10ギガ"]]
+      .map(([v, l]) => `<button type="button" data-speed="${v}" class="${val("speed") === v ? "on" : ""}">${l}</button>`).join("")}</div>
     <table><thead><tr><th>パターン</th><th>スマホ</th><th>ネット</th><th>合計/月</th></tr></thead><tbody>
     ${rows.map(r => `<tr><td>${r[0]}${r[3] === minTotal ? '<span class="badge">最安</span>' : ""}</td><td>${yen(r[1])}</td><td>${r[2] ? yen(r[2]) : "—"}</td><td><b>${yen(r[3])}</b>${r !== rows[0] && current > 0 ? `<span class="disc ${base - r[3] > 0 ? "plus" : "minus"}">${base - r[3] > 0 ? `月${yen(base - r[3])}安い` : `月${yen(r[3] - base)}高い`}</span>` : ""}</td></tr>`).join("")}
     </tbody></table>
@@ -690,7 +719,7 @@ function denkiCard(persons, ctx, best) {
   const total = phoneGain + pt + billDiff;
   const H = DATA.hikariPlus;
   return `<div class="card"><h2>auでんきに変えた場合</h2>
-    <p class="ex">電気代 ${yen(bill)}/月 → 使用量 約${Math.round(kwh)}kWh として計算（燃料費調整額は両社同じなので除外）</p>
+    <p class="ex">電気代 ${yen(bill)}/月 → 使用量 約${Math.round(kwh)}kWh として計算（燃料費調整額は両社同じ扱い）</p>
     <table><thead><tr><th>項目</th><th>差額/月</th></tr></thead><tbody>
       <tr><td>電気代（${E.kepco.name} → ${E.audenki.name}）<span class="disc">${yen(kepco)} → ${yen(au)}</span></td><td>${billDiff >= 0 ? "−" : "＋"}${yen(Math.abs(billDiff))}</td></tr>
       <tr><td>Pontaポイント還元（${rate * 100}%）</td><td>−${pt}円相当</td></tr>
@@ -708,13 +737,35 @@ function denkiCard(persons, ctx, best) {
 
 $("#form").addEventListener("submit", diagnose);
 $("#result").addEventListener("click", e => {
-  const b = e.target.closest("[data-netplan]");
+  const b = e.target.closest("[data-netplan], [data-speed]");
   if (!b) return;
-  document.querySelector(`input[name=netPlan][value=${b.dataset.netplan}]`).checked = true;
+  if (b.dataset.speed) document.querySelector(`input[name=speed][value="${b.dataset.speed}"]`).checked = true;
+  else document.querySelector(`input[name=netPlan][value=${b.dataset.netplan}]`).checked = true;
   diagnose();
   $("#result").scrollIntoView({ behavior: "smooth" });
 });
 document.querySelectorAll("input[name=netPhone]").forEach(r => r.addEventListener("change", onNetChange));
+document.querySelectorAll("input[name=speed]").forEach(r => r.addEventListener("change", () => { if ($("#result").innerHTML) diagnose(); }));
+
+// ───── 電気代の目安 ─────
+const EST = DATA.electricity.estimate;
+$("#estPeople").innerHTML = Object.keys(EST.people).map(k => `<option value="${k}" ${k === "3" ? "selected" : ""}>${k === "6" ? "6人以上" : k + "人"}</option>`).join("");
+$("#estSeason").innerHTML = Object.entries(EST.season).map(([k, [, t]]) => `<option value="${k}">${t}</option>`).join("");
+$("#estStay").innerHTML = Object.entries(EST.stay).map(([k, [, t]]) => `<option value="${k}" ${k === "normal" ? "selected" : ""}>${t}</option>`).join("");
+let estBill = 0;
+function updateEstimate() {
+  const kwh = EST.people[$("#estPeople").value] * EST.house[$("#estHouse").value] * EST.season[$("#estSeason").value][0] * EST.stay[$("#estStay").value][0];
+  estBill = Math.round(elecBill(DATA.electricity.kepco, kwh) / 10) * 10;
+  $("#estOut").innerHTML = `使用量 約${Math.round(kwh)}kWh → 電気代 <span class="v">約${yen(estBill)}</span>/月`;
+}
+["#estPeople", "#estHouse", "#estSeason", "#estStay"].forEach(id => $(id).addEventListener("change", updateEstimate));
+$("#estBox").addEventListener("toggle", () => { if ($("#estBox").open) { $("#estHouse").value = $("#house").value.replace("10", ""); updateEstimate(); } });
+$("#estUse").addEventListener("click", () => {
+  $("#elec").value = estBill;
+  $("#estBox").open = false;
+  if ($("#result").innerHTML) diagnose();
+});
+updateEstimate();
 onNetChange();
 restoreForm();
 document.querySelectorAll("input[name=netPlan]").forEach(r => r.addEventListener("change", () => {
