@@ -89,6 +89,9 @@
   summary { cursor: pointer; color: var(--accent); font-size: .88rem; }
   .disclaimer { color: var(--muted); font-size: .8rem; margin-top: 16px; }
   .version { color: var(--muted); font-size: .8rem; }
+  .person .chips { margin-top: 8px; }
+  .person .chips label { padding: 6px 14px; font-size: .9rem; }
+  .famtotal { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); font-size: .95rem; }
   .fam { margin-top: 10px; border-radius: 10px; padding: 10px 12px; background: var(--good-weak); font-size: .9rem; }
   .fam.none { background: var(--warn-weak); }
   .fam-title { font-weight: 800; margin-bottom: 2px; }
@@ -167,6 +170,14 @@
         </div>
       </div>
       <div class="q">
+        <div class="label">乗り換えない家族<span class="hint">　スマホ代を入れると、家族全体の合計で比べます</span></div>
+        <div class="row2">
+          <div><span class="label">他社のままの人</span><select id="exOther"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+          <div><span class="label">乗り換えない家族のスマホ代 合計（円/月）</span><input type="number" id="othersCost" inputmode="numeric" min="0" step="100" placeholder="例：6000"></div>
+        </div>
+        <p class="hint">すでに au / UQ の家族と、他社のままの家族の分をまとめて入れてください。</p>
+      </div>
+      <div class="q">
         <div class="label">au PAYカード</div>
         <div class="chips">
           <label><input type="radio" name="card" value="yes">持っている・作ってもいい</label>
@@ -221,9 +232,9 @@
   </div>
 </main>
 
-<script src="plans.js?v=1.3.0"></script>
+<script src="plans.js?v=1.4.0"></script>
 <script>
-const APP_VERSION = "1.3.0";
+const APP_VERSION = "1.4.0";
 const APP_DATE = "2026-11-14";
 document.getElementById("version").textContent = `v${APP_VERSION}（料金は${DATA.updated}時点）`;
 
@@ -240,10 +251,10 @@ const CALL_OPTS = [["none", "ほぼしない"], ["short", "短い通話が多い
 function renderPersons() {
   const n = +val("people");
   const box = $("#persons");
-  const prev = [...box.querySelectorAll(".person")].map(p => ({ gb: p.querySelector(".gb").value, call: p.querySelector(".call").value }));
+  const prev = [...box.querySelectorAll(".person")].map(p => ({ gb: p.querySelector(".gb").value, call: p.querySelector(".call").value, fix: p.querySelector(".fix:checked").value }));
   box.innerHTML = "";
   for (let i = 0; i < n; i++) {
-    const d = prev[i] || { gb: "5", call: "none" };
+    const d = prev[i] || { gb: "5", call: "none", fix: "auto" };
     box.insertAdjacentHTML("beforeend", `
       <div class="person">
         <div class="person-title">${n > 1 ? `${i + 1}人目` : "あなた"}</div>
@@ -252,6 +263,10 @@ function renderPersons() {
             <select class="gb">${GB_OPTS.map(([v, t]) => `<option value="${v}" ${String(v) === d.gb ? "selected" : ""}>${t}</option>`).join("")}</select></div>
           <div><span class="label">通話</span>
             <select class="call">${CALL_OPTS.map(([v, t]) => `<option value="${v}" ${v === d.call ? "selected" : ""}>${t}</option>`).join("")}</select></div>
+        </div>
+        <div class="chips" aria-label="乗り換え先">
+          ${[["auto", "おまかせ"], ["au", "au に固定"], ["uq", "UQ mobile に固定"]].map(([v, t]) =>
+            `<label><input type="radio" class="fix" name="fix${i}" value="${v}" ${v === d.fix ? "checked" : ""}>${t}</label>`).join("")}
         </div>
       </div>`);
   }
@@ -312,18 +327,22 @@ function calcAssign(assign, persons, ctx) {
 // 全員au / 全員UQ / 組み合わせ の中でいちばん安い形
 function compare(persons, ctx) {
   const n = persons.length;
-  const allAu = calcAssign(Array(n).fill("au"), persons, ctx);
-  const allUq = calcAssign(Array(n).fill("uq"), persons, ctx);
+  const ok = a => persons.every((p, i) => !p.fix || p.fix === "auto" || p.fix === a[i]);
+  const fixed = persons.some(p => p.fix && p.fix !== "auto");
+  const allAu = ok(Array(n).fill("au")) ? calcAssign(Array(n).fill("au"), persons, ctx) : null;
+  const allUq = ok(Array(n).fill("uq")) ? calcAssign(Array(n).fill("uq"), persons, ctx) : null;
   let mix = null;
   for (let m = 1; m < (1 << n) - 1; m++) {
     const a = persons.map((_, i) => (m >> i) & 1 ? "au" : "uq");
+    if (!ok(a)) continue;
     const r = calcAssign(a, persons, ctx);
     if (r && (!mix || r.total < mix.total)) mix = r;
   }
   const opts = [];
   if (allUq) opts.push({ key: "uq", name: "全員 UQ mobile", ...allUq });
   if (allAu) opts.push({ key: "au", name: "全員 au", ...allAu });
-  if (mix && mix.total < Math.min(allAu ? allAu.total : Infinity, allUq ? allUq.total : Infinity)) opts.push({ key: "mix", name: "au と UQ mobile を組み合わせ", ...mix });
+  if (mix && (fixed || mix.total < Math.min(allAu ? allAu.total : Infinity, allUq ? allUq.total : Infinity)))
+    opts.push({ key: "mix", name: fixed && persons.every(p => p.fix !== "auto") ? "指定どおり（au と UQ mobile）" : "au と UQ mobile を組み合わせ", ...mix });
   opts.sort((a, b) => a.total - b.total);
   return { opts, best: opts[0], allAu, allUq };
 }
@@ -389,7 +408,7 @@ function famSummary(o, ctx) {
 
 function diagnose(e) {
   e && e.preventDefault();
-  const persons = [...document.querySelectorAll(".person")].map(p => ({ gb: Number(p.querySelector(".gb").value), call: p.querySelector(".call").value }));
+  const persons = [...document.querySelectorAll(".person")].map(p => ({ gb: Number(p.querySelector(".gb").value), call: p.querySelector(".call").value, fix: p.querySelector(".fix:checked").value }));
   const ctx = {
     net: val("netPlan") === "plusPhone" ? true : val("netPlan") === "plusOnly" ? false : val("net") === "yes", denki: val("denki") === "yes", card: val("card") === "yes",
     exAu: +$("#exAu").value, exUq: +$("#exUq").value,
@@ -397,6 +416,22 @@ function diagnose(e) {
   const current = Number($("#current").value) || 0;
   const n = persons.length;
   const { opts, best, allUq } = compare(persons, ctx);
+  if (!best) {
+    $("#result").innerHTML = `<div class="card"><div class="notice">指定した乗り換え先では計算できません。UQ mobile は最大35GBなので、それより多く使う人は「au に固定」か「おまかせ」にしてください。</div></div>`;
+    $("#result").style.display = "block";
+    return;
+  }
+
+  // 家族全体：乗り換えない家族のスマホ代と、すでに au / UQ の家族の家族割の増え方
+  const othersCost = Number($("#othersCost").value) || 0;
+  const famAmt = { au: k => k >= 3 ? 1210 : k >= 2 ? 660 : 0, uq: k => k >= 2 ? 550 : 0 };
+  let exGain = 0;
+  if (ctx.exAu) exGain += ctx.exAu * (famAmt.au(best.fam.au) - famAmt.au(ctx.exAu));
+  if (ctx.exUq && !ctx.net && !ctx.denki) exGain += ctx.exUq * (famAmt.uq(best.fam.uq) - famAmt.uq(ctx.exUq));
+  const famBefore = current + othersCost, famAfter = best.total + othersCost - exGain;
+  const famLine = (othersCost || exGain) ? `<div class="famtotal">家族全体のスマホ代${+$("#exOther").value + ctx.exAu + ctx.exUq ? `（乗り換えない${+$("#exOther").value + ctx.exAu + ctx.exUq}人を含む）` : ""}：${current ? `今 ${yen(famBefore)} → ` : ""}<b>${yen(famAfter)}</b>/月
+      ${current ? `<b class="${famBefore - famAfter > 0 ? "plus" : "minus"}">（月${yen(Math.abs(famBefore - famAfter))}${famBefore - famAfter > 0 ? "安い" : "高い"}）</b>` : ""}
+      ${exGain ? `<br><span class="ex">すでに au / UQ の家族も、回線が増えて家族割が月${yen(exGain)}増えます（目安）</span>` : ""}</div>` : "";
 
   // ネットを変えた場合：家計（スマホ＋ネット）の合計
   const netPlan = val("netPlan");
@@ -426,12 +461,12 @@ function diagnose(e) {
     const save = current - best.total;
     if (save > 0) {
       html += `<div class="card hero">
-        <div class="tagline">いちばんおトクな乗り換え</div>
+        <div class="tagline">${persons.some(p => p.fix !== "auto") ? "指定した乗り換え先での結果" : "いちばんおトクな乗り換え"}</div>
         <div class="title">${best.name}</div>
         <div class="big">月 ${yen(save)} 節約</div>
         <div class="sub">1年で <b>${yen(save * 12)}</b>・2年で <b>${yen(save * 24)}</b> おトク</div>
         <div class="sub">今 ${yen(current)} → 乗り換え後 <b>${yen(best.total)}</b>/月</div>
-      ${famSummary(best, ctx).html}${netLine}</div>`;
+      ${famSummary(best, ctx).html}${famLine}${netLine}</div>`;
     } else {
       html += `<div class="card hero bad">
         <div class="tagline">診断結果</div>
@@ -439,7 +474,7 @@ function diagnose(e) {
         <div class="big">いちばん安くても月 ${yen(-save)} 高くなります</div>
         <div class="sub">乗り換え後のいちばん安い形：${best.name}（${yen(best.total)}/月）</div>
         <div class="sub">データ量を見直す・割引の条件をそろえると逆転することがあります。下のヒントも見てください。</div>
-      ${famSummary(best, ctx).html}${netLine}</div>`;
+      ${famSummary(best, ctx).html}${famLine}${netLine}</div>`;
     }
   } else {
     html += `<div class="card hero">
@@ -447,7 +482,7 @@ function diagnose(e) {
       <div class="title">${best.name}</div>
       <div class="big">月 ${yen(best.total)}</div>
       <div class="sub">今のスマホ代を入れると、節約額も計算します。</div>
-    ${famSummary(best, ctx).html}${netLine}</div>`;
+    ${famSummary(best, ctx).html}${famLine}${netLine}</div>`;
   }
 
   // 比較
