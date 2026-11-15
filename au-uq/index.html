@@ -104,6 +104,16 @@
   .chg.up { background: var(--accent-weak); color: var(--accent); border-color: transparent; }
   .chg.down { background: var(--warn-weak); color: var(--warn); border-color: transparent; }
   .pc-detail { margin-top: 6px; }
+  .yr { display: grid; grid-template-columns: repeat(3, 1fr) auto; align-items: center; gap: 4px; margin-top: 8px; padding: 8px 12px; border-radius: 12px; background: var(--good-weak); }
+  .yr.bad { background: var(--warn-weak); }
+  .yr > div { text-align: center; line-height: 1.3; }
+  .yr span { display: block; font-size: .75rem; color: var(--muted); font-weight: 700; }
+  .yr b { font-size: 1.1rem; color: var(--good); white-space: nowrap; }
+  .yr.bad b { color: var(--warn); }
+  .yr .yr-label { font-weight: 800; font-size: .85rem; color: var(--good); padding-left: 4px; }
+  .yr.bad .yr-label { color: var(--warn); }
+  .yr.total b { font-size: 1.3rem; }
+  @media (max-width: 520px) { .yr { grid-template-columns: repeat(3, 1fr); } .yr .yr-label { grid-column: 1 / -1; padding: 0; } .yr b { font-size: 1rem; } }
   .pc-bd { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: .82rem; color: var(--muted); margin-top: 6px; line-height: 1.6; }
   .pc-bd b { color: var(--text); }
   @media (max-width: 520px) {
@@ -328,9 +338,9 @@
   </div>
 </main>
 
-<script src="plans.js?v=2.4.0"></script>
+<script src="plans.js?v=2.5.0"></script>
 <script>
-const APP_VERSION = "2.4.0";
+const APP_VERSION = "2.5.0";
 const APP_DATE = "2026-11-15";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金は${DATA.updated}時点）`;
 
@@ -883,6 +893,12 @@ function gbChange(nowCap, newCap) {
   const d = newCap - nowCap;
   return d > 0 ? `<span class="chg up">ギガ ${d}GB 増える</span>` : `<span class="chg down">ギガ ${-d}GB 減る</span>`;
 }
+// 1年・2年でいくら得か
+const yearBox = d => d === null || d === 0 ? "" : `<div class="yr ${d > 0 ? "good" : "bad"}">
+  <div><span>1か月</span><b>${d > 0 ? "" : "＋"}${yen(Math.abs(d))}</b></div>
+  <div><span>1年間</span><b>${d > 0 ? "" : "＋"}${yen(Math.abs(d) * 12)}</b></div>
+  <div><span>2年間</span><b>${d > 0 ? "" : "＋"}${yen(Math.abs(d) * 24)}</b></div>
+  <div class="yr-label">${d > 0 ? "おトク" : "高くなる"}</div></div>`;
 const breakdown = (base, lines, callLabel) => `基本 ${yen(base)}${lines.map(([l, a]) => `<br>${l} −${yen(a)}`).join("")}${callLabel ? `<br>${callLabel}` : ""}`;
 function personCard(persons, est, best, currentInput) {
   const items = persons.map((p, i) => {
@@ -912,7 +928,8 @@ function personCard(persons, est, best, currentInput) {
           <div class="pc-price">${yen(r.total)}<small>/月</small></div>
         </div>
       </div>
-      <div class="pc-chg">${r.keep ? `<span class="chg same">今のプランのままがいちばん安い（手続き不要）</span>` : priceChg + gbChange(nowCap, r.cap)}</div>
+      <div class="pc-chg">${r.keep ? `<span class="chg same">今のプランのままがいちばん安い（手続き不要）</span>` : (d ? "" : priceChg) + gbChange(nowCap, r.cap)}</div>
+      ${r.keep ? "" : yearBox(d)}
       ${notes.map(t => `<div class="disc">${t}</div>`).join("")}
       <details class="pc-detail"><summary>料金の内訳</summary>
         <div class="pc-bd">
@@ -927,7 +944,8 @@ function personCard(persons, est, best, currentInput) {
   return `<div class="card"><h2>1人ずつの比較</h2>
     ${items}
     ${est.complete ? `<div class="pc-total"><span>合計</span><span>${yen(est.total)} → <b>${yen(best.total)}</b></span>
-      <b class="${tot > 0 ? "plus" : tot < 0 ? "minus" : ""}">${tot > 0 ? `月 ${yen(tot)} 安い` : tot < 0 ? `月 ${yen(-tot)} 高い` : "同じ"}</b></div>` : ""}
+      <b class="${tot > 0 ? "plus" : tot < 0 ? "minus" : ""}">${tot > 0 ? `月 ${yen(tot)} 安い` : tot < 0 ? `月 ${yen(-tot)} 高い` : "同じ"}</b></div>
+      ${yearBox(tot).replace('class="yr', 'class="yr total')}` : ""}
     ${currentInput ? `<p class="ex">いちばん上の節約額は、入力した家族の合計 ${yen(currentInput)} と比べています。</p>` : ""}
     ${unknown && !currentInput ? `<div class="notice">今の月額がわからない人が${unknown}人います。「今の月額」を入れる${persons.some(p => isOwn(p.from)) ? "か、au・UQ mobile の人は今のプランを選ぶ" : ""}と、家族全体の節約額が出ます。</div>` : ""}
     <p class="ex">他社の人は今のプランのギガがわからないため、「使う量」を目安に表示しています。</p>
