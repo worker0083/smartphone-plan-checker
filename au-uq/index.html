@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>au・UQ乗り換え診断</title>
+<title>料金診断</title>
 <style>
   :root {
     --bg: #f6f7f9; --card: #ffffff; --text: #1d2330; --muted: #6b7280;
@@ -140,8 +140,8 @@
     <span id="updateText">新しいバージョンがあります</span>
     <button type="button" id="updateBtn">最新版に更新</button>
   </div>
-  <h1>au・UQ mobile 乗り換え診断</h1>
-  <p class="lead">今のスマホ代を入れるだけで、auとUQ mobileに乗り換えたときの月額と節約額がわかります。家族割・自宅セット割・カード払い割もまとめて計算します。<br><span class="version" id="version"></span><button type="button" class="linkbtn" id="checkBtn">更新を確認</button></p>
+  <h1>料金診断</h1>
+  <p class="lead">他社から au・UQ mobile への乗り換えも、今の au・UQ mobile のプラン見直しも、月額と節約額がわかります。家族割・自宅セット割・カード払い割もまとめて計算します。<br><span class="version" id="version"></span><button type="button" class="linkbtn" id="checkBtn">更新を確認</button></p>
 
   <div class="layout">
   <form id="form" class="card" novalidate>
@@ -156,10 +156,12 @@
           <label><input type="radio" name="carrier" value="rakuten">楽天モバイル</label>
           <label><input type="radio" name="carrier" value="online">ahamo・LINEMO</label>
           <label><input type="radio" name="carrier" value="mvno">格安SIM</label>
+          <label><input type="radio" name="carrier" value="au">au</label>
+          <label><input type="radio" name="carrier" value="uq">UQ mobile</label>
         </div>
       </div>
       <div class="q">
-        <label for="people">乗り換える人数</label>
+        <label for="people" id="peopleLabel">乗り換える人数</label>
         <div class="chips" id="peopleChips">
           <label><input type="radio" name="people" value="1" checked>1人</label>
           <label><input type="radio" name="people" value="2">2人</label>
@@ -169,7 +171,7 @@
         </div>
       </div>
       <div class="q">
-        <label for="current">今のスマホ代（乗り換える人の合計）<span class="hint">　税込・円/月。端末代の分割は除く</span></label>
+        <label for="current"><span id="currentLabel">今のスマホ代（乗り換える人の合計）</span><span class="hint" id="currentHint">　税込・円/月。端末代の分割は除く</span></label>
         <input type="number" id="current" inputmode="numeric" min="0" step="any" placeholder="例：15000">
       </div>
     </fieldset>
@@ -274,9 +276,9 @@
   </div>
 </main>
 
-<script src="plans.js?v=1.8.0"></script>
+<script src="plans.js?v=2.0.0"></script>
 <script>
-const APP_VERSION = "1.8.0";
+const APP_VERSION = "2.0.0";
 const APP_DATE = "2026-11-15";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金は${DATA.updated}時点）`;
 
@@ -304,11 +306,13 @@ const FORM_KEY = "auuq-form";
 function saveForm() {
   const f = document.getElementById("form");
   const vals = [...f.querySelectorAll("input, select")].map(el => el.type === "radio" || el.type === "checkbox" ? el.checked : el.value);
-  try { sessionStorage.setItem(FORM_KEY, JSON.stringify({ people: (document.querySelector("input[name=people]:checked") || {}).value, vals, shown: !!document.getElementById("result").innerHTML })); } catch (e) {}
+  try { sessionStorage.setItem(FORM_KEY, JSON.stringify({ carrier: (document.querySelector("input[name=carrier]:checked") || {}).value, people: (document.querySelector("input[name=people]:checked") || {}).value, vals, shown: !!document.getElementById("result").innerHTML })); } catch (e) {}
 }
 function restoreForm() {
   let d; try { d = JSON.parse(sessionStorage.getItem(FORM_KEY)); sessionStorage.removeItem(FORM_KEY); } catch (e) {}
   if (!d) return;
+  const cr = document.querySelector(`input[name=carrier][value="${d.carrier}"]`);
+  if (cr) { cr.checked = true; onCarrierChange(); }
   const pr = document.querySelector(`input[name=people][value="${d.people}"]`);
   if (pr) { pr.checked = true; renderPersons(); }
   const els = [...document.getElementById("form").querySelectorAll("input, select")];
@@ -365,13 +369,16 @@ function onNetChange() {
 function renderPersons() {
   const n = +val("people");
   const box = $("#persons");
-  const prev = [...box.querySelectorAll(".person")].map(p => ({ gb: p.querySelector(".gb").value, call: p.querySelector(".call").value, fix: p.querySelector(".fix:checked").value }));
+  const prev = [...box.querySelectorAll(".person")].map(p => ({ gb: p.querySelector(".gb").value, call: p.querySelector(".call").value, fix: p.querySelector(".fix:checked").value, now: (p.querySelector(".now") || {}).value }));
+  const own = ownCarrier();
   box.innerHTML = "";
   for (let i = 0; i < n; i++) {
     const d = prev[i] || { gb: "5", call: "none", fix: "auto" };
     box.insertAdjacentHTML("beforeend", `
       <div class="person">
         <div class="person-title">${n > 1 ? `${i + 1}人目` : "あなた"}</div>
+        ${own ? `<div class="q" style="margin-bottom:10px"><span class="label">今の${own === "au" ? "au" : "UQ mobile"}のプラン</span>
+          <select class="now">${nowPlanOptions(own, d.now)}</select></div>` : ""}
         <div class="row2">
           <div><span class="label">データ（1か月）</span>
             <select class="gb">${GB_OPTS.map(([v, t]) => `<option value="${v}" ${String(v) === d.gb ? "selected" : ""}>${t}</option>`).join("")}</select></div>
@@ -386,6 +393,25 @@ function renderPersons() {
   }
 }
 document.querySelectorAll("input[name=people]").forEach(r => r.addEventListener("change", renderPersons));
+
+// ───── 今 au / UQ mobile の人：今のプランを選ぶ ─────
+const ownCarrier = () => ["au", "uq"].includes(val("carrier")) ? val("carrier") : null;
+function nowPlanOptions(cid, sel) {
+  const list = DATA.currentPlans[cid];
+  const opt = p => `<option value="${p.id}" ${p.id === sel ? "selected" : ""}>${p.name}${p.ended ? `（${p.ended}受付終了）` : ""}</option>`;
+  return `<option value="">わからない・その他</option>
+    <optgroup label="今のプラン">${list.filter(p => !p.ended).map(opt).join("")}</optgroup>
+    <optgroup label="新規受付終了のプラン">${list.filter(p => p.ended).map(opt).join("")}</optgroup>`;
+}
+function onCarrierChange() {
+  const own = ownCarrier();
+  $("#peopleLabel").textContent = own ? "診断する人数" : "乗り換える人数";
+  $("#currentLabel").textContent = own ? "今のスマホ代（診断する人の合計）" : "今のスマホ代（乗り換える人の合計）";
+  $("#currentHint").textContent = own ? "　税込・円/月。空欄なら下で選んだ今のプランから計算します" : "　税込・円/月。端末代の分割は除く";
+  renderPersons();
+  if ($("#result").innerHTML) diagnose();
+}
+document.querySelectorAll("input[name=carrier]").forEach(r => r.addEventListener("change", onCarrierChange));
 renderPersons();
 
 // ───── 料金計算 ─────
@@ -422,6 +448,36 @@ function bestPlan(c, person, ctx, famCount) {
     if (!best || total < best.total) best = { carrier: c, plan: p, capLabel, base, lines, call, callLabel, total };
   }
   return best;
+}
+
+// 今のプランの月額（目安）
+function nowPlanCost(cid, p, person, ctx, famCount) {
+  const tier = p.tiers.find(([cap]) => person.gb <= cap) || p.tiers[p.tiers.length - 1];
+  const lines = [];
+  if (p.low && person.gb <= p.low[0]) lines.push([`${p.low[0]}GB以下の割引`, p.low[1]]);
+  const setOk = p.set && (ctx.net || (cid === "uq" && ctx.denki));
+  const set = setOk ? p.set : 0;
+  const fam = p.fam2 ? (famCount >= 4 && p.fam4 ? p.fam4 : famCount >= 3 ? p.fam3 : famCount >= 2 ? p.fam2 : 0) : 0;
+  const setLabel = cid === "au" ? "auスマートバリュー" : (ctx.net ? "自宅セット割（インターネットコース）" : "自宅セット割（でんきコース）");
+  const famLabel = cid === "au" ? `家族割プラス（${famCount}回線）` : "家族セット割";
+  if (cid === "au") { if (set) lines.push([setLabel, set]); if (fam) lines.push([famLabel, fam]); }
+  else if (set >= fam) { if (set) lines.push([setLabel, set]); } else lines.push([famLabel, fam]);
+  if (ctx.card && p.card) lines.push([cid === "au" && p.card === 187 ? "au PAYカード払い割（2年契約N）" : "au PAYカード払い割", p.card]);
+  const call = person.call === "short" ? p.callShort : person.call === "long" ? p.callLong : 0;
+  const total = tier[1] - lines.reduce((a, [, v]) => a + v, 0) + call;
+  const over = person.gb > tier[0];
+  return { plan: p, base: tier[1], capLabel: tier[0] === Infinity ? "無制限" : `${tier[0]}GB`, lines, call, total, over };
+}
+function estimateNow(persons, ctx) {
+  const cid = ownCarrier();
+  if (!cid) return null;
+  const famCount = persons.length + (cid === "au" ? ctx.exAu : ctx.exUq);
+  const rows = persons.map(pr => {
+    const p = DATA.currentPlans[cid].find(x => x.id === pr.now);
+    return p ? nowPlanCost(cid, p, pr, ctx, famCount) : null;
+  });
+  const known = rows.filter(Boolean);
+  return { cid, rows, complete: known.length === rows.length, total: known.reduce((a, r) => a + r.total, 0) };
 }
 
 // 回線の割り当て（全員au / 全員UQ / 組み合わせ）を計算
@@ -524,12 +580,16 @@ function famSummary(o, ctx) {
 
 function diagnose(e) {
   e && e.preventDefault();
-  const persons = [...document.querySelectorAll(".person")].map(p => ({ gb: Number(p.querySelector(".gb").value), call: p.querySelector(".call").value, fix: p.querySelector(".fix:checked").value }));
+  const persons = [...document.querySelectorAll(".person")].map(p => ({ gb: Number(p.querySelector(".gb").value), call: p.querySelector(".call").value, fix: p.querySelector(".fix:checked").value, now: (p.querySelector(".now") || {}).value }));
   const ctx = {
     net: val("netPlan") === "plusPhone" ? true : val("netPlan") === "plusOnly" ? false : curNetSet(), denki: val("denki") === "yes", card: val("card") === "yes",
     exAu: +$("#exAu").value, exUq: +$("#exUq").value,
   };
-  const current = Number($("#current").value) || 0;
+  const currentInput = Number($("#current").value) || 0;
+  const own = ownCarrier();
+  const W = own ? "見直し" : "乗り換え";
+  const nowEst = estimateNow(persons, { ...ctx, net: curNetSet() });   // 今のプランは今のネットで計算
+  const current = currentInput || (nowEst && nowEst.complete ? nowEst.total : 0);
   const n = persons.length;
   const { opts, best, allUq } = compare(persons, ctx);
   if (!best) {
@@ -579,32 +639,33 @@ function diagnose(e) {
     const save = current - best.total;
     if (save > 0) {
       html += `<div class="card hero">
-        <div class="tagline">${persons.some(p => p.fix !== "auto") ? "指定した乗り換え先での結果" : "いちばんおトクな乗り換え"}</div>
+        <div class="tagline">${persons.some(p => p.fix !== "auto") ? `指定した${W}先での結果` : `いちばんおトクな${W}`}</div>
         <div class="title">${best.name}</div>
         <div class="big">月 ${yen(save)} 節約</div>
         <div class="sub">1年で <b>${yen(save * 12)}</b>・2年で <b>${yen(save * 24)}</b> おトク</div>
-        <div class="sub">今 ${yen(current)} → 乗り換え後 <b>${yen(best.total)}</b>/月</div>
+        <div class="sub">今 ${yen(current)}${!currentInput ? "（今のプランから計算）" : ""} → ${W}後 <b>${yen(best.total)}</b>/月</div>
       ${famSummary(best, ctx).html}${famLine}${netLine}</div>`;
     } else {
       html += `<div class="card hero bad">
         <div class="tagline">診断結果</div>
         <div class="title">今のままのほうが安いかもしれません</div>
         <div class="big">いちばん安くても月 ${yen(-save)} 高くなります</div>
-        <div class="sub">乗り換え後のいちばん安い形：${best.name}（${yen(best.total)}/月）</div>
+        <div class="sub">${W}後のいちばん安い形：${best.name}（${yen(best.total)}/月）</div>
         <div class="sub">データ量を見直す・割引の条件をそろえると逆転することがあります。下のヒントも見てください。</div>
       ${famSummary(best, ctx).html}${famLine}${netLine}</div>`;
     }
   } else {
     html += `<div class="card hero">
-      <div class="tagline">いちばん安い乗り換え</div>
+      <div class="tagline">いちばん安い${W}</div>
       <div class="title">${best.name}</div>
       <div class="big">月 ${yen(best.total)}</div>
-      <div class="sub">今のスマホ代を入れると、節約額も計算します。</div>
+      <div class="sub">${own ? "今のプランを選ぶか、今のスマホ代を入れると、節約額も計算します。" : "今のスマホ代を入れると、節約額も計算します。"}</div>
     ${famSummary(best, ctx).html}${famLine}${netLine}</div>`;
   }
 
   // 比較
-  html += `<div class="card"><h2>乗り換え先の比較${netPlan !== "keep" ? `<span class="applied">${NET_LABEL[netPlan]}で計算</span>` : ""}</h2>`;
+  html += nowCard(nowEst, currentInput);
+  html += `<div class="card"><h2>${W}先の比較${netPlan !== "keep" ? `<span class="applied">${NET_LABEL[netPlan]}で計算</span>` : ""}</h2>`;
   if (netPlan === "plusOnly") html += `<p class="ex">auひかりプラスをネットのみで使うと、スマホのセット割は付きません。</p>`;
   opts.forEach((o, idx) => {
     const d = current > 0 ? current - o.total : null;
@@ -643,7 +704,8 @@ function diagnose(e) {
     online: "ahamo・LINEMOはもともと安いので、店舗サポートや家族割・セット割を使えるかがポイントです。",
     mvno: "格安SIMはもともと安いので、通信速度や店舗サポートを重視する場合に乗り換えを検討しましょう。",
   };
-  html += `<div class="card"><h2>乗り換えの流れ</h2>
+  if (own) html += ownFlowCard(own, best, nowEst);
+  else html += `<div class="card"><h2>乗り換えの流れ</h2>
     <ul class="check">
       <li><b>MNPワンストップ</b>に対応しているので、多くの場合は予約番号なしでそのまま申し込めます。</li>
       <li>今のスマホをそのまま使うなら、<b>SIMロック解除</b>と対応機種かどうかを確認しましょう（2021年10月以降に買った機種は原則ロックなし）。</li>
@@ -663,6 +725,42 @@ function diagnose(e) {
   out.style.display = "block";
   if (window.innerWidth < 1000) out.scrollIntoView({ behavior: "smooth" });
 }
+// ───── 今のプラン（au / UQ mobile の人）─────
+function nowCard(est, currentInput) {
+  if (!est) return "";
+  const name = est.cid === "au" ? "au" : "UQ mobile";
+  const n = est.rows.length;
+  const rows = est.rows.map((r, i) => r
+    ? `<tr><td>${n > 1 ? `${i + 1}人目 ` : ""}<span class="pill ${est.cid}">${name}</span>${r.plan.name}（${r.capLabel}）${r.plan.ended ? `<span class="disc">${r.plan.ended}に新規受付終了</span>` : ""}
+        <span class="disc">基本 ${yen(r.base)}${r.lines.map(([l, a]) => `／${l} −${yen(a)}`).join("")}${r.call ? `／通話オプション ＋${yen(r.call)}` : ""}</span>
+        ${r.over ? `<span class="disc minus">このプランの容量より多く使う設定です（速度制限やデータ追加の可能性）</span>` : ""}</td><td><b>${yen(r.total)}</b></td></tr>`
+    : `<tr><td>${n > 1 ? `${i + 1}人目 ` : ""}今のプラン：わからない・その他</td><td>—</td></tr>`).join("");
+  let foot = "";
+  if (est.complete) {
+    foot = `<tr><td><b>合計（計算の目安）</b></td><td><b>${yen(est.total)}</b></td></tr>`;
+    if (currentInput) foot += `<tr><td>入力した今のスマホ代${Math.abs(currentInput - est.total) >= 300 ? `<span class="disc">差 ${yen(Math.abs(currentInput - est.total))}：オプション・端末代・ほかの割引などの分かもしれません</span>` : ""}</td><td>${yen(currentInput)}</td></tr>`;
+  }
+  return `<div class="card"><h2>今のプラン</h2>
+    <table><thead><tr><th>人・プラン</th><th>月額</th></tr></thead><tbody>${rows}</tbody>${foot ? `<tfoot>${foot}</tfoot>` : ""}</table>
+    ${!est.complete && !currentInput ? `<div class="notice">「わからない・その他」の人がいるため、今の月額を計算できません。今のスマホ代を入れると節約額が出ます。</div>` : ""}
+    <p class="ex">節約額は${currentInput ? "入力した今のスマホ代" : "この計算の目安"}と比べています。今のネット・でんき・au PAYカードの条件で計算しています。</p>
+  </div>`;
+}
+function ownFlowCard(own, best, est) {
+  const moves = best.rows.map(r => r.carrier.id);
+  const toOther = moves.some(c => c !== own);
+  const ended = est && est.rows.some(r => r && r.plan.ended);
+  return `<div class="card"><h2>見直しの流れ</h2>
+    <ul class="check">
+      ${moves.some(c => c === own) ? `<li><b>${own === "au" ? "au" : "UQ mobile"}のままプラン変更</b>：${own === "au" ? "My au" : "My UQ mobile"}や店頭で手続きできます。新しいプランは基本的に翌月から適用です。</li>` : ""}
+      ${toOther ? `<li><b>${own === "au" ? "au → UQ mobile" : "UQ mobile → au"}</b>：同じKDDIグループ内の「番号移行」で、電話番号はそのまま使えます。SIMの差し替え（eSIMは再発行）が必要です。</li>` : ""}
+      ${ended ? `<li><b>新規受付終了のプランから変更すると、元のプランには戻せません。</b>今のプランの特典（データ・通話・サービス）がなくなってもよいか確認しましょう。</li>` : ""}
+      <li>端末代の分割が残っている場合、見直し後も支払いは続きます（この診断の金額には入っていません）。</li>
+      <li>家族割・自宅セット割は、見直し後のプランでも対象かどうかをあわせて確認しましょう。</li>
+    </ul>
+  </div>`;
+}
+
 // ───── ネットを auひかりプラス にした場合 ─────
 function netCard(persons, ctx, current, best) {
   const H = DATA.hikariPlus, type = plusType(), t = H[type];
@@ -753,7 +851,7 @@ function clearAll() {
   netCoSel.value = "other";
   netCostTouched = false;
   $("#persons").innerHTML = "";   // 前の値を引き継がないように作り直す
-  renderPersons();
+  onCarrierChange();
   onNetChange();
   $("#estBox").open = false;
   updateEstimate();

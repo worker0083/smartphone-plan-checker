@@ -35,6 +35,44 @@ window.DATA = {
     },
   ],
 
+  // ───────── 今 au / UQ mobile を使っている人の「今のプラン」（過去プランを含む）─────────
+  // 書き方は carriers[].plans と同じ。追加の項目：
+  //   set   : 自宅セット割の1回線あたりの割引額（false = 対象外）
+  //   card  : au PAYカード払い割（または2年契約N）の割引額（false = 対象外）
+  //   fam4  : 4回線以上のときの家族割
+  //   low   : [GB, 割引額] … その容量以下の月は自動で割引
+  //   ended : 新規受付終了の年月
+  // ✅ = 2026年11月に au / UQ mobile 公式サイトで確認 / ⚠ = 目安
+  currentPlans: {
+    au: [
+      { id: "max-plus",  name: "使い放題MAX＋ 5G/4G", tiers: [[Infinity, 7788]], fam2: 660, fam3: 1210, set: 1100, card: 220, callShort: 880, callLong: 1980 },                 // ✅
+      { id: "mini-plus", name: "スマホミニプラン＋ 5G/4G", tiers: [[1, 4928], [3, 6578], [5, 8228]], fam2: 660, fam3: 1210, set: 1100, card: 220, callShort: 880, callLong: 1980 }, // ✅
+      { id: "valuelink", name: "auバリューリンクプラン", tiers: [[Infinity, 8008]], fam2: 660, fam3: 1210, set: 1100, card: 220, callShort: 880, callLong: 1980 },              // ✅
+      { id: "max",       name: "使い放題MAX 5G/4G", ended: "2024年12月", tiers: [[Infinity, 7568]], low: [3, 1650], fam2: 550, fam3: 1100, set: 1100, card: 110, callShort: 880, callLong: 1980 }, // ✅
+      { id: "manekatsu", name: "auマネ活プラン 5G/4G", ended: "2024年12月", tiers: [[Infinity, 7568]], fam2: 550, fam3: 1100, set: 1100, card: false, callShort: 880, callLong: 1980 }, // 料金✅ / 家族割⚠
+      { id: "datamax5g", name: "データMAX 5G/4G LTE", ended: "2021年2月", tiers: [[Infinity, 8745]], low: [2, 1628], fam2: 550, fam3: 1100, fam4: 2222, set: 1100, card: 187, callShort: 880, callLong: 1980 }, // ✅（cardは2年契約N）
+      { id: "datamaxpro", name: "auデータMAXプランPro", ended: "2020年6月", tiers: [[Infinity, 8745]], fam2: 550, fam3: 1100, set: 1100, card: 187, callShort: 880, callLong: 1980 }, // ✅
+      { id: "flat20n",   name: "auフラットプラン20N", ended: "2020年6月", tiers: [[20, 7007]], set: 1100, card: 187, callShort: 880, callLong: 1980 },                                     // ✅（家族割なし）
+      { id: "flat7n",    name: "auフラットプラン7プラスN", ended: "2020年6月", tiers: [[7, 6435]], fam2: 550, fam3: 1100, set: 1100, card: 187, callShort: 880, callLong: 1980 },        // 料金✅ / 家族割2回線⚠
+      { id: "pitatto",   name: "ピタットプラン 5G / 4G LTE", ended: "2023年1月", tiers: [[1, 3685], [4, 5335], [7, 6985]], fam2: 550, fam3: 1100, set: 550, card: 187, callShort: 880, callLong: 1980 }, // ✅
+      { id: "mini",      name: "スマホミニプラン 5G/4G", ended: "2024年12月", tiers: [[1, 3685], [2, 4785], [3, 5885], [4, 6435]], fam2: 220, fam3: 550, set: 550, card: 187, callShort: 880, callLong: 1980 }, // ✅
+    ],
+    uq: [
+      { id: "tokutoku2", name: "トクトクプラン2", tiers: [[5, 2948], [30, 4048]], fam2: 550, fam3: 550, set: 1100, card: 220, callShort: 880, callLong: 1980 },          // ✅（5GB以下の割引込み）
+      { id: "komivalue", name: "コミコミプランバリュー", tiers: [[35, 3828]], set: false, card: false, callShort: 0, callLong: 1100 },                                   // ✅ 10分かけ放題込み
+      { id: "tokutoku",  name: "トクトクプラン", ended: "2025年", tiers: [[1, 2387], [17, 3685]], fam2: 550, fam3: 550, set: 1100, card: 187, callShort: 880, callLong: 1980 }, // ✅（1GB以下 -1,298円込み）
+      { id: "komikomi-plus", name: "コミコミプラン＋", ended: "2025年", tiers: [[30, 3498]], set: false, card: false, callShort: 0, callLong: 1100 },                    // ✅ 10分込み / 完全かけ放題⚠
+      { id: "komikomi",  name: "コミコミプラン", ended: "2024年", tiers: [[20, 3498]], set: false, card: false, callShort: 0, callLong: 1100 },                           // ✅ 10分込み / 完全かけ放題⚠
+      { id: "minimini",  name: "ミニミニプラン", ended: "2025年", tiers: [[5, 2475]], fam2: 550, fam3: 550, set: 1100, card: 187, callShort: 880, callLong: 1980 },          // ✅
+      { id: "kurikoshi5g-s", name: "くりこしプランS +5G", ended: "2023年5月", tiers: [[4, 1738]], set: 638, card: false, callShort: 880, callLong: 1980 },             // ✅ 家族セット割の対象外
+      { id: "kurikoshi5g-m", name: "くりこしプランM +5G", ended: "2023年5月", tiers: [[17, 2948]], set: 638, card: false, callShort: 880, callLong: 1980 },            // ✅
+      { id: "kurikoshi5g-l", name: "くりこしプランL +5G", ended: "2023年5月", tiers: [[27, 4048]], set: 858, card: false, callShort: 880, callLong: 1980 },            // ✅
+      { id: "kurikoshi-s", name: "くりこしプランS（4G）", ended: "2021年", tiers: [[4, 1738]], set: false, card: false, callShort: 880, callLong: 1980 },              // ✅ 自宅セット割の対象外
+      { id: "kurikoshi-m", name: "くりこしプランM（4G）", ended: "2021年", tiers: [[17, 2948]], set: false, card: false, callShort: 880, callLong: 1980 },
+      { id: "kurikoshi-l", name: "くりこしプランL（4G）", ended: "2021年", tiers: [[27, 4048]], set: false, card: false, callShort: 880, callLong: 1980 },
+    ],
+  },
+
   // ───────── 今のネット（関西）─────────
   // set : "phone" = ネット＋電話で au/UQ のセット割の対象 / "any" = 対象プランならそのまま対象 / false = 対象外
   //       ✅ 2026年11月 auスマートバリュー公式ページの対象一覧で確認
