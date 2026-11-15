@@ -75,6 +75,15 @@
   .cmp .who { font-weight: 800; white-space: nowrap; }
   .save-cell { white-space: nowrap; font-weight: 800; }
   .h3 { font-size: .98rem; margin: 14px 0 4px; }
+  .scen h2 .hint { font-weight: 600; }
+  .sc-row { padding: 12px 0; border-top: 1px solid var(--line); }
+  .sc-row:first-of-type { border-top: 0; padding-top: 4px; }
+  .sc-name { font-weight: 800; margin-bottom: 6px; }
+  .sc-now { font-size: .9rem; color: var(--good); font-weight: 700; }
+  .sc-fx { margin-top: 6px; font-size: .9rem; line-height: 2; }
+  .seg.two { grid-template-columns: 1fr 1fr; }
+  table.hh { margin-top: 4px; }
+  table.hh td { padding: 3px 0; }
   .pc { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-top: 12px; }
   .pc-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
   .pc-head .pno { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; align-items: center; justify-content: center; background: var(--text); color: var(--card); font-weight: 800; font-size: .8rem; }
@@ -247,10 +256,10 @@
         <p class="hint">すでに au / UQ の家族と、他社のままの家族の分をまとめて入れてください。</p>
       </div>
       <div class="q">
-        <div class="label">au PAYカード</div>
+        <div class="label">今 au PAYカードで払っている？<span class="hint">　変えた場合は診断結果で比べられます</span></div>
         <div class="chips">
-          <label><input type="radio" name="card" value="yes">持っている・作ってもいい</label>
-          <label><input type="radio" name="card" value="no" checked>使わない</label>
+          <label><input type="radio" name="card" value="yes">はい</label>
+          <label><input type="radio" name="card" value="no" checked>いいえ</label>
         </div>
       </div>
     </fieldset>
@@ -270,21 +279,7 @@
         <div><span class="label">今のネット代（円/月）</span><input type="number" id="netCost" inputmode="numeric" min="0" step="any" placeholder="例：5500"></div>
         <div><span class="label">住まい</span><select id="house"><option value="home">戸建て</option><option value="mansion">マンション</option></select></div>
       </div>
-      <div class="q">
-        <div class="label">auひかりプラスの速さ<span class="hint">　10ギガは一部エリア・対応マンションのみ</span></div>
-        <div class="chips">
-          <label><input type="radio" name="speed" value="1" checked>1ギガ</label>
-          <label><input type="radio" name="speed" value="10">10ギガ</label>
-        </div>
-      </div>
-      <div class="q">
-        <div class="label">ネットを変える？<span class="hint">　選んだ内容がスマホ料金のセット割にも反映されます</span></div>
-        <div class="chips">
-          <label><input type="radio" name="netPlan" value="keep" checked>今のネットのまま</label>
-          <label><input type="radio" name="netPlan" value="plusOnly">auひかりプラス ネットのみ</label>
-          <label><input type="radio" name="netPlan" value="plusPhone">auひかりプラス ネット＋電話</label>
-        </div>
-      </div>
+      <p class="hint">auひかりプラスに変えた場合は、診断結果で比べられます。</p>
     </fieldset>
 
     <fieldset>
@@ -297,7 +292,7 @@
         </div>
       </div>
       <div class="q">
-        <label for="elec">電気代（円/月・1年の平均）<span class="hint">　入れるとauでんきに変えた場合を比較します</span></label>
+        <label for="elec">電気代（円/月・1年の平均）<span class="hint">　入れると、診断結果で auでんきに変えた場合を比べられます</span></label>
         <input type="number" id="elec" inputmode="numeric" min="0" step="any" placeholder="例：9000">
         <details id="estBox" class="est">
           <summary>電気代がわからないときは、目安を計算</summary>
@@ -314,6 +309,14 @@
       </div>
     </fieldset>
 
+    <!-- 診断結果の「変えた場合」ボタンの状態（画面には出さない） -->
+    <div hidden id="scen">
+      <input type="radio" name="netPlan" value="keep" checked><input type="radio" name="netPlan" value="plusOnly"><input type="radio" name="netPlan" value="plusPhone">
+      <input type="radio" name="speed" value="1" checked><input type="radio" name="speed" value="10">
+      <input type="radio" name="scCard" value="no" checked><input type="radio" name="scCard" value="yes">
+      <input type="radio" name="scDenki" value="no" checked><input type="radio" name="scDenki" value="yes">
+    </div>
+
     <div class="actions">
       <div class="bar-sum" id="barSum"></div>
       <button type="submit">診断する</button>
@@ -325,9 +328,9 @@
   </div>
 </main>
 
-<script src="plans.js?v=2.3.0"></script>
+<script src="plans.js?v=2.4.0"></script>
 <script>
-const APP_VERSION = "2.3.0";
+const APP_VERSION = "2.4.0";
 const APP_DATE = "2026-11-15";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金は${DATA.updated}時点）`;
 
@@ -651,6 +654,56 @@ function auDenkiPoint(kwh) {
   return { pt: Math.ceil(Math.floor(ex) * rate), rate };
 }
 
+// 電気代 → 関西電力 / auでんき の料金とポイント
+function elecInfo(bill) {
+  if (!bill) return { kwh: 0, kepco: 0, au: 0, pt: 0, rate: 0 };
+  const E = DATA.electricity, kwh = kwhFromBill(bill);
+  const { pt, rate } = auDenkiPoint(kwh);
+  return { kwh, kepco: Math.round(elecBill(E.kepco, kwh)), au: Math.round(elecBill(E.audenki, kwh)), pt, rate };
+}
+
+// ───── 変えた場合（診断結果の中で切り替えるボタン）─────
+function scenCard(persons, ctx0, cur, sc, netNow, bill, el) {
+  const base = compare(persons, ctx0).best.total;              // 何も変えないときのおすすめ
+  const fx = (d, extra) => d > 0 ? `<span class="chg good">月 ${yen(d)} おトク${extra || ""}</span>` : d < 0 ? `<span class="chg bad">月 ${yen(-d)} 高い${extra || ""}</span>` : `<span class="chg same">変わらず</span>`;
+  const btn = (k, v, label, on) => `<button type="button" data-sc="${k}=${v}" class="${on ? "on" : ""}">${label}</button>`;
+  // カード
+  const cardGain = base - compare(persons, { ...ctx0, card: true }).best.total;
+  // ネット
+  const type = plusType();
+  const netAvg = withPhone => avg(m => hikariMonth(type, withPhone, ctx0.denki, m), 1, 24);
+  const netFx = v => {
+    const ph = base - compare(persons, { ...ctx0, net: v === "plusPhone" }).best.total;
+    return netNow ? fx(ph + netNow - netAvg(v === "plusPhone"), "（スマホ＋ネット）") : `${fx(ph, "（スマホ）")}<span class="chg same">ネット 月${yen(netAvg(v === "plusPhone"))}</span>`;
+  };
+  // でんき
+  const dPhone = base - compare(persons, { ...ctx0, denki: true }).best.total;
+  const dTotal = dPhone + (bill ? el.kepco - el.au + el.pt : 0);
+  return `<div class="card scen"><h2>変えた場合<span class="hint">　ボタンを押すと上の結果に反映されます</span></h2>
+    <p class="ex" style="margin-top:-6px">緑の金額は、ほかを今のままにして1つだけ変えた場合の差額です。組み合わせた結果は上に出ます。</p>
+    <div class="sc-row">
+      <div class="sc-name">au PAYカード払い</div>
+      ${cur.card ? `<div class="sc-now">今 au PAYカードで払っています（計算に反映済み）</div>` : `
+      <div class="seg two">${btn("scCard", "no", "今のまま", !sc.card)}${btn("scCard", "yes", "au PAYカードにする", sc.card)}</div>
+      <div class="sc-fx">${fx(cardGain, "（スマホ）")}</div>`}
+    </div>
+    <div class="sc-row">
+      <div class="sc-name">自宅のネット<span class="hint">（今：${curNetCo().name}${netNow ? `・${yen(netNow)}` : ""}）</span></div>
+      <div class="seg">${btn("netPlan", "keep", "今のまま", sc.net === "keep")}${btn("netPlan", "plusOnly", "auひかりプラス<br>ネットのみ", sc.net === "plusOnly")}${btn("netPlan", "plusPhone", "auひかりプラス<br>ネット＋電話", sc.net === "plusPhone")}</div>
+      <div class="seg two">${btn("speed", "1", "1ギガ", val("speed") === "1")}${btn("speed", "10", "10ギガ", val("speed") === "10")}</div>
+      <div class="sc-fx">ネットのみ：${netFx("plusOnly")}<br>ネット＋電話：${netFx("plusPhone")}</div>
+      ${netNow ? "" : `<div class="ex">今のネット代を入れると、ネット代も含めた差額が出ます。</div>`}
+    </div>
+    <div class="sc-row">
+      <div class="sc-name">でんき</div>
+      ${cur.denki ? `<div class="sc-now">今 auでんきを使っています（計算に反映済み）</div>` : `
+      <div class="seg two">${btn("scDenki", "no", "今のまま", !sc.denki)}${btn("scDenki", "yes", "auでんきにする", sc.denki)}</div>
+      <div class="sc-fx">${fx(dTotal, bill ? "（スマホ割引＋ポイント）" : "（スマホ）")}</div>
+      ${bill ? "" : `<div class="ex">電気代を入れると、ポイント還元も含めた差額が出ます。</div>`}`}
+    </div>
+  </div>`;
+}
+
 // ───── 家族割のまとめ ─────
 function famSummary(o, ctx) {
   const parts = [];
@@ -675,15 +728,19 @@ function famSummary(o, ctx) {
 function diagnose(e) {
   e && e.preventDefault();
   const persons = readPersons().map(p => ({ ...p, gb: Number(p.gb) }));
+  const cur = { card: val("card") === "yes", denki: val("denki") === "yes" };             // 今の状態
+  const sc = { card: val("scCard") === "yes", denki: val("scDenki") === "yes", net: val("netPlan") }; // 変えた場合
   const ctx = {
-    net: val("netPlan") === "plusPhone" ? true : val("netPlan") === "plusOnly" ? false : curNetSet(), denki: val("denki") === "yes", card: val("card") === "yes",
+    net: sc.net === "plusPhone" ? true : sc.net === "plusOnly" ? false : curNetSet(),
+    denki: cur.denki || sc.denki, card: cur.card || sc.card,
     exAu: +$("#exAu").value, exUq: +$("#exUq").value,
   };
+  const ctx0 = { ...ctx, net: curNetSet(), denki: cur.denki, card: cur.card };            // 何も変えない場合
   const currentInput = Number($("#current").value) || 0;
   const ownCount = persons.filter(p => isOwn(p.from)).length;
   const own = ownCount > 0;
   const W = ownCount === persons.length ? "見直し" : ownCount ? "乗り換え・見直し" : "乗り換え";
-  const nowEst = estimateNow(persons, { ...ctx, net: curNetSet() });   // 今の月額は今のネットで計算
+  const nowEst = estimateNow(persons, ctx0);   // 今の月額は今の条件で計算
   const current = currentInput || (nowEst.complete ? nowEst.total : 0);
   const n = persons.length;
   const { opts, best, allUq } = compare(persons, ctx);
@@ -704,16 +761,24 @@ function diagnose(e) {
       ${current ? `<b class="${famBefore - famAfter > 0 ? "plus" : "minus"}">（月${yen(Math.abs(famBefore - famAfter))}${famBefore - famAfter > 0 ? "安い" : "高い"}）</b>` : ""}
       ${exGain ? `<br><span class="ex">すでに au / UQ の家族も、回線が増えて家族割が月${yen(exGain)}増えます（目安）</span>` : ""}</div>` : "";
 
-  // ネットを変えた場合：家計（スマホ＋ネット）の合計
-  const netPlan = val("netPlan");
+  // 変えた場合：家計（スマホ＋ネット＋でんき）
+  const netPlan = sc.net;
   const netNow = Number($("#netCost").value) || 0;
   const house = plusType();
   const netNew = netPlan === "keep" ? netNow : avg(m => hikariMonth(house, netPlan === "plusPhone", ctx.denki, m), 1, 24);
   const sp = val("speed") === "10" ? "10ギガ" : "1ギガ";
   const NET_LABEL = { keep: "", plusOnly: `auひかりプラス（${sp}）ネットのみ`, plusPhone: `auひかりプラス（${sp}）ネット＋電話` };
-  const netLine = netPlan === "keep" ? "" : `<div class="netline">ネット：${netNow ? `今 ${yen(netNow)} → ` : ""}${NET_LABEL[netPlan]} <b>${yen(netNew)}</b>（2年平均）
-      ${current > 0 && netNow ? `<br>スマホ＋ネット：今 ${yen(current + netNow)} → <b>${yen(best.total + netNew)}</b>
-      <b class="${current + netNow - best.total - netNew > 0 ? "plus" : "minus"}">（月${yen(Math.abs(current + netNow - best.total - netNew))}${current + netNow - best.total - netNew > 0 ? "安い" : "高い"}）</b>` : ""}</div>`;
+  const bill = Number($("#elec").value) || 0;
+  const el = elecInfo(bill);
+  const elecNew = bill && sc.denki && !cur.denki ? el.au - el.pt : bill;
+  const scOn = netPlan !== "keep" || (sc.card && !cur.card) || (sc.denki && !cur.denki);
+  const hhRows = [["スマホ", current, best.total]];
+  if (netNow || netPlan !== "keep") hhRows.push([netPlan === "keep" ? "ネット" : `ネット（${NET_LABEL[netPlan]}・2年平均）`, netNow, netNew]);
+  if (bill) hhRows.push([sc.denki && !cur.denki ? "でんき（auでんき・ポイント込み）" : "でんき", bill, elecNew]);
+  const hhNow = hhRows.reduce((a, r) => a + r[1], 0), hhNew = hhRows.reduce((a, r) => a + r[2], 0);
+  const netLine = scOn && current > 0 && hhRows.length > 1 ? `<div class="netline"><b>家計（${hhRows.map(r => r[0].replace(/（.*/, "")).join("＋")}）</b>
+      <table class="hh">${hhRows.map(r => `<tr><td>${r[0]}</td><td>${r[1] ? yen(r[1]) : "—"} → <b>${yen(r[2])}</b></td></tr>`).join("")}
+      <tr><td><b>合計</b></td><td>${yen(hhNow)} → <b>${yen(hhNew)}</b> <b class="${hhNow - hhNew > 0 ? "plus" : "minus"}">（月${yen(Math.abs(hhNow - hhNew))}${hhNow - hhNew > 0 ? "安い" : "高い"}）</b></td></tr></table></div>` : "";
 
   // ヒント：まだ使っていない割引でさらに安くなるか
   const tips = [];
@@ -723,20 +788,22 @@ function diagnose(e) {
     const r = calcAssign(a, persons, c2);
     if (r && best.total - r.total > 0) tips.push(`${label}と、さらに<b>月 ${yen(best.total - r.total)}</b>安くなります。`);
   };
-  if (!ctx.card) tryCtx({ card: true }, "au PAYカード払いにする");
   if (val("netPlan") === "keep" && curNetCo().set === "phone" && val("netPhone") !== "yes") tryCtx({ net: true }, `今の${curNetCo().name}に固定電話も付ける（電話の料金は別にかかります）`);
 
   const out = $("#result");
   let html = "";
+  const applied = [netPlan !== "keep" ? NET_LABEL[netPlan] : "", sc.card && !cur.card ? "au PAYカード払い" : "", sc.denki && !cur.denki ? "auでんき" : ""].filter(Boolean);
+  const appliedTags = applied.map(t => `<span class="applied">${t}</span>`).join("");
 
   // 結論
   if (current > 0) {
-    const save = current - best.total;
+    const hh = scOn && hhRows.length > 1;                    // 変えた場合は家計全体で比べる
+    const save = hh ? hhNow - hhNew : current - best.total;
     if (save > 0) {
       html += `<div class="card hero">
         <div class="tagline">${persons.some(p => p.fix !== "auto") ? `指定した${W}先での結果` : `いちばんおトクな${W}`}</div>
-        <div class="title">${best.name}</div>
-        <div class="big">月 ${yen(save)} 節約</div>
+        <div class="title">${best.name}</div>${applied.length ? `<div class="sub">変えた場合：${appliedTags}</div>` : ""}
+        <div class="big">${hh ? "家計で" : ""}月 ${yen(save)} 節約</div>${hh ? `<div class="sub">うちスマホ代は月 ${yen(current - best.total)} 節約</div>` : ""}
         <div class="sub">1年で <b>${yen(save * 12)}</b>・2年で <b>${yen(save * 24)}</b> おトク</div>
         <div class="sub">今 ${yen(current)}${!currentInput && nowEst.rows.some(r => !r.amount) ? "（今のプランから計算を含む）" : ""} → ${W}後 <b>${yen(best.total)}</b>/月</div>
       ${famSummary(best, ctx).html}${famLine}${netLine}</div>`;
@@ -752,15 +819,16 @@ function diagnose(e) {
   } else {
     html += `<div class="card hero">
       <div class="tagline">いちばん安い${W}</div>
-      <div class="title">${best.name}</div>
+      <div class="title">${best.name}</div>${applied.length ? `<div class="sub">変えた場合：${appliedTags}</div>` : ""}
       <div class="big">月 ${yen(best.total)}</div>
       <div class="sub">1人ずつ「今の月額」を入れる${own ? "（au・UQ mobile の人は今のプランを選ぶ）" : ""}と、節約額も計算します。</div>
     ${famSummary(best, ctx).html}${famLine}${netLine}</div>`;
   }
 
   // 比較
+  html += scenCard(persons, ctx0, cur, sc, netNow, bill, el);
   html += personCard(persons, nowEst, best, currentInput);
-  html += `<div class="card"><h2>${W}先の比較${netPlan !== "keep" ? `<span class="applied">${NET_LABEL[netPlan]}で計算</span>` : ""}</h2>`;
+  html += `<div class="card"><h2>${W}先の比較${appliedTags}</h2>`;
   if (netPlan === "plusOnly") html += `<p class="ex">auひかりプラスをネットのみで使うと、スマホのセット割は付きません。</p>`;
   opts.forEach((o, idx) => {
     const d = current > 0 ? current - o.total : null;
@@ -926,13 +994,8 @@ function netCard(persons, ctx, current, best) {
   const yr = f => [avg(f, 1, 12), avg(f, 13, 24), avg(f, 25, 36)];
   const [a1, a2y, a3] = yr(onlyNet), [b1, b2y, b3] = yr(withPh);
 
-  return `<div class="card"><h2>ネットも auひかりプラス（関西）にした場合</h2>
+  return `<div class="card"><h2>auひかりプラス（関西）の詳細</h2>
     <p class="ex">${t.name}・2年契約（BIGLOBE）・ルーター代込み。ネット代は2年間の平均です。${netNow ? "" : "今のネット代を入れると、家計全体の差額も出ます。"}</p>
-    <div class="label" style="font-weight:700">ボタンで選ぶと、上のスマホ料金にも反映されます</div>
-    <div class="seg">${[["keep", "今のネットのまま"], ["plusOnly", "auひかりプラス<br>ネットのみ"], ["plusPhone", "auひかりプラス<br>ネット＋電話"]]
-      .map(([v, l]) => `<button type="button" data-netplan="${v}" class="${val("netPlan") === v ? "on" : ""}">${l}</button>`).join("")}</div>
-    <div class="seg" style="grid-template-columns:1fr 1fr">${[["1", "1ギガ"], ["10", "10ギガ"]]
-      .map(([v, l]) => `<button type="button" data-speed="${v}" class="${val("speed") === v ? "on" : ""}">${l}</button>`).join("")}</div>
     <table><thead><tr><th>パターン</th><th>スマホ</th><th>ネット</th><th>合計/月</th></tr></thead><tbody>
     ${rows.map(r => `<tr><td>${r[0]}${r[3] === minTotal ? '<span class="badge">最安</span>' : ""}</td><td>${yen(r[1])}</td><td>${r[2] ? yen(r[2]) : "—"}</td><td><b>${yen(r[3])}</b>${r !== rows[0] && current > 0 ? `<span class="disc ${base - r[3] > 0 ? "plus" : "minus"}">${base - r[3] > 0 ? `月${yen(base - r[3])}安い` : `月${yen(r[3] - base)}高い`}</span>` : ""}</td></tr>`).join("")}
     </tbody></table>
@@ -955,19 +1018,19 @@ function netCard(persons, ctx, current, best) {
 function denkiCard(persons, ctx, best) {
   const bill = Number($("#elec").value) || 0;
   const E = DATA.electricity;
-  if (!bill) return `<div class="card"><h2>auでんきに変えた場合</h2><p class="ex">左の「電気代」を入れると、auでんきに変えた場合の差額を計算します。</p></div>`;
+  if (!bill) return "";
   const kwh = kwhFromBill(bill);
   const kepco = Math.round(elecBill(E.kepco, kwh)), au = Math.round(elecBill(E.audenki, kwh));
   const { pt, rate } = auDenkiPoint(kwh);
-  if (ctx.denki) {
+  if (val("denki") === "yes") {
     return `<div class="card"><h2>auでんき</h2><p>すでにauでんきなので、スマホの計算にもでんきのセット割を入れています。Pontaポイントは毎月 約<b>${pt}ポイント</b>（${rate * 100}%）です。</p></div>`;
   }
   const withD = compare(persons, { ...ctx, denki: true }).best;
-  const phoneGain = best.total - withD.total;
+  const phoneGain = compare(persons, { ...ctx, denki: false }).best.total - withD.total;
   const billDiff = kepco - au;
   const total = phoneGain + pt + billDiff;
   const H = DATA.hikariPlus;
-  return `<div class="card"><h2>auでんきに変えた場合</h2>
+  return `<div class="card"><h2>auでんきの詳細</h2>
     <p class="ex">電気代 ${yen(bill)}/月 → 使用量 約${Math.round(kwh)}kWh として計算（燃料費調整額は両社同じ扱い）</p>
     <table><thead><tr><th>項目</th><th>差額/月</th></tr></thead><tbody>
       <tr><td>電気代（${E.kepco.name} → ${E.audenki.name}）<span class="disc">${yen(kepco)} → ${yen(au)}</span></td><td>${billDiff >= 0 ? "−" : "＋"}${yen(Math.abs(billDiff))}</td></tr>
@@ -1007,12 +1070,11 @@ function clearAll() {
 }
 document.addEventListener("click", e => { if (e.target.closest("[data-clear]")) clearAll(); });
 $("#result").addEventListener("click", e => {
-  const b = e.target.closest("[data-netplan], [data-speed]");
+  const b = e.target.closest("[data-sc]");
   if (!b) return;
-  if (b.dataset.speed) document.querySelector(`input[name=speed][value="${b.dataset.speed}"]`).checked = true;
-  else document.querySelector(`input[name=netPlan][value=${b.dataset.netplan}]`).checked = true;
+  const [k, v] = b.dataset.sc.split("=");
+  document.querySelector(`#scen input[name=${k}][value="${v}"]`).checked = true;
   diagnose();
-  $("#result").scrollIntoView({ behavior: "smooth" });
 });
 document.querySelectorAll("input[name=netPhone]").forEach(r => r.addEventListener("change", onNetChange));
 document.querySelectorAll("input[name=speed]").forEach(r => r.addEventListener("change", () => { if ($("#result").innerHTML) diagnose(); }));
