@@ -49,8 +49,33 @@
   .chips label:has(input:checked) { background: var(--accent-weak); border-color: var(--accent); color: var(--accent); font-weight: 600; }
   .chips label, input[type=number], select, button { min-height: 44px; }
   button { width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border: 0; border-radius: 12px; background: var(--accent); color: #fff; cursor: pointer; }
-  .person { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 10px; }
-  .person-title { font-weight: 700; margin-bottom: 8px; }
+  .person { border: 1px solid var(--line); border-left: 5px solid var(--muted); border-radius: 14px; padding: 12px 14px 14px; margin-bottom: 12px; background: var(--card); }
+  .person.from-au { border-left-color: var(--au); } .person.from-uq { border-left-color: var(--uq); }
+  .person-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .person-head .pno { display: inline-flex; width: 28px; height: 28px; border-radius: 50%; align-items: center; justify-content: center; background: var(--text); color: var(--card); font-weight: 800; font-size: .9rem; }
+  .person-head .pname { font-weight: 800; flex: 1; }
+  .del-btn { width: auto; min-height: 36px; padding: 4px 12px; font-size: .85rem; font-weight: 600; background: none; color: var(--muted); border: 1px solid var(--line); border-radius: 8px; }
+  .sublabel { font-size: .82rem; color: var(--muted); display: block; margin: 0 0 4px; }
+  .carrier-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 6px; margin-bottom: 10px; }
+  .carrier-grid label { justify-content: center; text-align: center; padding: 6px 4px !important; font-size: .85rem !important; border-radius: 10px !important; line-height: 1.25; }
+  .carrier-grid label:has(input[value=au]:checked) { background: var(--au-weak); border-color: var(--au); color: var(--au); }
+  .carrier-grid label:has(input[value=uq]:checked) { background: var(--uq-weak); border-color: var(--uq); color: var(--uq); }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .fix-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .fix-row .sublabel { margin: 0; }
+  .fix-row .chips { margin: 0 !important; gap: 6px; }
+  .add-btn { background: none; color: var(--accent); border: 2px dashed var(--line); font-size: 1rem; }
+  .total-box { margin-top: 12px; }
+  header.top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  header.top .lead { margin: 0; }
+  .ver { text-align: right; }
+  .pill.other { background: var(--muted); }
+  .cmp td { vertical-align: top; }
+  .cmp .arrow { color: var(--muted); padding: 0 2px; }
+  .cmp .who { font-weight: 800; white-space: nowrap; }
+  .save-cell { white-space: nowrap; font-weight: 800; }
+  .h3 { font-size: .98rem; margin: 14px 0 4px; }
+  .cmp td:nth-child(2), .cmp td:nth-child(3), .cmp th:nth-child(2), .cmp th:nth-child(3) { text-align: left; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .row2 .label { font-size: .82rem; color: var(--muted); display: block; margin-bottom: 4px; }
 
@@ -89,7 +114,8 @@
   summary { cursor: pointer; color: var(--accent); font-size: .88rem; }
   .disclaimer { color: var(--muted); font-size: .8rem; margin-top: 16px; }
   .version { color: var(--muted); font-size: .8rem; }
-  .actions { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+  .actions { display: grid; grid-template-columns: 1fr auto; gap: 10px; position: sticky; bottom: 0; z-index: 2;
+    margin: 0 -20px -20px; padding: 14px 20px 20px; background: var(--card); border-top: 1px solid var(--line); border-radius: 0 0 14px 14px; }
   .clear-btn { width: auto; padding: 14px 22px; background: var(--card); color: var(--text); border: 1px solid var(--line); }
   .restart { margin-top: 4px; }
   .est { margin-top: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: var(--bg); }
@@ -104,8 +130,7 @@
   .update-bar.show { display: flex; }
   .update-bar button { width: auto; padding: 8px 18px; min-height: 40px; font-size: .95rem; }
   .linkbtn { background: none; border: 0; color: var(--accent); padding: 0 4px; width: auto; min-height: 0; font-size: .8rem; font-weight: 600; text-decoration: underline; cursor: pointer; }
-  .person .chips { margin-top: 8px; }
-  .person .chips label { padding: 6px 14px; font-size: .9rem; }
+  .person .chips label { padding: 6px 12px; font-size: .88rem; min-height: 38px; }
   .famtotal { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); font-size: .95rem; }
   .fam { margin-top: 10px; border-radius: 10px; padding: 10px 12px; background: var(--good-weak); font-size: .9rem; }
   .fam.none { background: var(--warn-weak); }
@@ -125,11 +150,12 @@
     main { max-width: 760px; padding: 32px 24px 64px; }
     h1 { font-size: 1.9rem; }
     .card { padding: 24px; border-radius: 18px; }
+    .actions { margin: 0 -24px -24px; padding: 16px 24px 24px; border-radius: 0 0 18px 18px; }
     .chips label { padding: 10px 18px; font-size: 1rem; }
   }
   @media (min-width: 1000px) {
     main { max-width: 1120px; }
-    .layout { display: grid; grid-template-columns: 460px 1fr; gap: 24px; align-items: start; }
+    .layout { display: grid; grid-template-columns: 500px 1fr; gap: 24px; align-items: start; }
     .layout > form { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; margin-bottom: 0; }
   }
 </style>
@@ -140,51 +166,33 @@
     <span id="updateText">新しいバージョンがあります</span>
     <button type="button" id="updateBtn">最新版に更新</button>
   </div>
-  <h1>料金診断</h1>
-  <p class="lead">他社から au・UQ mobile への乗り換えも、今の au・UQ mobile のプラン見直しも、月額と節約額がわかります。家族割・自宅セット割・カード払い割もまとめて計算します。<br><span class="version" id="version"></span><button type="button" class="linkbtn" id="checkBtn">更新を確認</button></p>
+  <header class="top">
+    <div>
+      <h1>料金診断</h1>
+      <p class="lead">他社からの乗り換えも、今の au・UQ mobile の見直しも。1人ずつ入れるだけで、家族割・セット割まで計算します。</p>
+    </div>
+    <div class="ver"><span class="version" id="version"></span><button type="button" class="linkbtn" id="checkBtn">更新を確認</button></div>
+  </header>
 
   <div class="layout">
   <form id="form" class="card" novalidate>
     <fieldset>
-      <legend><span class="num">1</span>今のスマホ</legend>
-      <div class="q">
-        <div class="label">今のキャリア</div>
-        <div class="chips" id="carrier">
-          <label><input type="radio" name="carrier" value="docomo" checked>ドコモ</label>
-          <label><input type="radio" name="carrier" value="softbank">ソフトバンク</label>
-          <label><input type="radio" name="carrier" value="ymobile">ワイモバイル</label>
-          <label><input type="radio" name="carrier" value="rakuten">楽天モバイル</label>
-          <label><input type="radio" name="carrier" value="online">ahamo・LINEMO</label>
-          <label><input type="radio" name="carrier" value="mvno">格安SIM</label>
-          <label><input type="radio" name="carrier" value="au">au</label>
-          <label><input type="radio" name="carrier" value="uq">UQ mobile</label>
-        </div>
-      </div>
-      <div class="q">
-        <label for="people" id="peopleLabel">乗り換える人数</label>
-        <div class="chips" id="peopleChips">
-          <label><input type="radio" name="people" value="1" checked>1人</label>
-          <label><input type="radio" name="people" value="2">2人</label>
-          <label><input type="radio" name="people" value="3">3人</label>
-          <label><input type="radio" name="people" value="4">4人</label>
-          <label><input type="radio" name="people" value="5">5人</label>
-        </div>
-      </div>
-      <div class="q">
-        <label for="current"><span id="currentLabel">今のスマホ代（乗り換える人の合計）</span><span class="hint" id="currentHint">　税込・円/月。端末代の分割は除く</span></label>
-        <input type="number" id="current" inputmode="numeric" min="0" step="any" placeholder="例：15000">
-      </div>
-    </fieldset>
-
-    <fieldset>
-      <legend><span class="num">2</span>使い方（1人ずつ）</legend>
+      <legend><span class="num">1</span>診断する人<span class="hint">　1人ずつ今のキャリアと使い方を入れます</span></legend>
       <div id="persons"></div>
+      <button type="button" class="add-btn" id="addPerson">＋ 人を追加</button>
+      <details class="total-box" id="totalBox">
+        <summary>今のスマホ代を家族の合計で入れる</summary>
+        <div class="q" style="margin:10px 0 0">
+          <input type="number" id="current" inputmode="numeric" min="0" step="any" placeholder="例：15000（税込・円/月）">
+          <p class="hint">入れると1人ずつの金額より優先します。端末代の分割は除いてください。</p>
+        </div>
+      </details>
     </fieldset>
 
     <fieldset>
-      <legend><span class="num">3</span>割引の条件</legend>
+      <legend><span class="num">2</span>家族・割引</legend>
       <div class="q">
-        <div class="label">家族ですでに au / UQ mobile を使っている人<span class="hint">　家族割の回線数に入ります</span></div>
+        <div class="label">ここに入れていない家族で、au / UQ mobile を使っている人<span class="hint">　家族割の回線数に入ります</span></div>
         <div class="row2">
           <div><span class="label">au</span><select id="exAu"><option>0</option><option>1</option><option>2</option><option>3</option></select></div>
           <div><span class="label">UQ mobile</span><select id="exUq"><option>0</option><option>1</option><option>2</option><option>3</option></select></div>
@@ -208,7 +216,7 @@
     </fieldset>
 
     <fieldset>
-      <legend><span class="num">4</span>自宅のインターネット</legend>
+      <legend><span class="num">3</span>自宅のインターネット</legend>
       <div class="q">
         <label for="netCo">今のネット会社</label>
         <select id="netCo"></select>
@@ -240,7 +248,7 @@
     </fieldset>
 
     <fieldset>
-      <legend><span class="num">5</span>でんき</legend>
+      <legend><span class="num">4</span>でんき</legend>
       <div class="q">
         <div class="label">今の電気</div>
         <div class="chips">
@@ -276,9 +284,9 @@
   </div>
 </main>
 
-<script src="plans.js?v=2.0.0"></script>
+<script src="plans.js?v=2.1.0"></script>
 <script>
-const APP_VERSION = "2.0.0";
+const APP_VERSION = "2.1.0";
 const APP_DATE = "2026-11-15";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金は${DATA.updated}時点）`;
 
@@ -303,23 +311,22 @@ async function checkUpdate(manual) {
 }
 // 入力内容を一時保存して、更新後に戻す
 const FORM_KEY = "auuq-form";
+const formFields = () => [...document.getElementById("form").querySelectorAll("input, select")].filter(el => !el.closest("#persons"));
 function saveForm() {
-  const f = document.getElementById("form");
-  const vals = [...f.querySelectorAll("input, select")].map(el => el.type === "radio" || el.type === "checkbox" ? el.checked : el.value);
-  try { sessionStorage.setItem(FORM_KEY, JSON.stringify({ carrier: (document.querySelector("input[name=carrier]:checked") || {}).value, people: (document.querySelector("input[name=people]:checked") || {}).value, vals, shown: !!document.getElementById("result").innerHTML })); } catch (e) {}
+  const vals = formFields().map(el => el.type === "radio" || el.type === "checkbox" ? el.checked : el.value);
+  try { sessionStorage.setItem(FORM_KEY, JSON.stringify({ persons: readPersons(), vals, shown: !!document.getElementById("result").innerHTML })); } catch (e) {}
 }
 function restoreForm() {
   let d; try { d = JSON.parse(sessionStorage.getItem(FORM_KEY)); sessionStorage.removeItem(FORM_KEY); } catch (e) {}
-  if (!d) return;
-  const cr = document.querySelector(`input[name=carrier][value="${d.carrier}"]`);
-  if (cr) { cr.checked = true; onCarrierChange(); }
-  const pr = document.querySelector(`input[name=people][value="${d.people}"]`);
-  if (pr) { pr.checked = true; renderPersons(); }
-  const els = [...document.getElementById("form").querySelectorAll("input, select")];
-  if (els.length !== d.vals.length) return;
-  els.forEach((el, i) => { if (el.type === "radio" || el.type === "checkbox") el.checked = d.vals[i]; else el.value = d.vals[i]; });
-  if (d.vals.some((v, i) => els[i].id === "netCost" && v !== "")) netCostTouched = true;
+  if (!d || !d.persons) return;
+  renderPersons(d.persons);
+  const els = formFields();
+  if (els.length === d.vals.length) {
+    els.forEach((el, i) => { if (el.type === "radio" || el.type === "checkbox") el.checked = d.vals[i]; else el.value = d.vals[i]; });
+    if ($("#netCost").value !== "") netCostTouched = true;
+  }
   onNetChange();
+  if ($("#current").value) $("#totalBox").open = true;
   if (d.shown) diagnose();
 }
 document.getElementById("updateBtn").addEventListener("click", () => {
@@ -366,36 +373,11 @@ function onNetChange() {
 [netCoSel, $("#house")].forEach(el => el.addEventListener("change", onNetChange));
 
 // ───── 1人ずつの入力欄 ─────
-function renderPersons() {
-  const n = +val("people");
-  const box = $("#persons");
-  const prev = [...box.querySelectorAll(".person")].map(p => ({ gb: p.querySelector(".gb").value, call: p.querySelector(".call").value, fix: p.querySelector(".fix:checked").value, now: (p.querySelector(".now") || {}).value }));
-  const own = ownCarrier();
-  box.innerHTML = "";
-  for (let i = 0; i < n; i++) {
-    const d = prev[i] || { gb: "5", call: "none", fix: "auto" };
-    box.insertAdjacentHTML("beforeend", `
-      <div class="person">
-        <div class="person-title">${n > 1 ? `${i + 1}人目` : "あなた"}</div>
-        ${own ? `<div class="q" style="margin-bottom:10px"><span class="label">今の${own === "au" ? "au" : "UQ mobile"}のプラン</span>
-          <select class="now">${nowPlanOptions(own, d.now)}</select></div>` : ""}
-        <div class="row2">
-          <div><span class="label">データ（1か月）</span>
-            <select class="gb">${GB_OPTS.map(([v, t]) => `<option value="${v}" ${String(v) === d.gb ? "selected" : ""}>${t}</option>`).join("")}</select></div>
-          <div><span class="label">通話</span>
-            <select class="call">${CALL_OPTS.map(([v, t]) => `<option value="${v}" ${v === d.call ? "selected" : ""}>${t}</option>`).join("")}</select></div>
-        </div>
-        <div class="chips" aria-label="乗り換え先">
-          ${[["auto", "おまかせ"], ["au", "au に固定"], ["uq", "UQ mobile に固定"]].map(([v, t]) =>
-            `<label><input type="radio" class="fix" name="fix${i}" value="${v}" ${v === d.fix ? "checked" : ""}>${t}</label>`).join("")}
-        </div>
-      </div>`);
-  }
-}
-document.querySelectorAll("input[name=people]").forEach(r => r.addEventListener("change", renderPersons));
-
-// ───── 今 au / UQ mobile の人：今のプランを選ぶ ─────
-const ownCarrier = () => ["au", "uq"].includes(val("carrier")) ? val("carrier") : null;
+const CARRIERS = [["docomo", "ドコモ"], ["softbank", "ソフトバンク"], ["ymobile", "ワイモバイル"], ["rakuten", "楽天モバイル"],
+  ["online", "ahamo・LINEMO"], ["mvno", "格安SIM"], ["au", "au"], ["uq", "UQ mobile"]];
+const carrierName = id => (CARRIERS.find(c => c[0] === id) || [, ""])[1];
+const isOwn = id => id === "au" || id === "uq";
+const defaultPerson = from => ({ from: from || "docomo", now: "", amount: "", gb: "5", call: "none", fix: "auto" });
 function nowPlanOptions(cid, sel) {
   const list = DATA.currentPlans[cid];
   const opt = p => `<option value="${p.id}" ${p.id === sel ? "selected" : ""}>${p.name}${p.ended ? `（${p.ended}受付終了）` : ""}</option>`;
@@ -403,16 +385,75 @@ function nowPlanOptions(cid, sel) {
     <optgroup label="今のプラン">${list.filter(p => !p.ended).map(opt).join("")}</optgroup>
     <optgroup label="新規受付終了のプラン">${list.filter(p => p.ended).map(opt).join("")}</optgroup>`;
 }
-function onCarrierChange() {
-  const own = ownCarrier();
-  $("#peopleLabel").textContent = own ? "診断する人数" : "乗り換える人数";
-  $("#currentLabel").textContent = own ? "今のスマホ代（診断する人の合計）" : "今のスマホ代（乗り換える人の合計）";
-  $("#currentHint").textContent = own ? "　税込・円/月。空欄なら下で選んだ今のプランから計算します" : "　税込・円/月。端末代の分割は除く";
-  renderPersons();
-  if ($("#result").innerHTML) diagnose();
+// 画面の入力 → 配列
+function readPersons() {
+  return [...document.querySelectorAll("#persons .person")].map(el => ({
+    from: (el.querySelector(".from:checked") || {}).value || "docomo",
+    now: (el.querySelector(".now") || {}).value || "",
+    amount: el.querySelector(".amount").value,
+    gb: el.querySelector(".gb").value,
+    call: el.querySelector(".call").value,
+    fix: (el.querySelector(".fix:checked") || {}).value || "auto",
+  }));
 }
-document.querySelectorAll("input[name=carrier]").forEach(r => r.addEventListener("change", onCarrierChange));
-renderPersons();
+// 配列 → 画面
+function renderPersons(list) {
+  const n = list.length;
+  $("#persons").innerHTML = list.map((d, i) => `
+    <div class="person from-${d.from}" data-i="${i}">
+      <div class="person-head">
+        <span class="pno">${i + 1}</span>
+        <span class="pname">${i + 1}人目</span>
+        ${n > 1 ? `<button type="button" class="del-btn" data-del="${i}">削除</button>` : ""}
+      </div>
+      <span class="sublabel">今のキャリア</span>
+      <div class="chips carrier-grid">
+        ${CARRIERS.map(([v, t]) => `<label><input type="radio" class="from" name="from${i}" value="${v}" ${v === d.from ? "checked" : ""}>${t}</label>`).join("")}
+      </div>
+      ${isOwn(d.from) ? `<div class="q" style="margin-bottom:10px"><span class="sublabel">今の${carrierName(d.from)}のプラン</span>
+        <select class="now">${nowPlanOptions(d.from, d.now)}</select></div>` : ""}
+      <div class="row3">
+        <div><span class="sublabel">データ（1か月）</span>
+          <select class="gb">${GB_OPTS.map(([v, t]) => `<option value="${v}" ${String(v) === String(d.gb) ? "selected" : ""}>${t}</option>`).join("")}</select></div>
+        <div><span class="sublabel">通話</span>
+          <select class="call">${CALL_OPTS.map(([v, t]) => `<option value="${v}" ${v === d.call ? "selected" : ""}>${t}</option>`).join("")}</select></div>
+        <div><span class="sublabel">今の月額（円）</span>
+          <input type="number" class="amount" inputmode="numeric" min="0" step="any" value="${d.amount}" placeholder="${isOwn(d.from) ? "空欄でも可" : "例：7000"}"></div>
+      </div>
+      <div class="fix-row"><span class="sublabel">${isOwn(d.from) ? "見直し先" : "乗り換え先"}</span>
+        <div class="chips">
+          ${[["auto", "おまかせ"], ["au", "au"], ["uq", "UQ mobile"]].map(([v, t]) =>
+            `<label><input type="radio" class="fix" name="fix${i}" value="${v}" ${v === d.fix ? "checked" : ""}>${t}</label>`).join("")}
+        </div>
+      </div>
+    </div>`).join("");
+}
+$("#persons").addEventListener("change", e => {
+  if (e.target.classList.contains("from")) {          // キャリアを変えたらプラン欄を出し直す
+    const list = readPersons();
+    const i = +e.target.closest(".person").dataset.i;
+    list[i].now = "";
+    renderPersons(list);
+  }
+  if ($("#result").innerHTML) diagnose();
+});
+$("#persons").addEventListener("click", e => {
+  const b = e.target.closest("[data-del]");
+  if (!b) return;
+  const list = readPersons();
+  list.splice(+b.dataset.del, 1);
+  renderPersons(list);
+  if ($("#result").innerHTML) diagnose();
+});
+$("#addPerson").addEventListener("click", () => {
+  const list = readPersons();
+  if (list.length >= 6) { alert("一度に診断できるのは6人までです。"); return; }
+  list.push(defaultPerson(list.length ? list[list.length - 1].from : "docomo"));  // 前の人と同じキャリアで追加
+  renderPersons(list);
+  $("#persons .person:last-child").scrollIntoView({ behavior: "smooth", block: "center" });
+  if ($("#result").innerHTML) diagnose();
+});
+renderPersons([defaultPerson()]);
 
 // ───── 料金計算 ─────
 // 1人分：その会社のプランの中でいちばん安いものを選ぶ
@@ -468,16 +509,16 @@ function nowPlanCost(cid, p, person, ctx, famCount) {
   const over = person.gb > tier[0];
   return { plan: p, base: tier[1], capLabel: tier[0] === Infinity ? "無制限" : `${tier[0]}GB`, lines, call, total, over };
 }
+// 1人ずつの「今の月額」：入力した金額 → なければ au / UQ の今のプランから計算
 function estimateNow(persons, ctx) {
-  const cid = ownCarrier();
-  if (!cid) return null;
-  const famCount = persons.length + (cid === "au" ? ctx.exAu : ctx.exUq);
+  const famNow = { au: persons.filter(p => p.from === "au").length + ctx.exAu, uq: persons.filter(p => p.from === "uq").length + ctx.exUq };
   const rows = persons.map(pr => {
-    const p = DATA.currentPlans[cid].find(x => x.id === pr.now);
-    return p ? nowPlanCost(cid, p, pr, ctx, famCount) : null;
+    const plan = isOwn(pr.from) ? DATA.currentPlans[pr.from].find(x => x.id === pr.now) : null;
+    const est = plan ? nowPlanCost(pr.from, plan, pr, ctx, famNow[pr.from]) : null;
+    const amount = Number(pr.amount) || 0;
+    return { from: pr.from, est, amount, total: amount || (est ? est.total : 0), known: !!(amount || est) };
   });
-  const known = rows.filter(Boolean);
-  return { cid, rows, complete: known.length === rows.length, total: known.reduce((a, r) => a + r.total, 0) };
+  return { rows, complete: rows.every(r => r.known), total: rows.reduce((a, r) => a + r.total, 0) };
 }
 
 // 回線の割り当て（全員au / 全員UQ / 組み合わせ）を計算
@@ -487,7 +528,18 @@ function calcAssign(assign, persons, ctx) {
   const rows = [];
   for (let i = 0; i < persons.length; i++) {
     const c = assign[i] === "au" ? AU : UQ;
-    const r = bestPlan(c, persons[i], ctx, assign[i] === "au" ? famAu : famUq);
+    const fc = assign[i] === "au" ? famAu : famUq;
+    let r = bestPlan(c, persons[i], ctx, fc);
+    // 今 au / UQ の人は「今のプランのまま」も候補にする
+    const pr = persons[i];
+    const cur = pr.from === assign[i] && pr.now ? DATA.currentPlans[pr.from].find(x => x.id === pr.now) : null;
+    if (cur) {
+      const k = nowPlanCost(pr.from, cur, pr, ctx, fc);
+      if (!k.over && (!r || k.total < r.total)) {
+        const callLabel = pr.call === "none" || !k.call ? "" : `＋通話オプション ${yen(k.call)}`;
+        r = { carrier: c, plan: k.plan, capLabel: k.capLabel, base: k.base, lines: k.lines, call: k.call, callLabel, total: k.total, keep: true };
+      }
+    }
     if (!r) return null; // 容量が足りない
     rows.push(r);
   }
@@ -567,7 +619,7 @@ function famSummary(o, ctx) {
     const count = o.fam[c.id], ex = c.id === "au" ? ctx.exAu : ctx.exUq;
     const disc = rows.reduce((s, r) => s + r.lines.filter(([l]) => l.startsWith(c.famName)).reduce((a, [, v]) => a + v, 0), 0);
     sum += disc;
-    const who = `乗り換え${rows.length}人${ex ? `＋家族${ex}人` : ""}＝${count}回線`;
+    const who = `診断${rows.length}人${ex ? `＋家族${ex}人` : ""}＝${count}回線`;
     let note;
     if (disc) note = `<b>−${yen(disc)}/月</b>`;
     else if (count < 2) note = `<b>なし</b>（2回線から）`;
@@ -580,16 +632,17 @@ function famSummary(o, ctx) {
 
 function diagnose(e) {
   e && e.preventDefault();
-  const persons = [...document.querySelectorAll(".person")].map(p => ({ gb: Number(p.querySelector(".gb").value), call: p.querySelector(".call").value, fix: p.querySelector(".fix:checked").value, now: (p.querySelector(".now") || {}).value }));
+  const persons = readPersons().map(p => ({ ...p, gb: Number(p.gb) }));
   const ctx = {
     net: val("netPlan") === "plusPhone" ? true : val("netPlan") === "plusOnly" ? false : curNetSet(), denki: val("denki") === "yes", card: val("card") === "yes",
     exAu: +$("#exAu").value, exUq: +$("#exUq").value,
   };
   const currentInput = Number($("#current").value) || 0;
-  const own = ownCarrier();
-  const W = own ? "見直し" : "乗り換え";
-  const nowEst = estimateNow(persons, { ...ctx, net: curNetSet() });   // 今のプランは今のネットで計算
-  const current = currentInput || (nowEst && nowEst.complete ? nowEst.total : 0);
+  const ownCount = persons.filter(p => isOwn(p.from)).length;
+  const own = ownCount > 0;
+  const W = ownCount === persons.length ? "見直し" : ownCount ? "乗り換え・見直し" : "乗り換え";
+  const nowEst = estimateNow(persons, { ...ctx, net: curNetSet() });   // 今の月額は今のネットで計算
+  const current = currentInput || (nowEst.complete ? nowEst.total : 0);
   const n = persons.length;
   const { opts, best, allUq } = compare(persons, ctx);
   if (!best) {
@@ -643,7 +696,7 @@ function diagnose(e) {
         <div class="title">${best.name}</div>
         <div class="big">月 ${yen(save)} 節約</div>
         <div class="sub">1年で <b>${yen(save * 12)}</b>・2年で <b>${yen(save * 24)}</b> おトク</div>
-        <div class="sub">今 ${yen(current)}${!currentInput ? "（今のプランから計算）" : ""} → ${W}後 <b>${yen(best.total)}</b>/月</div>
+        <div class="sub">今 ${yen(current)}${!currentInput && nowEst.rows.some(r => !r.amount) ? "（今のプランから計算を含む）" : ""} → ${W}後 <b>${yen(best.total)}</b>/月</div>
       ${famSummary(best, ctx).html}${famLine}${netLine}</div>`;
     } else {
       html += `<div class="card hero bad">
@@ -659,12 +712,12 @@ function diagnose(e) {
       <div class="tagline">いちばん安い${W}</div>
       <div class="title">${best.name}</div>
       <div class="big">月 ${yen(best.total)}</div>
-      <div class="sub">${own ? "今のプランを選ぶか、今のスマホ代を入れると、節約額も計算します。" : "今のスマホ代を入れると、節約額も計算します。"}</div>
+      <div class="sub">1人ずつ「今の月額」を入れる${own ? "（au・UQ mobile の人は今のプランを選ぶ）" : ""}と、節約額も計算します。</div>
     ${famSummary(best, ctx).html}${famLine}${netLine}</div>`;
   }
 
   // 比較
-  html += nowCard(nowEst, currentInput);
+  html += personCard(persons, nowEst, best, currentInput);
   html += `<div class="card"><h2>${W}先の比較${netPlan !== "keep" ? `<span class="applied">${NET_LABEL[netPlan]}で計算</span>` : ""}</h2>`;
   if (netPlan === "plusOnly") html += `<p class="ex">auひかりプラスをネットのみで使うと、スマホのセット割は付きません。</p>`;
   opts.forEach((o, idx) => {
@@ -694,29 +747,7 @@ function diagnose(e) {
   html += netCard(persons, ctx, current, best);
   html += denkiCard(persons, ctx, best);
 
-  // 乗り換えの流れ
-  const from = val("carrier");
-  const fromNotes = {
-    docomo: "ドコモの解約金は今のプランならほぼかかりません。dポイントは解約前に使い切りましょう。",
-    softbank: "ソフトバンクの解約金は今のプランならほぼかかりません。「新トクするサポート」で機種を買った人は端末の返却時期を確認しましょう。",
-    ymobile: "ワイモバイルは解約金なし。PayPayカード割・おうち割がなくなる分も含めて比較できています。",
-    rakuten: "楽天モバイルはもともと安いので、通話やエリアの安定を重視する場合に乗り換えを検討しましょう。",
-    online: "ahamo・LINEMOはもともと安いので、店舗サポートや家族割・セット割を使えるかがポイントです。",
-    mvno: "格安SIMはもともと安いので、通信速度や店舗サポートを重視する場合に乗り換えを検討しましょう。",
-  };
-  if (own) html += ownFlowCard(own, best, nowEst);
-  else html += `<div class="card"><h2>乗り換えの流れ</h2>
-    <ul class="check">
-      <li><b>MNPワンストップ</b>に対応しているので、多くの場合は予約番号なしでそのまま申し込めます。</li>
-      <li>今のスマホをそのまま使うなら、<b>SIMロック解除</b>と対応機種かどうかを確認しましょう（2021年10月以降に買った機種は原則ロックなし）。</li>
-      <li>端末代の分割が残っている場合、乗り換え後も支払いは続きます（この診断の金額には入っていません）。</li>
-      <li>キャリアメール（@docomo.ne.jp など）は使えなくなります。必要なら「メールアドレス持ち運び」を利用しましょう。</li>
-      <li>${fromNotes[from]}</li>
-    </ul>
-    <details><summary>持っていくもの</summary>
-      <ul class="check"><li>本人確認書類（マイナンバーカード・運転免許証など）</li><li>支払い用のクレジットカードまたはキャッシュカード</li><li>今使っているスマホ</li></ul>
-    </details>
-  </div>`;
+  html += flowCard(persons, best, nowEst);
 
   html += `<button type="button" class="clear-btn restart" data-clear style="width:100%">入力をクリアして最初から</button>`;
   html += `<p class="disclaimer">※ 料金は${DATA.updated}時点の税込の目安です。キャンペーン・端末代・ユニバーサルサービス料などは含みません。最新の料金と条件は au・UQ mobile 公式サイトや店頭で確認してください。</p>`;
@@ -725,40 +756,73 @@ function diagnose(e) {
   out.style.display = "block";
   if (window.innerWidth < 1000) out.scrollIntoView({ behavior: "smooth" });
 }
-// ───── 今のプラン（au / UQ mobile の人）─────
-function nowCard(est, currentInput) {
-  if (!est) return "";
-  const name = est.cid === "au" ? "au" : "UQ mobile";
-  const n = est.rows.length;
-  const rows = est.rows.map((r, i) => r
-    ? `<tr><td>${n > 1 ? `${i + 1}人目 ` : ""}<span class="pill ${est.cid}">${name}</span>${r.plan.name}（${r.capLabel}）${r.plan.ended ? `<span class="disc">${r.plan.ended}に新規受付終了</span>` : ""}
-        <span class="disc">基本 ${yen(r.base)}${r.lines.map(([l, a]) => `／${l} −${yen(a)}`).join("")}${r.call ? `／通話オプション ＋${yen(r.call)}` : ""}</span>
-        ${r.over ? `<span class="disc minus">このプランの容量より多く使う設定です（速度制限やデータ追加の可能性）</span>` : ""}</td><td><b>${yen(r.total)}</b></td></tr>`
-    : `<tr><td>${n > 1 ? `${i + 1}人目 ` : ""}今のプラン：わからない・その他</td><td>—</td></tr>`).join("");
-  let foot = "";
-  if (est.complete) {
-    foot = `<tr><td><b>合計（計算の目安）</b></td><td><b>${yen(est.total)}</b></td></tr>`;
-    if (currentInput) foot += `<tr><td>入力した今のスマホ代${Math.abs(currentInput - est.total) >= 300 ? `<span class="disc">差 ${yen(Math.abs(currentInput - est.total))}：オプション・端末代・ほかの割引などの分かもしれません</span>` : ""}</td><td>${yen(currentInput)}</td></tr>`;
-  }
-  return `<div class="card"><h2>今のプラン</h2>
-    <table><thead><tr><th>人・プラン</th><th>月額</th></tr></thead><tbody>${rows}</tbody>${foot ? `<tfoot>${foot}</tfoot>` : ""}</table>
-    ${!est.complete && !currentInput ? `<div class="notice">「わからない・その他」の人がいるため、今の月額を計算できません。今のスマホ代を入れると節約額が出ます。</div>` : ""}
-    <p class="ex">節約額は${currentInput ? "入力した今のスマホ代" : "この計算の目安"}と比べています。今のネット・でんき・au PAYカードの条件で計算しています。</p>
+// ───── 1人ずつの比較（今 → おすすめ）─────
+const pillOf = id => `<span class="pill ${isOwn(id) ? id : "other"}">${carrierName(id)}</span>`;
+function personCard(persons, est, best, currentInput) {
+  const rows = persons.map((p, i) => {
+    const e = est.rows[i], r = best.rows[i];
+    const nowPlan = e.est ? `${e.est.plan.name}（${e.est.capLabel}）` : "";
+    const nowDetail = e.est ? `基本 ${yen(e.est.base)}${e.est.lines.map(([l, a]) => `／${l} −${yen(a)}`).join("")}${e.est.call ? `／通話 ＋${yen(e.est.call)}` : ""}` : "";
+    const notes = [
+      e.est && e.est.plan.ended ? `${e.est.plan.ended}に新規受付終了` : "",
+      e.est && e.est.over ? `<span class="minus">このプランの容量より多く使う設定です</span>` : "",
+      e.amount && e.est && Math.abs(e.amount - e.est.total) >= 300 ? `計算の目安は ${yen(e.est.total)}（差はオプション・ほかの割引などの分かも）` : "",
+    ].filter(Boolean);
+    const d = e.known ? e.total - r.total : null;
+    const same = !!r.keep;
+    return `<tr>
+      <td><span class="who">${i + 1}人目</span></td>
+      <td>${pillOf(p.from)}${nowPlan}<span class="disc">${e.known ? `<b>${yen(e.total)}</b>${e.amount ? "（入力）" : "（計算）"}` : "今の月額：未入力"}${nowDetail ? "・" + nowDetail : ""}</span>${notes.map(t => `<span class="disc">${t}</span>`).join("")}</td>
+      <td>${pillOf(r.carrier.id)}${r.plan.name}（${r.capLabel}）${same ? '<span class="disc">今のプランのまま</span>' : ""}<span class="disc"><b>${yen(r.total)}</b>・基本 ${yen(r.base)}${r.lines.map(([l, a]) => `／${l} −${yen(a)}`).join("")}${r.callLabel ? `／${r.callLabel}` : ""}</span></td>
+      <td class="save-cell ${d === null ? "" : d > 0 ? "plus" : d < 0 ? "minus" : ""}">${d === null ? "—" : d > 0 ? `−${yen(d)}` : d < 0 ? `＋${yen(-d)}` : "±0円"}</td>
+    </tr>`;
+  }).join("");
+  const unknown = est.rows.filter(r => !r.known).length;
+  return `<div class="card"><h2>1人ずつの比較</h2>
+    <table class="cmp"><thead><tr><th></th><th>今</th><th>おすすめ（${best.name}）</th><th>差額/月</th></tr></thead><tbody>${rows}</tbody>
+    ${est.complete ? `<tfoot><tr><td></td><td><b>${yen(est.total)}</b></td><td><b>${yen(best.total)}</b></td><td class="save-cell ${est.total - best.total > 0 ? "plus" : "minus"}">${est.total - best.total >= 0 ? "−" : "＋"}${yen(Math.abs(est.total - best.total))}</td></tr></tfoot>` : ""}</table>
+    ${currentInput ? `<p class="ex">節約額は、入力した家族の合計 ${yen(currentInput)} と比べています${est.complete && Math.abs(currentInput - est.total) >= 300 ? `（1人ずつの合計は ${yen(est.total)}）` : ""}。</p>` : ""}
+    ${unknown && !currentInput ? `<div class="notice">今の月額がわからない人が${unknown}人います。「今の月額」を入れる${persons.some(p => isOwn(p.from)) ? "か、au・UQ mobile の人は今のプランを選ぶ" : ""}と、家族全体の節約額が出ます。</div>` : ""}
   </div>`;
 }
-function ownFlowCard(own, best, est) {
-  const moves = best.rows.map(r => r.carrier.id);
-  const toOther = moves.some(c => c !== own);
-  const ended = est && est.rows.some(r => r && r.plan.ended);
-  return `<div class="card"><h2>見直しの流れ</h2>
+function flowCard(persons, best, est) {
+  const fromNotes = {
+    docomo: "ドコモの解約金は今のプランならほぼかかりません。dポイントは解約前に使い切りましょう。",
+    softbank: "ソフトバンクの解約金は今のプランならほぼかかりません。「新トクするサポート」で機種を買った人は端末の返却時期を確認しましょう。",
+    ymobile: "ワイモバイルは解約金なし。PayPayカード割・おうち割がなくなる分も含めて比較しています。",
+    rakuten: "楽天モバイルはもともと安いので、通話やエリアの安定を重視する場合に検討しましょう。",
+    online: "ahamo・LINEMOはもともと安いので、店舗サポートや家族割・セット割を使えるかがポイントです。",
+    mvno: "格安SIMはもともと安いので、通信速度や店舗サポートを重視する場合に検討しましょう。",
+  };
+  const others = [...new Set(persons.filter(p => !isOwn(p.from)).map(p => p.from))];
+  const moves = persons.map((p, i) => [p.from, best.rows[i].carrier.id, !!best.rows[i].keep]);
+  const change = moves.filter(([f, t, keep]) => isOwn(f) && f === t && !keep);
+  const migrate = [...new Set(moves.filter(([f, t]) => isOwn(f) && f !== t).map(([f, t]) => `${carrierName(f)} → ${carrierName(t)}`))];
+  const ended = est.rows.some((r, i) => r.est && r.est.plan.ended && !best.rows[i].keep);
+  const keeps = moves.filter(m => m[2]).length;
+  let html = `<div class="card"><h2>手続きの流れ</h2>`;
+  if (others.length) html += `<h3 class="h3">他社からの乗り換え（${others.map(carrierName).join("・")}）</h3>
     <ul class="check">
-      ${moves.some(c => c === own) ? `<li><b>${own === "au" ? "au" : "UQ mobile"}のままプラン変更</b>：${own === "au" ? "My au" : "My UQ mobile"}や店頭で手続きできます。新しいプランは基本的に翌月から適用です。</li>` : ""}
-      ${toOther ? `<li><b>${own === "au" ? "au → UQ mobile" : "UQ mobile → au"}</b>：同じKDDIグループ内の「番号移行」で、電話番号はそのまま使えます。SIMの差し替え（eSIMは再発行）が必要です。</li>` : ""}
-      ${ended ? `<li><b>新規受付終了のプランから変更すると、元のプランには戻せません。</b>今のプランの特典（データ・通話・サービス）がなくなってもよいか確認しましょう。</li>` : ""}
-      <li>端末代の分割が残っている場合、見直し後も支払いは続きます（この診断の金額には入っていません）。</li>
-      <li>家族割・自宅セット割は、見直し後のプランでも対象かどうかをあわせて確認しましょう。</li>
+      <li><b>MNPワンストップ</b>に対応しているので、多くの場合は予約番号なしでそのまま申し込めます。</li>
+      <li>今のスマホをそのまま使うなら、<b>SIMロック解除</b>と対応機種かどうかを確認しましょう（2021年10月以降に買った機種は原則ロックなし）。</li>
+      <li>キャリアメール（@docomo.ne.jp など）は使えなくなります。必要なら「メールアドレス持ち運び」を利用しましょう。</li>
+      ${others.map(c => `<li>${fromNotes[c]}</li>`).join("")}
+    </ul>`;
+  if (change.length || migrate.length || keeps) html += `<h3 class="h3">au・UQ mobile の見直し</h3>
+    <ul class="check">
+      ${change.length ? `<li><b>同じ会社でプラン変更</b>：My au・My UQ mobile や店頭で手続きできます。新しいプランは基本的に翌月から適用です。</li>` : ""}
+      ${migrate.map(m => `<li><b>${m}</b>：同じKDDIグループ内の「番号移行」で、電話番号はそのまま使えます。SIMの差し替え（eSIMは再発行）が必要です。</li>`).join("")}
+      ${ended ? `<li><b>新規受付終了のプランから変更すると、元のプランには戻せません。</b>今のプランの特典がなくなってもよいか確認しましょう。</li>` : ""}
+    </ul>`;
+  if (keeps) html += `<p class="ex">今のプランのままがいちばん安い人（${keeps}人）は、手続きはいりません。</p>`;
+  html += `<ul class="check">
+      <li>端末代の分割が残っている場合、手続き後も支払いは続きます（この診断の金額には入っていません）。</li>
     </ul>
+    <details><summary>持っていくもの</summary>
+      <ul class="check"><li>本人確認書類（マイナンバーカード・運転免許証など）</li><li>支払い用のクレジットカードまたはキャッシュカード</li><li>今使っているスマホ</li></ul>
+    </details>
   </div>`;
+  return html;
 }
 
 // ───── ネットを auひかりプラス にした場合 ─────
@@ -850,8 +914,8 @@ function clearAll() {
   $("#form").reset();
   netCoSel.value = "other";
   netCostTouched = false;
-  $("#persons").innerHTML = "";   // 前の値を引き継がないように作り直す
-  onCarrierChange();
+  renderPersons([defaultPerson()]);
+  $("#totalBox").open = false;
   onNetChange();
   $("#estBox").open = false;
   updateEstimate();
