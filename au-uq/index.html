@@ -89,6 +89,9 @@
   summary { cursor: pointer; color: var(--accent); font-size: .88rem; }
   .disclaimer { color: var(--muted); font-size: .8rem; margin-top: 16px; }
   .version { color: var(--muted); font-size: .8rem; }
+  .actions { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+  .clear-btn { width: auto; padding: 14px 22px; background: var(--card); color: var(--text); border: 1px solid var(--line); }
+  .restart { margin-top: 4px; }
   .est { margin-top: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: var(--bg); }
   .est .row2 { row-gap: 10px; }
   .est-out { margin: 12px 0 8px; font-size: .95rem; }
@@ -261,17 +264,20 @@
       </div>
     </fieldset>
 
-    <button type="submit">診断する</button>
+    <div class="actions">
+      <button type="submit">診断する</button>
+      <button type="button" class="clear-btn" data-clear>クリア</button>
+    </div>
   </form>
 
   <section id="result"></section>
   </div>
 </main>
 
-<script src="plans.js?v=1.7.0"></script>
+<script src="plans.js?v=1.8.0"></script>
 <script>
-const APP_VERSION = "1.7.0";
-const APP_DATE = "2026-11-14";
+const APP_VERSION = "1.8.0";
+const APP_DATE = "2026-11-15";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金は${DATA.updated}時点）`;
 
 // ───── 更新チェック：公開中の version.json と比べて、古ければ「最新版に更新」ボタンを出す ─────
@@ -650,6 +656,7 @@ function diagnose(e) {
     </details>
   </div>`;
 
+  html += `<button type="button" class="clear-btn restart" data-clear style="width:100%">入力をクリアして最初から</button>`;
   html += `<p class="disclaimer">※ 料金は${DATA.updated}時点の税込の目安です。キャンペーン・端末代・ユニバーサルサービス料などは含みません。最新の料金と条件は au・UQ mobile 公式サイトや店頭で確認してください。</p>`;
 
   out.innerHTML = html;
@@ -736,6 +743,24 @@ function denkiCard(persons, ctx, best) {
 }
 
 $("#form").addEventListener("submit", diagnose);
+
+// ───── クリア：入力をすべて最初の状態に戻す ─────
+function clearAll() {
+  if (!confirm("入力した内容をすべて消して、最初の状態に戻しますか？")) return;
+  $("#result").innerHTML = "";
+  $("#result").style.display = "";
+  $("#form").reset();
+  netCoSel.value = "other";
+  netCostTouched = false;
+  $("#persons").innerHTML = "";   // 前の値を引き継がないように作り直す
+  renderPersons();
+  onNetChange();
+  $("#estBox").open = false;
+  updateEstimate();
+  try { sessionStorage.removeItem(FORM_KEY); } catch (e) {}
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+document.addEventListener("click", e => { if (e.target.closest("[data-clear]")) clearAll(); });
 $("#result").addEventListener("click", e => {
   const b = e.target.closest("[data-netplan], [data-speed]");
   if (!b) return;
