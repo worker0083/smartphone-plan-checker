@@ -113,6 +113,9 @@
   .yr .yr-label { font-weight: 800; font-size: .85rem; color: var(--good); padding-left: 4px; }
   .yr.bad .yr-label { color: var(--warn); }
   .yr.total b { font-size: 1.3rem; }
+  .yr .yr-note { grid-column: 1 / -1; text-align: left; font-size: .78rem; color: var(--muted); }
+  .u18-chip:has(input:checked) { background: var(--uq-weak) !important; border-color: var(--uq) !important; color: var(--uq) !important; }
+  .chips input[type=checkbox] { display: none; }
   @media (max-width: 520px) { .yr { grid-template-columns: repeat(3, 1fr); } .yr .yr-label { grid-column: 1 / -1; padding: 0; } .yr b { font-size: 1rem; } }
   .pc-bd { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: .82rem; color: var(--muted); margin-top: 6px; line-height: 1.6; }
   .pc-bd b { color: var(--text); }
@@ -338,10 +341,10 @@
   </div>
 </main>
 
-<script src="plans.js?v=2.5.0"></script>
+<script src="plans.js?v=2.6.0"></script>
 <script>
-const APP_VERSION = "2.5.0";
-const APP_DATE = "2026-11-15";
+const APP_VERSION = "2.6.0";
+const APP_DATE = "2026-11-20";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金は${DATA.updated}時点）`;
 
 // ───── 更新チェック：公開中の version.json と比べて、古ければ「最新版に更新」ボタンを出す ─────
@@ -431,7 +434,7 @@ const CARRIERS = [["docomo", "ドコモ"], ["softbank", "ソフトバンク"], [
   ["online", "ahamo・LINEMO"], ["mvno", "格安SIM"], ["au", "au"], ["uq", "UQ mobile"]];
 const carrierName = id => (CARRIERS.find(c => c[0] === id) || [, ""])[1];
 const isOwn = id => id === "au" || id === "uq";
-const defaultPerson = from => ({ from: from || "docomo", now: "", amount: "", gb: "5", call: "none", fix: "auto" });
+const defaultPerson = from => ({ from: from || "docomo", now: "", amount: "", gb: "5", call: "none", fix: "auto", u18: false });
 function nowPlanOptions(cid, sel) {
   const list = DATA.currentPlans[cid];
   const opt = p => `<option value="${p.id}" ${p.id === sel ? "selected" : ""}>${p.name}${p.ended ? `（${p.ended}受付終了）` : ""}</option>`;
@@ -448,6 +451,7 @@ function readPersons() {
     gb: el.querySelector(".gb").value,
     call: el.querySelector(".call").value,
     fix: (el.querySelector(".fix:checked") || {}).value || "auto",
+    u18: el.querySelector(".u18").checked,
   }));
 }
 // 配列 → 画面
@@ -479,6 +483,7 @@ function renderPersons(list) {
           ${[["auto", "おまかせ"], ["au", "au"], ["uq", "UQ mobile"]].map(([v, t]) =>
             `<label><input type="radio" class="fix" name="fix${i}" value="${v}" ${v === d.fix ? "checked" : ""}>${t}</label>`).join("")}
         </div>
+        <div class="chips"><label class="u18-chip"><input type="checkbox" class="u18" ${d.u18 ? "checked" : ""}>18歳以下（5〜18歳）</label></div>
       </div>
     </div>`).join("");
 }
@@ -576,7 +581,16 @@ function estimateNow(persons, ctx) {
 }
 
 // 回線の割り当て（全員au / 全員UQ / 組み合わせ）を計算
-function calcAssign(assign, persons, ctx) {
+function calcAssign(assign, persons, ctx, oyako) {
+  // UQ親子応援割：18歳以下の人が UQ の対象プランに新しく入る形なら、家族の UQ 回線も割引
+  if (oyako === undefined) {
+    const on = persons.some((p, i) => p.u18 && assign[i] === "uq");
+    if (!on) return calcAssign(assign, persons, ctx, false);
+    const r = calcAssign(assign, persons, ctx, true);
+    // 18歳以下の人が「今のプランのまま」になったら割引は付かないので、付けずに計算し直す
+    if (r && !r.rows.some((row, i) => persons[i].u18 && row.oyako)) return calcAssign(assign, persons, ctx, false);
+    return r;
+  }
   const famAu = assign.filter(a => a === "au").length + ctx.exAu;
   const famUq = assign.filter(a => a === "uq").length + ctx.exUq;
   const rows = [];
@@ -584,12 +598,17 @@ function calcAssign(assign, persons, ctx) {
     const c = assign[i] === "au" ? AU : UQ;
     const fc = assign[i] === "au" ? famAu : famUq;
     let r = bestPlan(c, persons[i], ctx, fc);
+    const OY = DATA.uqOyako;
+    const nowName = persons[i].from === "uq" && persons[i].now ? (DATA.currentPlans.uq.find(x => x.id === persons[i].now) || {}).name : null;
+    if (r && oyako && c === UQ && OY.plans.includes(r.plan.name) && nowName !== r.plan.name) {   // すでに同じプランの人は「新たに加入」ではないので対象外
+      r = { ...r, lines: [...r.lines, [OY.label, OY.amt]], total: r.total - OY.amt, oyako: OY.amt };
+    }
     // 今 au / UQ の人は「今のプランのまま」も候補にする
     const pr = persons[i];
     const cur = pr.from === assign[i] && pr.now ? DATA.currentPlans[pr.from].find(x => x.id === pr.now) : null;
     if (cur) {
       const k = nowPlanCost(pr.from, cur, pr, ctx, fc);
-      if (!k.over && (!r || k.total < r.total)) {
+      if (!k.over && (!r || k.total <= r.total)) {   // 同じ金額なら今のプランのまま（手続き不要）
         const callLabel = pr.call === "none" || !k.call ? "" : `＋通話オプション ${yen(k.call)}`;
         r = { carrier: c, plan: k.plan, cap: k.cap, capLabel: k.capLabel, base: k.base, lines: k.lines, call: k.call, callLabel, total: k.total, keep: true };
       }
@@ -597,7 +616,7 @@ function calcAssign(assign, persons, ctx) {
     if (!r) return null; // 容量が足りない
     rows.push(r);
   }
-  return { rows, total: rows.reduce((s, r) => s + r.total, 0), fam: { au: famAu, uq: famUq } };
+  return { rows, total: rows.reduce((s, r) => s + r.total, 0), fam: { au: famAu, uq: famUq }, oyako: rows.reduce((s, r) => s + (r.oyako || 0), 0) };
 }
 
 // 全員au / 全員UQ / 組み合わせ の中でいちばん安い形
@@ -814,7 +833,8 @@ function diagnose(e) {
         <div class="tagline">${persons.some(p => p.fix !== "auto") ? `指定した${W}先での結果` : `いちばんおトクな${W}`}</div>
         <div class="title">${best.name}</div>${applied.length ? `<div class="sub">変えた場合：${appliedTags}</div>` : ""}
         <div class="big">${hh ? "家計で" : ""}月 ${yen(save)} 節約</div>${hh ? `<div class="sub">うちスマホ代は月 ${yen(current - best.total)} 節約</div>` : ""}
-        <div class="sub">1年で <b>${yen(save * 12)}</b>・2年で <b>${yen(save * 24)}</b> おトク</div>
+        <div class="sub">1年で <b>${yen(save * 12)}</b>・2年で <b>${yen(save * 24 - (best.oyako || 0) * 12)}</b> おトク</div>
+        ${best.oyako ? `<div class="sub">UQ親子応援割（月${yen(best.oyako)}引き）は1年間。2年目からは月${yen(best.oyako)}高くなります。</div>` : ""}
         <div class="sub">今 ${yen(current)}${!currentInput && nowEst.rows.some(r => !r.amount) ? "（今のプランから計算を含む）" : ""} → ${W}後 <b>${yen(best.total)}</b>/月</div>
       ${famSummary(best, ctx).html}${famLine}${netLine}</div>`;
     } else {
@@ -894,11 +914,18 @@ function gbChange(nowCap, newCap) {
   return d > 0 ? `<span class="chg up">ギガ ${d}GB 増える</span>` : `<span class="chg down">ギガ ${-d}GB 減る</span>`;
 }
 // 1年・2年でいくら得か
-const yearBox = d => d === null || d === 0 ? "" : `<div class="yr ${d > 0 ? "good" : "bad"}">
-  <div><span>1か月</span><b>${d > 0 ? "" : "＋"}${yen(Math.abs(d))}</b></div>
-  <div><span>1年間</span><b>${d > 0 ? "" : "＋"}${yen(Math.abs(d) * 12)}</b></div>
-  <div><span>2年間</span><b>${d > 0 ? "" : "＋"}${yen(Math.abs(d) * 24)}</b></div>
-  <div class="yr-label">${d > 0 ? "おトク" : "高くなる"}</div></div>`;
+// tmp：1年間だけの割引（UQ親子応援割）。2年目はその分を引かずに計算
+const yearBox = (d, tmp = 0) => {
+  if (d === null || d === 0) return "";
+  const y1 = d * 12, y2 = d * 24 - tmp * 12;
+  const v = x => `${x > 0 ? "" : "＋"}${yen(Math.abs(x))}`;
+  return `<div class="yr ${d > 0 ? "good" : "bad"}">
+  <div><span>1か月${tmp ? "（1年目）" : ""}</span><b>${v(d)}</b></div>
+  <div><span>1年間</span><b>${v(y1)}</b></div>
+  <div><span>2年間</span><b>${v(y2)}</b></div>
+  <div class="yr-label">${y2 > 0 ? "おトク" : "高くなる"}</div>
+  ${tmp ? `<div class="yr-note">2年目は親子応援割（月${yen(tmp)}）が終わるので、月${v(d - tmp)}で計算</div>` : ""}</div>`;
+};
 const breakdown = (base, lines, callLabel) => `基本 ${yen(base)}${lines.map(([l, a]) => `<br>${l} −${yen(a)}`).join("")}${callLabel ? `<br>${callLabel}` : ""}`;
 function personCard(persons, est, best, currentInput) {
   const items = persons.map((p, i) => {
@@ -928,8 +955,8 @@ function personCard(persons, est, best, currentInput) {
           <div class="pc-price">${yen(r.total)}<small>/月</small></div>
         </div>
       </div>
-      <div class="pc-chg">${r.keep ? `<span class="chg same">今のプランのままがいちばん安い（手続き不要）</span>` : (d ? "" : priceChg) + gbChange(nowCap, r.cap)}</div>
-      ${r.keep ? "" : yearBox(d)}
+      <div class="pc-chg">${r.keep ? `<span class="chg same">今のプランのままがいちばん安い（プラン変更の手続き不要）</span>${d > 0 ? `<span class="chg good">家族の割引が増えて安くなります</span>` : ""}` : (d ? "" : priceChg) + gbChange(nowCap, r.cap)}</div>
+      ${yearBox(d, r.oyako || 0)}
       ${notes.map(t => `<div class="disc">${t}</div>`).join("")}
       <details class="pc-detail"><summary>料金の内訳</summary>
         <div class="pc-bd">
@@ -945,7 +972,7 @@ function personCard(persons, est, best, currentInput) {
     ${items}
     ${est.complete ? `<div class="pc-total"><span>合計</span><span>${yen(est.total)} → <b>${yen(best.total)}</b></span>
       <b class="${tot > 0 ? "plus" : tot < 0 ? "minus" : ""}">${tot > 0 ? `月 ${yen(tot)} 安い` : tot < 0 ? `月 ${yen(-tot)} 高い` : "同じ"}</b></div>
-      ${yearBox(tot).replace('class="yr', 'class="yr total')}` : ""}
+      ${yearBox(tot, best.oyako || 0).replace('class="yr', 'class="yr total')}` : ""}
     ${currentInput ? `<p class="ex">いちばん上の節約額は、入力した家族の合計 ${yen(currentInput)} と比べています。</p>` : ""}
     ${unknown && !currentInput ? `<div class="notice">今の月額がわからない人が${unknown}人います。「今の月額」を入れる${persons.some(p => isOwn(p.from)) ? "か、au・UQ mobile の人は今のプランを選ぶ" : ""}と、家族全体の節約額が出ます。</div>` : ""}
     <p class="ex">他社の人は今のプランのギガがわからないため、「使う量」を目安に表示しています。</p>
