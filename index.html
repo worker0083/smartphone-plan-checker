@@ -317,10 +317,10 @@
 
 <script>
 // ───── バージョン（更新するときは version.json と合わせて書き換える）─────
-const APP_VERSION = "1.8.2";
+const APP_VERSION = "1.8.3";
 const APP_DATE = "2026-11-21";
 </script>
-<script src="plans.js?v=1.8.2"></script>
+<script src="plans.js?v=1.8.3"></script>
 <script>
 const D = window.DATA;
 
@@ -407,6 +407,7 @@ function studentDiscs(c, plan, tier, mem, groupAges) {
     let amt = st.amt || 0;
     if (st.byTier) amt = st.byTier[tier[0]] || 0;
     if (st.byNeed) amt = st.byNeed.find(([g]) => mem.need <= g)[1];
+    if (st.free) amt = 1; // 実際の額は linePrice で割引後の月額に置きかえる
     if (amt > 0) out.push({ ...st, amt, who: mem.who, student: true });
   }
   return out;
@@ -469,14 +470,16 @@ function linePrice(c, plan, ctx, setNet, setDenki, mem) {
   if (!c.famWithSet && setLine > 0 && fam > 0) { if (fam > setLine) setLine = 0; else fam = 0; }
   if (setLine) { cost -= setLine; parts.push(`セット割 -${yen(setLine)}`); }
   if (fam) { cost -= fam; parts.push(`家族割 -${yen(fam)}${plan.famFrom2nd ? "（平均）" : ""}`); }
-  if (ctx.card && c.card && plan.card !== false) { cost -= c.card; parts.push(`${c.cardName} -${yen(c.card)}`); }
+  const cardAmt = plan.cardAmt ?? c.card;
+  if (ctx.card && cardAmt && plan.card !== false) { cost -= cardAmt; parts.push(`${c.cardName} -${yen(cardAmt)}`); }
+  const baseAfter = Math.max(cost, 0); // 各種割引後の月額（通話オプション前）。「半年0円」の学割はこの額を引く
   const add = mem.call === "short" ? plan.callShort : mem.call === "long" ? plan.callLong : 0;
   if (add) { cost += add; parts.push(`${mem.call === "short" ? "短時間かけ放題" : "かけ放題"} +${yen(add)}`); }
   // 学割：ずっと続くものは月額から引き、期間限定のものは乗り換え時のキャンペーンとして扱う
-  const sd = studentDiscs(c, plan, tier, mem, ctx.groupAges || new Set());
+  const sd = studentDiscs(c, plan, tier, mem, ctx.groupAges || new Set()).map(x => x.free ? { ...x, amt: baseAfter } : x).filter(x => x.amt > 0);
   for (const x of sd.filter(x => !x.months)) { cost -= x.amt; parts.push(`${x.label} -${yen(x.amt)}`); }
   cost = Math.max(cost, 0);
-  const promos = [...linePromos(c, plan, tier, mem), ...(mem.carrierId === c.id ? [] : sd.filter(x => x.months))];
+  const promos = [...linePromos(c, plan, tier, mem), ...sd.filter(x => x.months && (mem.carrierId !== c.id || x.stayOk))];
   return { plan: plan.name, gb: tier[0], cost, parts, promos, eff: cost - promoValue(promos) / H };
 }
 
@@ -783,7 +786,7 @@ document.getElementById("form").addEventListener("submit", e => {
           <div class="when">${st.start ? `${dateText(st.start)} 受付開始・` : ""}${st.until ? `申込 〜${dateText(st.until)}` : "終了日未定"}${st.note ? "・" + st.note : ""}</div></div>`).join("")
           : '<div class="none">学割なし（確認時点）</div>'}
       </div>`).join("")}</div>
-    <div class="breakdown" style="margin-top:8px">期間限定の学割は、乗り換え・新規で契約したときだけ計算に入れています。今のキャリアのまま見直す場合は対象外として計算しています。</div>`;
+    <div class="breakdown" style="margin-top:8px">期間限定の学割は、乗り換え・新規で契約したときだけ計算に入れています（ドコモU22割はプラン変更でも対象のため、今ドコモの人にも入れています）。</div>`;
 
   document.getElementById("internet").style.display = useNet ? "" : "none";
   document.getElementById("elec").style.display = useElec ? "" : "none";
