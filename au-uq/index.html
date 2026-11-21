@@ -220,10 +220,49 @@
 
     .chips label { padding: 10px 18px; font-size: 1rem; }
   }
+  .jump { display: none; }
+  #resultNav { display: none; }
+
+  /* ───── iPad横向き・PC：左に入力、右に結果。左右それぞれスクロール ───── */
   @media (min-width: 1000px) {
-    main { max-width: 1120px; }
-    .layout { display: grid; grid-template-columns: 500px 1fr; gap: 24px; align-items: start; }
-    .layout > form { position: sticky; top: 16px; max-height: calc(100vh - 120px); overflow-y: auto; margin-bottom: 0; }
+    html, body { height: 100%; }
+    body { overflow: hidden; }
+    main { max-width: 1440px; height: 100vh; height: 100dvh; display: flex; flex-direction: column; padding: 12px 20px 0; }
+    header.top { margin-bottom: 10px; align-items: center; flex-wrap: nowrap; }
+    header.top > div:first-child { display: flex; align-items: baseline; gap: 14px; min-width: 0; }
+    .ver { white-space: nowrap; }
+    header.top h1 { font-size: 1.45rem; margin: 0; }
+    header.top .lead { font-size: .85rem; }
+    .update-bar { margin-bottom: 10px; }
+    .layout { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(440px, 44%) 1fr; gap: 16px;
+      padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+    .layout > form, #result { height: 100%; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; margin: 0; }
+    .layout > form { padding: 0 18px 18px; }
+    .card { padding: 18px; border-radius: 16px; margin-bottom: 12px; }
+    fieldset { margin-bottom: 20px; scroll-margin-top: 60px; }
+    /* 入力欄の上の目次 */
+    .jump { display: flex; gap: 6px; position: sticky; top: 0; z-index: 3; background: var(--card); margin: 0 -18px 12px; padding: 12px 18px 10px; border-bottom: 1px solid var(--line); }
+    .jump button, #resultNav button { width: auto; flex: 1; min-height: 40px; padding: 6px 8px; font-size: .85rem; font-weight: 700; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 10px; white-space: nowrap; }
+    .jump button.on, #resultNav button.on { background: var(--accent-weak); border-color: var(--accent); color: var(--accent); }
+    /* 結果の上の目次 */
+    #resultNav { display: flex; gap: 6px; position: sticky; top: 0; z-index: 3; background: var(--bg); padding: 0 0 10px; overflow-x: auto; }
+    #resultNav button { flex: none; }
+    #result .card { scroll-margin-top: 56px; }
+    /* まだ診断していないとき */
+    #result:empty { display: flex; align-items: center; justify-content: center; border: 2px dashed var(--line); border-radius: 16px; }
+    #result:empty::before { content: "左に入力して、下の「診断する」を押すと\A ここに結果が出ます"; white-space: pre; text-align: center; color: var(--muted); font-size: 1.05rem; line-height: 1.8; }
+    .person { padding: 10px 12px 12px; margin-bottom: 10px; }
+    .carrier-grid { grid-template-columns: repeat(4, 1fr); }
+    .carrier-grid label { font-size: .8rem !important; min-height: 40px; }
+    .big { font-size: 2rem; }
+    .actions { padding-top: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
+    .actions button[type=submit], .actions .clear-btn { min-height: 50px; }
+  }
+  /* iPad mini など少し狭い横向き */
+  @media (min-width: 1000px) and (max-width: 1250px) { header.top .lead { display: none; } }
+  @media (min-width: 1000px) and (max-width: 1150px) {
+    .layout { grid-template-columns: 430px 1fr; }
+    .carrier-grid { grid-template-columns: repeat(3, 1fr); }
   }
 </style>
 </head>
@@ -243,7 +282,10 @@
 
   <div class="layout">
   <form id="form" class="card" novalidate>
-    <fieldset>
+    <nav class="jump" id="formNav" aria-label="入力の場所">
+      <button type="button" data-jump="f1">1 診断する人</button><button type="button" data-jump="f2">2 家族・割引</button><button type="button" data-jump="f3">3 ネット</button><button type="button" data-jump="f4">4 でんき</button>
+    </nav>
+    <fieldset id="f1">
       <legend><span class="num">1</span>診断する人<span class="hint">　1人ずつ今のキャリアと使い方を入れます</span></legend>
       <div id="persons"></div>
       <button type="button" class="add-btn" id="addPerson">＋ 人を追加</button>
@@ -256,7 +298,7 @@
       </details>
     </fieldset>
 
-    <fieldset>
+    <fieldset id="f2">
       <legend><span class="num">2</span>家族・割引</legend>
       <div class="q">
         <div class="label">ここに入れていない家族で、au / UQ mobile を使っている人<span class="hint">　家族割の回線数に入ります</span></div>
@@ -282,7 +324,7 @@
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset id="f3">
       <legend><span class="num">3</span>自宅のインターネット</legend>
       <div class="q">
         <label for="netCo">今のネット会社</label>
@@ -300,7 +342,7 @@
       <p class="hint">auひかりプラスに変えた場合は、診断結果で比べられます。</p>
     </fieldset>
 
-    <fieldset>
+    <fieldset id="f4">
       <legend><span class="num">4</span>でんき</legend>
       <div class="q">
         <div class="label">今の電気</div>
@@ -346,9 +388,9 @@
   </div>
 </main>
 
-<script src="plans.js?v=2.7.0"></script>
+<script src="plans.js?v=2.8.0"></script>
 <script>
-const APP_VERSION = "2.7.0";
+const APP_VERSION = "2.8.0";
 const APP_DATE = "2026-11-21";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金は${DATA.updated}時点）`;
 
@@ -500,6 +542,11 @@ $("#persons").addEventListener("change", e => {
     renderPersons(list);
   }
   if ($("#result").innerHTML) diagnose();
+});
+$("#persons").addEventListener("input", e => {
+  if (!e.target.classList.contains("amount") || !$("#result").innerHTML) return;
+  clearTimeout(liveTimer);
+  liveTimer = setTimeout(() => diagnose(), 400);
 });
 $("#persons").addEventListener("click", e => {
   const b = e.target.closest("[data-del]");
@@ -913,13 +960,56 @@ function diagnose(e) {
 
   out.innerHTML = html;
   out.style.display = "block";
+  buildResultNav();
   const sv = current > 0 ? current - best.total : null;
   $("#barSum").innerHTML = `${best.name}　<b>${yen(best.total)}</b>/月`
     + (sv === null ? "" : `<br><span class="${sv > 0 ? "plus" : "minus"}">${sv > 0 ? `月 ${yen(sv)} 節約` : `月 ${yen(-sv)} 高い`}</span>`)
     + ` <button type="button" id="toResult">結果を見る</button>`;
   $("#form").querySelector("button[type=submit]").textContent = "もう一度診断";
-  if (window.innerWidth < 1000 && e) out.scrollIntoView({ behavior: "smooth" });
+  if (e) { if (isWide()) out.scrollTo({ top: 0, behavior: "smooth" }); else out.scrollIntoView({ behavior: "smooth" }); }
 }
+const isWide = () => window.matchMedia("(min-width: 1000px)").matches;
+// 結果の上に目次を作る（iPad横向き）
+function buildResultNav() {
+  const out = $("#result");
+  const cards = [...out.querySelectorAll(":scope > .card")];
+  const short = t => t.replace(/\s.*$/, "").replace("auひかりプラス（関西）の詳細", "ネット").replace("auでんきの詳細", "でんき").replace(/先の比較$/, "先").replace("1人ずつの比較", "1人ずつ").replace("手続きの流れ", "手続き");
+  cards.forEach((c, i) => c.id = "rc" + i);
+  const nav = document.createElement("nav");
+  nav.id = "resultNav";
+  nav.innerHTML = cards.map((c, i) => {
+    const h = c.querySelector("h2");
+    const label = c.classList.contains("hero") ? "結果" : h ? short(h.childNodes[0].textContent.trim()) : "";
+    return label ? `<button type="button" data-rjump="rc${i}">${label}</button>` : "";
+  }).join("");
+  out.prepend(nav);
+  markNav(out, cards, "data-rjump");
+}
+document.addEventListener("click", e => {
+  const j = e.target.closest("[data-jump]");
+  if (j) { $("#" + j.dataset.jump).scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+  const r = e.target.closest("[data-rjump]");
+  if (r) $("#" + r.dataset.rjump).scrollIntoView({ behavior: "smooth", block: "start" });
+});
+// 目次：今見ている場所に色を付ける
+function markNav(container, items, attr) {
+  const top = container.getBoundingClientRect().top + 70;
+  let cur = null;
+  for (const el of items) if (el && el.getBoundingClientRect().top <= top) cur = el.id;
+  if (!cur && items[0]) cur = items[0].id;
+  document.querySelectorAll(`[${attr}]`).forEach(b => b.classList.toggle("on", b.getAttribute(attr) === cur));
+}
+$("#form").addEventListener("scroll", () => markNav($("#form"), ["f1", "f2", "f3", "f4"].map(id => document.getElementById(id)), "data-jump"), { passive: true });
+$("#result").addEventListener("scroll", () => markNav($("#result"), [...$("#result").querySelectorAll(":scope > .card")], "data-rjump"), { passive: true });
+markNav($("#form"), ["f1", "f2", "f3", "f4"].map(id => document.getElementById(id)), "data-jump");
+
+// 結果が出ているときは、入力を変えるとすぐ計算し直す（左で入力→右ですぐ確認）
+let liveTimer = null;
+$("#form").addEventListener("input", e => {
+  if (!$("#result").innerHTML || e.target.closest("#persons")) return;   // 人の欄は別で計算し直している
+  clearTimeout(liveTimer);
+  liveTimer = setTimeout(() => diagnose(), 300);
+});
 // ───── 1人ずつの比較（今 → おすすめ）─────
 const pillOf = id => `<span class="pill ${isOwn(id) ? id : "other"}">${carrierName(id)}</span>`;
 const gbText = cap => cap === Infinity ? "無制限" : `${cap}GBまで`;
@@ -1122,7 +1212,7 @@ function denkiCard(persons, ctx, best) {
 }
 
 $("#form").addEventListener("submit", diagnose);
-document.addEventListener("click", e => { if (e.target.id === "toResult") $("#result").scrollIntoView({ behavior: "smooth" }); });
+document.addEventListener("click", e => { if (e.target.id === "toResult") { if (isWide()) $("#result").scrollTo({ top: 0, behavior: "smooth" }); else $("#result").scrollIntoView({ behavior: "smooth" }); } });
 
 // ───── クリア：入力をすべて最初の状態に戻す ─────
 function clearAll() {
@@ -1141,6 +1231,7 @@ function clearAll() {
   updateEstimate();
   try { sessionStorage.removeItem(FORM_KEY); } catch (e) {}
   window.scrollTo({ top: 0, behavior: "smooth" });
+  $("#form").scrollTo({ top: 0, behavior: "smooth" });
 }
 document.addEventListener("click", e => { if (e.target.closest("[data-clear]")) clearAll(); });
 $("#result").addEventListener("click", e => {
