@@ -164,6 +164,8 @@
     background: var(--accent-weak); border: 1px solid var(--accent); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: .92rem;
   }
   .update-bar.show { display: flex; }
+  .ver { display: inline-flex; align-items: baseline; gap: 8px; }
+  .linkbtn { background: none; border: 0; color: var(--accent); font-size: .8rem; font-weight: 600; width: auto; min-height: 32px; padding: 4px 2px; cursor: pointer; text-decoration: underline; }
   .promo { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; background: var(--good-weak); font-size: .85rem; }
   .promo-title { font-weight: 700; color: var(--good); display: flex; align-items: center; }
   details.promo { margin-top: 8px; }
@@ -191,7 +193,7 @@
   </div>
   <div class="topbar">
     <h1>スマホ・ネット・でんき 料金診断</h1>
-    <span class="version" id="version"></span>
+    <span class="ver"><span class="version" id="version"></span><button type="button" class="linkbtn" id="checkBtn">更新を確認</button></span>
   </div>
   <p class="lead">スマホ・自宅のインターネット・電気代をまとめて入力すると、各社ごとにいちばん安くなる組み合わせを計算して、家計全体で比べます（関西エリア向け）。</p>
 
@@ -315,10 +317,10 @@
 
 <script>
 // ───── バージョン（更新するときは version.json と合わせて書き換える）─────
-const APP_VERSION = "1.8.0";
+const APP_VERSION = "1.8.1";
 const APP_DATE = "2026-11-21";
 </script>
-<script src="plans.js?v=1.8.0"></script>
+<script src="plans.js?v=1.8.1"></script>
 <script>
 const D = window.DATA;
 
@@ -330,24 +332,43 @@ const newer = (a, b) => { // a が b より新しいか
   return false;
 };
 let latest = null;
-async function checkUpdate() {
+async function checkUpdate(manual) {
   try {
     const r = await fetch(`version.json?t=${Date.now()}`, { cache: "no-store" });
-    if (!r.ok) return;
+    if (!r.ok) throw new Error();
     const v = await r.json();
     if (v.version && newer(v.version, APP_VERSION)) {
       latest = v.version;
-      document.getElementById("updateText").textContent = `新しいバージョン v${v.version} があります（今は v${APP_VERSION}）`;
+      document.getElementById("updateText").textContent = `新しいバージョン v${v.version} があります（今は v${APP_VERSION}）${v.notes ? "：" + v.notes : ""}`;
       document.getElementById("updateBar").classList.add("show");
-    }
-  } catch (e) { /* オフライン等は何もしない */ }
+    } else if (manual) alert(`最新版（v${APP_VERSION}）です。`);
+  } catch (e) { if (manual) alert("更新を確認できませんでした。通信状態を確かめてください。"); }
+}
+// 入力内容を一時保存して、更新後に戻す（結果を出していたら自動でもう一度診断）
+const FORM_KEY = "plan-checker-form";
+const formFields = () => [...document.getElementById("form").querySelectorAll("input, select")].filter(el => !el.closest("#members"));
+function saveForm() {
+  const vals = formFields().map(el => el.type === "radio" || el.type === "checkbox" ? el.checked : el.value);
+  const members = readMembers().map(m => ({ carrier: m.carrierId, cost: m.current || "", data: String(m.need), call: m.call, age: m.age }));
+  try { sessionStorage.setItem(FORM_KEY, JSON.stringify({ members, vals, shown: !document.getElementById("result").classList.contains("empty") })); } catch (e) {}
+}
+function restoreForm() {
+  let d; try { d = JSON.parse(sessionStorage.getItem(FORM_KEY)); sessionStorage.removeItem(FORM_KEY); } catch (e) {}
+  if (!d || !d.members || !d.members.length) return;
+  document.getElementById("members").innerHTML = "";
+  d.members.forEach(m => addMember(m));
+  const els = formFields();
+  if (els.length === d.vals.length) els.forEach((el, i) => { if (el.type === "radio" || el.type === "checkbox") el.checked = d.vals[i]; else el.value = d.vals[i]; });
+  syncScope();
+  if (d.shown && document.getElementById("form").checkValidity()) document.getElementById("form").requestSubmit();
 }
 document.getElementById("updateBtn").addEventListener("click", () => {
-  // キャッシュを避けるため、URLに版番号を付けて読み込み直す
+  saveForm();
   const u = new URL(location.href);
-  u.searchParams.set("v", latest || Date.now());
+  u.searchParams.set("v", latest || Date.now()); // キャッシュを避けるため版番号付きで読み込み直す
   location.replace(u.toString());
 });
+document.getElementById("checkBtn").addEventListener("click", () => checkUpdate(true));
 checkUpdate();
 document.addEventListener("visibilitychange", () => { if (!document.hidden) checkUpdate(); });
 setInterval(checkUpdate, 10 * 60 * 1000);
@@ -812,6 +833,7 @@ document.getElementById("form").addEventListener("submit", e => {
   res.style.display = "block";
   if (window.innerWidth < 1000) res.scrollIntoView({ behavior: "smooth" });
 });
+restoreForm(); // 更新ボタンで読み込み直したときは、入力内容を戻す（診断の処理を登録した後に呼ぶ）
 </script>
 </body>
 </html>
