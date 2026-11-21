@@ -96,6 +96,11 @@
   .pc-gb { font-size: 1.15rem; font-weight: 800; }
   .pc-price { font-size: 1.35rem; font-weight: 800; line-height: 1.3; }
   .pc-price small { font-size: .75rem; font-weight: 600; color: var(--muted); margin-left: 2px; }
+  .pc-tier { margin-top: 6px; font-size: .78rem; line-height: 1.5; color: var(--muted); }
+  .pc-tier span { display: block; }
+  .pc-tier .t.now { color: var(--text); font-weight: 700; }
+  .pc-tier .t.now::before { content: "▶ "; font-size: .7rem; }
+  .pc-tier b { color: var(--text); }
   .pc-arrow { align-self: center; font-size: 1.4rem; font-weight: 800; color: var(--muted); }
   .pc-chg { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
   .chg { display: inline-block; font-size: .85rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); }
@@ -341,9 +346,9 @@
   </div>
 </main>
 
-<script src="plans.js?v=2.6.1"></script>
+<script src="plans.js?v=2.7.0"></script>
 <script>
-const APP_VERSION = "2.6.1";
+const APP_VERSION = "2.7.0";
 const APP_DATE = "2026-11-21";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金は${DATA.updated}時点）`;
 
@@ -553,7 +558,13 @@ function bestPlan(c, person, ctx, famCount, oyako) {
     const total = base - discount + call;
     const capLabel = tier[0] === Infinity ? "無制限" : `${tier[0]}GB`;
     const callLabel = person.call === "none" ? "" : person.call === "short" ? (call ? `＋短時間かけ放題 ${yen(call)}` : "（10分かけ放題込み）") : (call ? `＋かけ放題 ${yen(call)}` : "（かけ放題込み）");
-    if (!best || total < best.total) best = { carrier: c, plan: p, cap: tier[0], capLabel, base, lines, call, callLabel, total, oyako: oyGain, oyakoQual: oyHere };
+    // 使う量で料金が変わるプラン（〜5GBの月は安い）：両方の金額
+    let tiersInfo = null;
+    if (p.low) {
+      if (oyHere) tiersInfo = { cap: p.low[0], high: total, afterHigh: total + OY.amt, afterLow: total + OY.amt - p.low[1] };   // 1年目は使う量に関係なく同じ
+      else { const high = lowHere ? total + p.low[1] : total; tiersInfo = { cap: p.low[0], low: high - p.low[1], high }; }
+    }
+    if (!best || total < best.total) best = { carrier: c, plan: p, cap: tier[0], capLabel, base, lines, call, callLabel, total, oyako: oyGain, oyakoQual: oyHere, tiersInfo };
   }
   return best;
 }
@@ -574,7 +585,12 @@ function nowPlanCost(cid, p, person, ctx, famCount) {
   const call = person.call === "short" ? p.callShort : person.call === "long" ? p.callLong : 0;
   const total = tier[1] - lines.reduce((a, [, v]) => a + v, 0) + call;
   const over = person.gb > tier[0];
-  return { plan: p, base: tier[1], cap: tier[0], capLabel: tier[0] === Infinity ? "無制限" : `${tier[0]}GB`, lines, call, total, over };
+  let tiersInfo = null;
+  if (p.low) {
+    const lowHere = person.gb <= p.low[0];
+    tiersInfo = { cap: p.low[0], low: lowHere ? total : total - p.low[1], high: lowHere ? total + p.low[1] : total };
+  }
+  return { plan: p, base: tier[1], cap: tier[0], capLabel: tier[0] === Infinity ? "無制限" : `${tier[0]}GB`, lines, call, total, over, tiersInfo };
 }
 // 1人ずつの「今の月額」：入力した金額 → なければ au / UQ の今のプランから計算
 function estimateNow(persons, ctx) {
@@ -613,7 +629,7 @@ function calcAssign(assign, persons, ctx, oyako) {
       const k = nowPlanCost(pr.from, cur, pr, ctx, fc);
       if (!k.over && (!r || k.total <= r.total)) {   // 同じ金額なら今のプランのまま（手続き不要）
         const callLabel = pr.call === "none" || !k.call ? "" : `＋通話オプション ${yen(k.call)}`;
-        r = { carrier: c, plan: k.plan, cap: k.cap, capLabel: k.capLabel, base: k.base, lines: k.lines, call: k.call, callLabel, total: k.total, keep: true };
+        r = { carrier: c, plan: k.plan, cap: k.cap, capLabel: k.capLabel, tiersInfo: k.tiersInfo, base: k.base, lines: k.lines, call: k.call, callLabel, total: k.total, keep: true };
       }
     }
     if (!r) return null; // 容量が足りない
@@ -929,6 +945,14 @@ const yearBox = (d, tmp = 0) => {
   <div class="yr-label">${y2 > 0 ? "おトク" : "高くなる"}</div>
   ${tmp ? `<div class="yr-note">2年目は親子応援割（月${yen(tmp)}）が終わるので、月${v(d - tmp)}で計算</div>` : ""}</div>`;
 };
+// 使う量で変わる料金（UQ トクトクプラン2 など）
+const tierLine = (t, gbUse) => {
+  if (!t) return "";
+  const mark = lowSide => (gbUse <= t.cap) === lowSide ? " now" : "";
+  if (t.afterHigh) return `<div class="pc-tier">1年目は使う量に関係なく <b>${yen(t.high)}</b>
+    <span>13か月目から：〜${t.cap}GB <b>${yen(t.afterLow)}</b>／${t.cap}GB超 <b>${yen(t.afterHigh)}</b></span></div>`;
+  return `<div class="pc-tier"><span class="t${mark(true)}">〜${t.cap}GBの月 <b>${yen(t.low)}</b></span><span class="t${mark(false)}">${t.cap}GB超の月 <b>${yen(t.high)}</b></span></div>`;
+};
 const breakdown = (base, lines, callLabel) => `基本 ${yen(base)}${lines.map(([l, a]) => `<br>${l} −${yen(a)}`).join("")}${callLabel ? `<br>${callLabel}` : ""}`;
 function personCard(persons, est, best, currentInput) {
   const items = persons.map((p, i) => {
@@ -949,6 +973,7 @@ function personCard(persons, est, best, currentInput) {
           <div class="pc-plan">${pillOf(p.from)}${e.est ? e.est.plan.name : ""}</div>
           <div class="pc-gb">${e.est ? gbText(e.est.cap) : `<span class="ex">ギガ：不明</span>`}</div>
           <div class="pc-price">${e.known ? yen(e.total) : "—"}<small>${e.known ? (e.amount ? "/月（入力）" : "/月（計算）") : "今の月額 未入力"}</small></div>
+          ${e.est && !e.amount ? tierLine(e.est.tiersInfo, p.gb) : ""}
         </div>
         <div class="pc-arrow">→</div>
         <div class="pc-side new ${r.carrier.id}">
@@ -956,6 +981,7 @@ function personCard(persons, est, best, currentInput) {
           <div class="pc-plan">${pillOf(r.carrier.id)}${r.plan.name}</div>
           <div class="pc-gb">${gbText(r.cap)}</div>
           <div class="pc-price">${yen(r.total)}<small>/月</small></div>
+          ${tierLine(r.tiersInfo, p.gb)}
         </div>
       </div>
       <div class="pc-chg">${r.keep ? `<span class="chg same">今のプランのままがいちばん安い（プラン変更の手続き不要）</span>${d > 0 ? `<span class="chg good">家族の割引が増えて安くなります</span>` : ""}` : (d ? "" : priceChg) + gbChange(nowCap, r.cap)}</div>
