@@ -92,8 +92,9 @@ window.DATA = {
       net: { ids: ["softbank"], amt: 1650, per: "line", extra: 550 },  // おうち割 光セット(A) ✅1,650（M/L）
       denki: { id: "ouchidenki", amt: 1100, per: "line" },             // ✅ でんきセット(E)（M/L）・光セットと併用不可
       stack: false, famWithSet: false,
-      student: [{ label: "ワイモバ親子割", ages: ["u12", "u18"], family: true, plans: ["シンプル3 M", "シンプル3 L"], amt: 1100, months: 12, start: "2026-11-16", src: "⚠",
-        desc: "5〜18歳の子どもと家族がシンプル3 M/Lで12か月、月1,100円引き", note: "2026年版は「月780円で30GB」と報道あり。割引額の詳細は未確認" }],
+      student: [{ label: "ワイモバ親子割", ages: ["u12", "u18"], family: true, plans: ["シンプル3 M", "シンプル3 L"], amt: 1100, months: 12, start: "2026-11-18", src: "✅",
+        desc: "5〜18歳の子どもと家族がシンプル3 M/Lで1年間、月1,100円引き（シンプル3 Sは対象外）",
+        note: "公式で確認。PayPayカード ゴールド払い＋おうち割 光セット（A）なら1年間 月858円・14か月目以降 月1,958円（シンプル3 M）。期間は公式ページでは「13か月目まで」の表記もあり" }],
       plans: [
         { name: "シンプル3 S", tiers: [[5, 3058]], famFrom2nd: 1100, setAmt: 1100, denkiAmt: 0, callShort: 880, callLong: 1980 }, // ⚠
         { name: "シンプル3 M", tiers: [[30, 4158]], famFrom2nd: 1100, callShort: 880, callLong: 1980 },                           // ⚠
