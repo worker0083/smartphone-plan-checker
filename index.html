@@ -171,9 +171,15 @@
   .promo-title .ic { color: var(--good); }
   .promo ul { list-style: none; padding: 0; margin: 4px 0 0; }
   .promo li { padding: 2px 0; }
-  .promo .when { color: var(--muted); font-size: .8rem; }
+  .promo .when, .gaku-item .when { color: var(--muted); font-size: .8rem; }
   .ref { display: inline-block; font-size: .7rem; padding: 0 6px; border-radius: 5px; border: 1px solid var(--warn); color: var(--warn); margin-left: 4px; vertical-align: 1px; }
   .timeline { font-size: .82rem; margin-top: 4px; }
+  .tag.gaku { background: var(--good); margin-left: 0; }
+  .gaku-list { display: grid; gap: 10px; margin-top: 10px; }
+  @media (min-width: 700px) { .gaku-list { grid-template-columns: 1fr 1fr; } .gaku-list .plan { margin-top: 0; } }
+  .gaku-item { margin-top: 6px; font-size: .88rem; }
+  .gaku-item b { margin-right: 4px; }
+  .none { color: var(--muted); font-size: .88rem; margin-top: 6px; }
   .update-bar button { width: auto; padding: 8px 18px; min-height: 40px; font-size: .95rem; }
 </style>
 </head>
@@ -299,6 +305,7 @@
     <div class="placeholder">左の質問に答えて「診断する」を押すと、<br>ここに結果が表示されます。</div>
     <div class="card hero" id="hero"></div>
     <div class="card" id="ranking"></div>
+    <div class="card" id="gakuwari"></div>
     <div class="card" id="internet"></div>
     <div class="card" id="elec"></div>
     <p class="disclaimer" id="disclaimer"></p>
@@ -308,10 +315,10 @@
 
 <script>
 // ───── バージョン（更新するときは version.json と合わせて書き換える）─────
-const APP_VERSION = "1.7.1";
-const APP_DATE = "2026-11-14";
+const APP_VERSION = "1.8.0";
+const APP_DATE = "2026-11-21";
 </script>
-<script src="plans.js?v=1.7.1"></script>
+<script src="plans.js?v=1.8.0"></script>
 <script>
 const D = window.DATA;
 
@@ -367,6 +374,22 @@ const TODAY = (() => { const d = new Date(); return `${d.getFullYear()}-${String
 const livePromos = list => (list || []).filter(p => !p.until || p.until >= TODAY);
 const promoValue = list => list.reduce((t, p) => t + (p.amt || 0) * Math.min(p.months || 0, H), 0);
 const dateText = d => d.replace(/-/g, "/");
+// 学割：その人（または家族に対象の子どもがいれば家族全員）が受けられる割引
+const AGE_TEXT = { u12: "12歳以下", u18: "13〜18歳", u22: "19〜22歳" };
+function studentDiscs(c, plan, tier, mem, groupAges) {
+  const out = [];
+  for (const st of livePromos(c.student)) {
+    if (st.calc === false || (st.start && st.start > TODAY)) continue;
+    if (st.plans && !st.plans.includes(plan.name)) continue;
+    const ok = st.family ? st.ages.some(a => groupAges.has(a)) : st.ages.includes(mem.age);
+    if (!ok) continue;
+    let amt = st.amt || 0;
+    if (st.byTier) amt = st.byTier[tier[0]] || 0;
+    if (st.byNeed) amt = st.byNeed.find(([g]) => mem.need <= g)[1];
+    if (amt > 0) out.push({ ...st, amt, who: mem.who, student: true });
+  }
+  return out;
+}
 // スマホ1回線ぶんのキャンペーン（今と同じキャリアなら対象外）
 function linePromos(c, plan, tier, mem) {
   if (mem.carrierId === c.id) return [];
@@ -405,6 +428,7 @@ function kwhFromBill(p, bill) {
 
 // ───── スマホ：1回線あたりの月額 ─────
 function linePrice(c, plan, ctx, setNet, setDenki, mem) {
+  if (plan.studentOnly && !plan.studentOnly.includes(mem.age)) return null;
   const tier = plan.tiers.find(([g]) => g >= mem.need);
   if (!tier) return null;
   const parts = [`基本 ${yen(tier[1])}`];
@@ -427,14 +451,17 @@ function linePrice(c, plan, ctx, setNet, setDenki, mem) {
   if (ctx.card && c.card && plan.card !== false) { cost -= c.card; parts.push(`${c.cardName} -${yen(c.card)}`); }
   const add = mem.call === "short" ? plan.callShort : mem.call === "long" ? plan.callLong : 0;
   if (add) { cost += add; parts.push(`${mem.call === "short" ? "短時間かけ放題" : "かけ放題"} +${yen(add)}`); }
+  // 学割：ずっと続くものは月額から引き、期間限定のものは乗り換え時のキャンペーンとして扱う
+  const sd = studentDiscs(c, plan, tier, mem, ctx.groupAges || new Set());
+  for (const x of sd.filter(x => !x.months)) { cost -= x.amt; parts.push(`${x.label} -${yen(x.amt)}`); }
   cost = Math.max(cost, 0);
-  const promos = linePromos(c, plan, tier, mem);
+  const promos = [...linePromos(c, plan, tier, mem), ...(mem.carrierId === c.id ? [] : sd.filter(x => x.months))];
   return { plan: plan.name, gb: tier[0], cost, parts, promos, eff: cost - promoValue(promos) / H };
 }
 
 // ───── あるキャリアで、指定した人たちが一番安くなるプランを一人ずつ選ぶ ─────
 function mobileFor(c, mems, ctx, setNet, setDenki) {
-  const sub = { ...ctx, lines: mems.length }; // 家族割はそのキャリアの回線数で数える
+  const sub = { ...ctx, lines: mems.length, groupAges: new Set(mems.map(m => m.age)) }; // 家族割・親子割はそのキャリアの家族で数える
   const out = mems.map(mem => {
     const opts = c.plans.map(p => linePrice(c, p, sub, setNet, setDenki, mem)).filter(Boolean);
     const key = o => ctx.promo ? o.eff : o.cost;
@@ -509,6 +536,7 @@ function stayFor(ctx) {
 // ───── 使う人ごとの入力欄 ─────
 const DATA_OPTS = [["1","1GB未満"],["3","1〜3GB"],["5","3〜5GB"],["10","5〜10GB"],["20","10〜20GB"],["30","20〜30GB"],["50","30〜50GB"],["Infinity","50GB以上・無制限"]];
 const CALL_OPTS = [["none","ほぼかけない"],["short","短い電話が多い"],["long","長電話をよくする"]];
+const AGE_OPTS = [["adult","23歳以上"],["u22","19〜22歳"],["u18","13〜18歳"],["u12","12歳以下"]];
 const MAX_MEMBERS = 6;
 const CARRIER_OPTS = [["docomo","ドコモ・ahamo"],["au","au"],["uq","UQ mobile"],["softbank","ソフトバンク"],["ymobile","ワイモバイル"],["linemo","LINEMO"],["rakuten","楽天モバイル"],["mineo","mineo"],["iij","IIJmio"],["other","その他の格安SIM"]];
 const opts = (list, sel) => list.map(([v, t]) => `<option value="${v}"${v === sel ? " selected" : ""}>${t}</option>`).join("");
@@ -525,6 +553,7 @@ function addMember(preset = {}) {
       <div><label>今のスマホ代</label><input class="m-cost" type="number" inputmode="numeric" min="0" step="1" placeholder="例：7500" value="${preset.cost ?? ""}"></div>
       <div><label>データ量</label><select class="m-data">${opts(DATA_OPTS, preset.data || "5")}</select></div>
       <div><label>電話</label><select class="m-call">${opts(CALL_OPTS, preset.call || "none")}</select></div>
+      <div><label>年齢（学割の判定）</label><select class="m-age">${opts(AGE_OPTS, preset.age || "adult")}</select></div>
     </div>`;
   div.querySelector(".remove").addEventListener("click", () => { div.remove(); relabel(); });
   box.appendChild(div);
@@ -546,6 +575,7 @@ function readMembers() {
     current: Number(r.querySelector(".m-cost").value) || 0,
     need: Number(r.querySelector(".m-data").value),
     call: r.querySelector(".m-call").value,
+    age: r.querySelector(".m-age").value,
   }));
 }
 document.getElementById("addMember").addEventListener("click", () => addMember());
@@ -627,11 +657,11 @@ document.getElementById("form").addEventListener("submit", e => {
   const promoLine = p => {
     const what = `-${yen(p.amt)}/月 × ${p.months}か月`;
     const when = p.until ? `申込 〜${dateText(p.until)}` : "終了日未定";
-    return `<li><span class="who">${p.who}</span>${p.label}：<b>${what}</b>${p.src === "⚠" ? '<span class="ref">参考</span>' : ""}<div class="when">${when}${p.note ? "・" + p.note : ""}</div></li>`;
+    return `<li><span class="who">${p.who}</span>${p.student ? '<span class="tag gaku">学割</span> ' : ""}${p.label}：<b>${what}</b>${p.src === "⚠" ? '<span class="ref">参考</span>' : ""}<div class="when">${when}${p.note ? "・" + p.note : ""}</div></li>`;
   };
   const promoBox = (list, fold = false) => {
     if (!list || !list.length) return "";
-    const head = `${IC.gift}キャンペーン${usePromo ? `（2年間で ${yen(promoValue(list))} おトク）` : "（この比較では計算に入れていません）"}`;
+    const head = `${IC.gift}${list.some(p => p.student) ? "キャンペーン・学割" : "キャンペーン"}${usePromo ? `（2年間で ${yen(promoValue(list))} おトク）` : "（この比較では計算に入れていません）"}`;
     const body = `<ul>${list.map(promoLine).join("")}</ul>`;
     return fold
       ? `<details class="promo"><summary class="promo-title">${head}</summary>${body}</details>`
@@ -705,6 +735,35 @@ document.getElementById("form").addEventListener("submit", e => {
     </div>
     ${nowIds.length > 1 ? '<div class="ex" style="margin-top:8px">ランキングは家族みんなで同じ会社に乗り換えた場合です。</div>' : ""}`;
 
+  // 学割の比較：各社の学割の内容と、この家族ならどれだけ安くなるか（キャンペーン込み・2年間）
+  const students = members.filter(m => m.age !== "adult");
+  const gakuValue = c => {
+    if (!students.length) return null;
+    const a = bestFor(c, { ...ctx, promo: true });
+    const b = bestFor(c, { ...ctx, promo: true, members: members.map(m => ({ ...m, age: "adult" })) });
+    return a && b ? Math.round((b.score - a.score) * 24) : null;
+  };
+  // 学割で安くならなかった理由
+  const gakuLabel = list => {
+    const calc = list.filter(st => st.calc !== false && (!st.start || st.start <= TODAY));
+    if (calc.some(st => st.ages.some(a => students.some(m => m.age === a)))) return '<span class="ex">学割なしのプランの方が安い</span>';
+    if (list.some(st => st.calc === false)) return '<span class="ex">計算に入れていません</span>';
+    return '<span class="ex">対象外</span>';
+  };
+  const gakuRows = D.carriers.map(c => ({ c, list: (c.student || []).filter(st => !st.until || st.until >= TODAY), v: gakuValue(c) }))
+    .sort((x, y) => (y.v || 0) - (x.v || 0) || y.list.length - x.list.length);
+  document.getElementById("gakuwari").innerHTML = `
+    <h2>${IC.gift}各社の学割</h2>
+    <div class="ex">${students.length ? `学割の対象：${students.map(m => `${m.who}（${AGE_TEXT[m.age]}）`).join("・")}。家族みんなでその会社に乗り換えた場合に、学割で2年間に安くなる金額です。` : "入力欄の「年齢」で学生・子どもを選ぶと、学割でいくら安くなるかを計算します。"}</div>
+    <div class="gaku-list">${gakuRows.map(({ c, list, v }) => `
+      <div class="plan${v > 0 ? " rec" : ""}">
+        <div class="plan-head"><span class="plan-name">${c.name}</span>${v != null ? `<span class="price">${v > 0 ? `2年で ${yen(v)} 安く` : gakuLabel(list)}</span>` : ""}</div>
+        ${list.length ? list.map(st => `<div class="gaku-item"><b>${st.label}</b>${st.src === "⚠" ? '<span class="ref">参考</span>' : ""}<div>${st.desc}</div>
+          <div class="when">${st.start ? `${dateText(st.start)} 受付開始・` : ""}${st.until ? `申込 〜${dateText(st.until)}` : "終了日未定"}${st.note ? "・" + st.note : ""}</div></div>`).join("")
+          : '<div class="none">学割なし（確認時点）</div>'}
+      </div>`).join("")}</div>
+    <div class="breakdown" style="margin-top:8px">期間限定の学割は、乗り換え・新規で契約したときだけ計算に入れています。今のキャリアのまま見直す場合は対象外として計算しています。</div>`;
+
   document.getElementById("internet").style.display = useNet ? "" : "none";
   document.getElementById("elec").style.display = useElec ? "" : "none";
 
@@ -744,6 +803,7 @@ document.getElementById("form").addEventListener("submit", e => {
 
   document.getElementById("disclaimer").innerHTML =
     `※ 料金は${D.updated}時点で各社の公式サイトを確認した税込の目安です（一部は参考値）。端末代・工事費・事務手数料・解約金は含みません。` +
+    `※ 学割は${D.promoChecked}に確認した内容です。年齢の区切りや、親の契約プランなどの条件は各社で違うため、申込前に公式サイトでご確認ください。` +
     `※ キャンペーンは${D.promoChecked}に確認した、各社の月額料金の割引キャンペーンです。「参考」は公式で条件を確認できていない値です。ポイント還元・キャッシュバック・端末割引は含みません。申込期限を過ぎたものは自動で外れます。乗り換え元のキャリアや申込窓口によって対象外になることがあります。` +
     `※ 本ツールは個人が作成した非公式の試算ツールで、特定の会社とは関係ありません。正式な料金は各社の公式サイト・店頭でご確認ください。`;
 
