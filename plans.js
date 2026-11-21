@@ -12,14 +12,44 @@
 //   denki : セット割の対象でんきと割引額
 //   stack : ネットとでんきのセット割を両方受けられるか
 //   famWithSet : 家族割とセット割を両方受けられるか（false なら大きい方だけ）
+//
+// キャンペーン（promos）の書き方 ※料金が下がる月額割引だけ。ポイント還元・キャッシュバックは入れない
+//   乗り換え・新規で契約したときだけ計算に入ります
+//   carriers[].promos : そのキャリアの全プラン共通 / plans[].promos があればそちらを使う
+//   internet[].promos / electricity.plans[].promos : 回線・でんきのキャンペーン
+//   { label: 名前,
+//     amt: 毎月の割引額, months: 割引が続く月数,       ← 月額割引
+//     rate: 基本料金に対する割引率（0.5 = 半額）, tiers: 対象のデータ容量,
+//     byTier: { データ容量: 割引額 },                  ← 容量ごとに割引額が違う場合
+//     until: 申込期限 "YYYY-MM-DD"（過ぎると自動で表示・計算から外れる。未定なら書かない）,
+//     excludeFrom: 対象外の乗り換え元キャリアid, house: "home"/"mansion" だけ対象,
+//     src: "✅" 公式で確認 / "⚠" まとめサイト等の参考値, note: 条件など }
+//
+// 学割（student）の書き方：carriers[].student
+//   { label: 名前, desc: 画面の比較表に出す説明,
+//     ages: 対象の年齢区分（"u12" 12歳以下 / "u18" 13〜18歳 / "u22" 19〜22歳）,
+//     family: true なら対象の子どもがいると同じキャリアの家族全員が割引,
+//     plans: 対象プラン名, amt / byTier / byNeed: 割引額（byNeed は [[使うGB以下, 割引額], ...]）,
+//     months: 割引が続く月数（書かない = 対象年齢のあいだずっと）,
+//     free: true なら期間中は割引後の月額が0円（amt は不要）,
+//     stayOk: true なら今と同じキャリアでプラン変更する場合も対象,
+//     start / until: 受付開始日・申込期限, calc: false なら比較表に出すだけで計算には入れない, src, note }
+//   plans[].cardAmt : カード払い割引の金額がプランで違う場合の上書き
+//   plans[].studentOnly : その年齢区分の人しか入れない学生向けプラン
 window.DATA = {
   updated: "2026年11月",
+  promoChecked: "2026年11月21日", // キャンペーンを確認した日
 
   carriers: [
     {
       id: "docomo", name: "ドコモ", card: 220, cardName: "dカード払い",
       net: { ids: ["docomo"], amt: 1210, per: "line" },          // ✅ ドコモ光セット割
       denki: { id: "docomodenki", amt: 110, per: "line" },        // ✅ ドコモでんきセット割
+      // ✅ ドコモU22割：7か月間ボーナスパケット27GB（〜28GBが「〜1GB」の料金、28〜30GBが「〜3GB」の料金になる）＋ 月2,728円/3,828円/550円引き
+      //    byNeed はこの2つを合わせた「通常料金からの値下がり額」
+      student: [{ label: "ドコモU22割", ages: ["u12", "u18", "u22"], plans: ["ドコモMAX"], byNeed: [[1, 2728], [3, 3828], [28, 5478], [30, 5478], [Infinity, 550]], months: 7, stayOk: true, start: "2025-11-27", src: "✅",
+        desc: "22歳以下。ドコモMAXに7か月間ボーナスパケット27GB（28GBまで「〜1GB」の料金）＋月2,728円引き。28〜30GBは3,828円・30GB超は550円引き",
+        note: "新規・乗り換え・機種変更・プラン変更が対象。1人1回線まで" }],
       stack: true, famWithSet: true,
       plans: [
         { name: "ドコモMAX", tiers: [[1, 5698], [3, 6798], [Infinity, 8448]], fam2: 550, fam3: 1210, callShort: 880, callLong: 1980 }, // ✅
@@ -30,10 +60,14 @@ window.DATA = {
     {
       id: "au", name: "au", card: 220, cardName: "au PAYカード払い",
       net: { ids: ["eo", "auhikari"], amt: 1100, per: "line" },   // ✅ auスマートバリュー（auでんき単体は対象外）
+      student: [{ label: "U18バリュープラン", ages: ["u12", "u18"], calc: false, src: "✅",
+        desc: "5〜18歳が入れる専用プラン。3GBまで2,398円・20GBまで4,048円（割引前）。スマートバリュー・家族割・カード払いで3GBまで1,078円・20GBまで2,728円",
+        note: "プランとして比較に入っています。19歳以降も続けられ、23歳になる月の翌月から20GBまで定額。U18ギガ増量キャンペーンは2026年5月で終了" }],
       stack: true, famWithSet: true,
       plans: [
         { name: "使い放題MAX＋ 5G/4G", tiers: [[Infinity, 7788]], fam2: 660, fam3: 1210, callShort: 880, callLong: 1980 },                // ✅
         { name: "スマホミニプラン＋ 5G/4G", tiers: [[1, 4928], [3, 6578], [5, 8228]], fam2: 660, fam3: 1210, callShort: 880, callLong: 1980 }, // ✅（家族割2回線は⚠）
+        { name: "U18バリュープラン", studentOnly: ["u12", "u18"], tiers: [[3, 2398], [20, 4048]], setAmt: 550, fam2: 220, fam3: 550, callShort: 880, callLong: 1980 }, // ✅ スマートバリュー550・家族割プラス2人220/3人以上550 / 通話⚠
       ],
     },
     {
@@ -41,6 +75,9 @@ window.DATA = {
       net: { ids: ["eo", "auhikari"], amt: 1100, per: "line" },   // ✅ 自宅セット割 インターネットコース
       denki: { id: "audenki", amt: 1100, per: "line" },           // ✅ 自宅セット割 でんきコース
       stack: false, famWithSet: false,                            // ✅ 家族セット割(550)とは併用不可
+      student: [{ label: "UQ親子応援割", ages: ["u12", "u18"], family: true, plans: ["トクトクプラン2", "コミコミプランバリュー"], byTier: { 5: 0, 30: 1100, 35: 1100 }, months: 12, start: "2026-11-19", src: "✅",
+        desc: "5〜18歳の子どもと、同じ家族セット割グループの家族がそれぞれ1年間、月1,100円引き",
+        note: "対象プランへ新たに加入した場合。トクトクプラン2は自宅セット割＋au PAYカード払いで1年間 月1,628円。5GB以下の割引（1,100円）とは重ねずに計算" }],
       plans: [
         { name: "トクトクプラン2", tiers: [[5, 2948], [30, 4048]], fam2: 550, fam3: 550, callShort: 880, callLong: 1980 }, // ✅ 5GB以下は-1,100込み / 通話⚠
         { name: "コミコミプランバリュー", tiers: [[35, 3828]], card: false, set: false, callShort: 0, callLong: 1100 },   // ✅ 10分かけ放題込み
@@ -50,10 +87,15 @@ window.DATA = {
       id: "softbank", name: "ソフトバンク", card: 187, cardName: "PayPayカード払い",   // カード割⚠（ゴールドは550）
       net: { ids: ["softbank"], amt: 1100, per: "line", extra: 550 },  // ✅ おうち割 光セット（オプションパック550円が必要）
       denki: { id: "ouchidenki", amt: 110, per: "line" },              // ✅ おうち割 でんきセット(M)
+      student: [{ label: "ソフトバンクデビュー割（デビューセット割）", ages: ["u12", "u18"], plans: ["スマホデビュープラン2"], free: true, months: 6, start: "2026-11-18", src: "✅",
+        desc: "5〜18歳がスマホデビュープラン2（3GBまで1,958円・30GBまで4,246円）に入ると、翌月から半年間、割引後の月額が0円",
+        note: "家族が対象プランを契約しているなどの条件あり。8か月目以降は割引後の料金" }],
       stack: true, famWithSet: true,
       plans: [
         { name: "テイガク無制限", tiers: [[Infinity, 8008]], fam2: 660, fam3: 1210, callShort: 880, callLong: 1980 },              // ✅
         { name: "ミニフィット2", tiers: [[2, 5258], [5, 6358]], fam2: 220, fam3: 550, callShort: 880, callLong: 1980 },             // ✅
+        { name: "スマホデビュープラン2", studentOnly: ["u12", "u18"], tiers: [[3, 1958], [30, 4246]], fam2: 220, fam3: 550, cardAmt: 330, set: false, callShort: 880, callLong: 1980 },
+        // ✅ 料金・家族3回線以上＋PayPayカード払いで 1,078/3,366円（ゴールドは858/3,146円）。家族2回線・おうち割・通話オプションは⚠
       ],
     },
     {
@@ -61,6 +103,9 @@ window.DATA = {
       net: { ids: ["softbank"], amt: 1650, per: "line", extra: 550 },  // おうち割 光セット(A) ✅1,650（M/L）
       denki: { id: "ouchidenki", amt: 1100, per: "line" },             // ✅ でんきセット(E)（M/L）・光セットと併用不可
       stack: false, famWithSet: false,
+      student: [{ label: "ワイモバ親子割", ages: ["u12", "u18"], family: true, plans: ["シンプル3 M", "シンプル3 L"], amt: 1100, months: 12, start: "2026-11-18", src: "✅",
+        desc: "5〜18歳の子どもと家族がシンプル3 M/Lで1年間、月1,100円引き（シンプル3 Sは対象外）",
+        note: "公式で確認。PayPayカード ゴールド払い＋おうち割 光セット（A）なら1年間 月858円・14か月目以降 月1,958円（シンプル3 M）。期間は公式ページでは「13か月目まで」の表記もあり" }],
       plans: [
         { name: "シンプル3 S", tiers: [[5, 3058]], famFrom2nd: 1100, setAmt: 1100, denkiAmt: 0, callShort: 880, callLong: 1980 }, // ⚠
         { name: "シンプル3 M", tiers: [[30, 4158]], famFrom2nd: 1100, callShort: 880, callLong: 1980 },                           // ⚠
@@ -78,6 +123,10 @@ window.DATA = {
       id: "rakuten", name: "楽天モバイル", card: 0,
       net: { ids: ["rakuten"], amt: 1000, per: "home", label: "最強おうちプログラム（ポイント）" }, // ✅ 1,000pt/月（条件あり）
       stack: true, famWithSet: true,
+      student: [
+        { label: "最強こども割", ages: ["u12"], byNeed: [[3, 440], [Infinity, 110]], src: "✅", desc: "12歳以下。3GBまで月440円引き・3GB超は110円引き（12歳のあいだずっと）", note: "my 楽天モバイルで「適用する」を押す必要あり。13歳から自動で最強青春割に" },
+        { label: "最強青春割", ages: ["u18", "u22"], amt: 110, src: "✅", desc: "13〜22歳。月110円引き（23歳の誕生日の前月まで）", note: "my 楽天モバイルで「適用する」を押す必要あり" },
+      ],
       plans: [
         { name: "Rakuten最強プラン", tiers: [[3, 1078], [20, 2178], [Infinity, 3278]], fam2: 110, fam3: 110, callShort: 0, callLong: 0 }, // ✅ Rakuten Linkで通話無料
       ],
@@ -85,6 +134,7 @@ window.DATA = {
     {
       id: "mineo", name: "mineo", card: 0,
       net: { ids: ["eo"], amt: 330, per: "home", label: "eo×mineoセット割" },  // ✅
+      promos: [{ label: "秋のピッタリ割", byTier: { 3: 418, 7: 528, 15: 968, 30: 858, 50: 858 }, months: 6, until: "2026-11-30", src: "⚠", note: "マイピタ（音声）の基本料金を最大6か月割引" }],
       stack: true, famWithSet: true,
       plans: [
         { name: "マイピタ", tiers: [[3, 1298], [7, 1518], [15, 1958], [30, 2178], [50, 2948]], fam2: 55, fam3: 55, callShort: 550, callLong: 1210 }, // ✅
@@ -93,6 +143,7 @@ window.DATA = {
     {
       id: "iij", name: "IIJmio", card: 0,
       stack: true, famWithSet: true,
+      promos: [{ label: "ギガプラン半額キャンペーン", rate: 0.5, tiers: [5, 10, 15, 25, 35], months: 3, src: "⚠", note: "2026年11月5日開始。12月1日申込分から初期費用が3,850円に" }],
       plans: [
         { name: "ギガプラン", tiers: [[2, 850], [5, 950], [10, 1400], [15, 1800], [25, 2000], [35, 2400]], fam2: 100, fam3: 100, callShort: 500, callLong: 1400 }, // 5GB・通話✅ / 他⚠
       ],
@@ -101,11 +152,13 @@ window.DATA = {
 
   // ───────── 自宅のインターネット（1ギガ前後・月額）─────────
   internet: [
-    { id: "eo", name: "eo光＋eo光電話", home: 5814, mansion: 4400, note: "戸建て✅（即割）/ マンション⚠" },
+    { id: "eo", name: "eo光＋eo光電話", home: 5814, mansion: 4400, note: "戸建て✅（即割）/ マンション⚠",
+      promos: [{ label: "eo暮らしスタート割", amt: 2220, months: 12, src: "⚠", note: "eo光ネットの新規申込" }] },
     { id: "auhikari", name: "auひかり＋電話", home: 6380, mansion: 5000, note: "戸建て✅ / マンション⚠。関西は戸建ての提供エリアが限られます" },
     { id: "docomo", name: "ドコモ光", home: 5720, mansion: 4400, note: "✅ タイプA・2年定期" },
     { id: "softbank", name: "ソフトバンク光", home: 6050, mansion: 4510, note: "✅ 2026年12月〜の料金" },
-    { id: "nuro", name: "NURO光", home: 3980, mansion: 2980, note: "✅ 2年割適用（24か月）" },
+    { id: "nuro", name: "NURO光", home: 5720, mansion: 4235, note: "戸建て✅ 2026年9月〜の通常料金（2年契約）/ マンション⚠",
+      promos: [{ label: "2年割", amt: 1740, months: 24, house: "home", src: "✅", note: "開通月〜24か月目は月3,980円" }] },
     { id: "rakuten", name: "楽天ひかり", home: 5280, mansion: 4180, note: "✅" },
   ],
 
