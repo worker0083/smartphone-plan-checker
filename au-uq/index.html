@@ -341,10 +341,10 @@
   </div>
 </main>
 
-<script src="plans.js?v=2.6.0"></script>
+<script src="plans.js?v=2.6.1"></script>
 <script>
-const APP_VERSION = "2.6.0";
-const APP_DATE = "2026-11-20";
+const APP_VERSION = "2.6.1";
+const APP_DATE = "2026-11-21";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金は${DATA.updated}時点）`;
 
 // ───── 更新チェック：公開中の version.json と比べて、古ければ「最新版に更新」ボタンを出す ─────
@@ -516,8 +516,10 @@ renderPersons([defaultPerson()]);
 
 // ───── 料金計算 ─────
 // 1人分：その会社のプランの中でいちばん安いものを選ぶ
-function bestPlan(c, person, ctx, famCount) {
+function bestPlan(c, person, ctx, famCount, oyako) {
   let best = null;
+  const OY = DATA.uqOyako;
+  const nowName = person.from === "uq" && person.now ? (DATA.currentPlans.uq.find(x => x.id === person.now) || {}).name : null;
   for (const p of c.plans) {
     const tier = p.tiers.find(([cap]) => person.gb <= cap);
     if (!tier) continue;
@@ -540,12 +542,18 @@ function bestPlan(c, person, ctx, famCount) {
     else lines.push([`${c.famName}`, fam]);
     // カード払い
     if (ctx.card && p.card !== false && c.card) lines.push([c.cardName, c.card]);
+    // UQ親子応援割（すでに同じプランの人は「新たに加入」ではないので対象外）と、少ない月の自動割引（重ねられない：親子応援割が優先）
+    const oyHere = oyako && c === UQ && OY.plans.includes(p.name) && nowName !== p.name;
+    const lowHere = p.low && person.gb <= p.low[0];
+    if (oyHere) lines.push([OY.label + (lowHere ? `（${p.low[0]}GB以下の割引とは重ねられません）` : ""), OY.amt]);
+    else if (lowHere) lines.push([`${p.low[0]}GB以下の月の割引`, p.low[1]]);
+    const oyGain = oyHere ? OY.amt - (lowHere ? p.low[1] : 0) : 0;   // 親子応援割で実際に安くなる額
     const call = person.call === "short" ? p.callShort : person.call === "long" ? p.callLong : 0;
     const discount = lines.reduce((s, [, a]) => s + a, 0);
     const total = base - discount + call;
     const capLabel = tier[0] === Infinity ? "無制限" : `${tier[0]}GB`;
     const callLabel = person.call === "none" ? "" : person.call === "short" ? (call ? `＋短時間かけ放題 ${yen(call)}` : "（10分かけ放題込み）") : (call ? `＋かけ放題 ${yen(call)}` : "（かけ放題込み）");
-    if (!best || total < best.total) best = { carrier: c, plan: p, cap: tier[0], capLabel, base, lines, call, callLabel, total };
+    if (!best || total < best.total) best = { carrier: c, plan: p, cap: tier[0], capLabel, base, lines, call, callLabel, total, oyako: oyGain, oyakoQual: oyHere };
   }
   return best;
 }
@@ -588,7 +596,7 @@ function calcAssign(assign, persons, ctx, oyako) {
     if (!on) return calcAssign(assign, persons, ctx, false);
     const r = calcAssign(assign, persons, ctx, true);
     // 18歳以下の人が「今のプランのまま」になったら割引は付かないので、付けずに計算し直す
-    if (r && !r.rows.some((row, i) => persons[i].u18 && row.oyako)) return calcAssign(assign, persons, ctx, false);
+    if (r && !r.rows.some((row, i) => persons[i].u18 && row.oyakoQual)) return calcAssign(assign, persons, ctx, false);
     return r;
   }
   const famAu = assign.filter(a => a === "au").length + ctx.exAu;
@@ -597,12 +605,7 @@ function calcAssign(assign, persons, ctx, oyako) {
   for (let i = 0; i < persons.length; i++) {
     const c = assign[i] === "au" ? AU : UQ;
     const fc = assign[i] === "au" ? famAu : famUq;
-    let r = bestPlan(c, persons[i], ctx, fc);
-    const OY = DATA.uqOyako;
-    const nowName = persons[i].from === "uq" && persons[i].now ? (DATA.currentPlans.uq.find(x => x.id === persons[i].now) || {}).name : null;
-    if (r && oyako && c === UQ && OY.plans.includes(r.plan.name) && nowName !== r.plan.name) {   // すでに同じプランの人は「新たに加入」ではないので対象外
-      r = { ...r, lines: [...r.lines, [OY.label, OY.amt]], total: r.total - OY.amt, oyako: OY.amt };
-    }
+    let r = bestPlan(c, persons[i], ctx, fc, oyako);
     // 今 au / UQ の人は「今のプランのまま」も候補にする
     const pr = persons[i];
     const cur = pr.from === assign[i] && pr.now ? DATA.currentPlans[pr.from].find(x => x.id === pr.now) : null;

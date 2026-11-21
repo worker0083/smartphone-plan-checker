@@ -29,7 +29,7 @@ window.DATA = {
       denki: { amt: 1100, label: "自宅セット割（でんきコース）" },        // ✅
       stack: false, famWithSet: false, famName: "家族セット割",           // ✅ 家族セット割(550)とは併用不可
       plans: [
-        { name: "トクトクプラン2", tiers: [[5, 2948], [30, 4048]], fam2: 550, fam3: 550, callShort: 880, callLong: 1980 }, // ✅ 5GB以下は-1,100込み / 通話⚠
+        { name: "トクトクプラン2", tiers: [[30, 4048]], low: [5, 1100], fam2: 550, fam3: 550, callShort: 880, callLong: 1980 }, // ✅ 30GB・5GB以下の月は-1,100（親子応援割とは重ねられない）/ 通話⚠
         { name: "コミコミプランバリュー", tiers: [[35, 3828]], card: false, set: false, callShort: 0, callLong: 1100 },   // ✅ 10分かけ放題込み
       ],
     },
@@ -64,9 +64,9 @@ window.DATA = {
       { id: "mini",      name: "スマホミニプラン 5G/4G", ended: "2024年12月", tiers: [[1, 3685], [2, 4785], [3, 5885], [4, 6435]], fam2: 220, fam3: 550, set: 550, card: 187, callShort: 880, callLong: 1980 }, // ✅
     ],
     uq: [
-      { id: "tokutoku2", name: "トクトクプラン2", tiers: [[5, 2948], [30, 4048]], fam2: 550, fam3: 550, set: 1100, card: 220, callShort: 880, callLong: 1980 },          // ✅（5GB以下の割引込み）
+      { id: "tokutoku2", name: "トクトクプラン2", tiers: [[30, 4048]], low: [5, 1100], fam2: 550, fam3: 550, set: 1100, card: 220, callShort: 880, callLong: 1980 },          // ✅
       { id: "komivalue", name: "コミコミプランバリュー", tiers: [[35, 3828]], set: false, card: false, callShort: 0, callLong: 1100 },                                   // ✅ 10分かけ放題込み
-      { id: "tokutoku",  name: "トクトクプラン", ended: "2025年", tiers: [[1, 2387], [17, 3685]], fam2: 550, fam3: 550, set: 1100, card: 187, callShort: 880, callLong: 1980 }, // ✅（1GB以下 -1,298円込み）
+      { id: "tokutoku",  name: "トクトクプラン", ended: "2025年", tiers: [[17, 3685]], low: [1, 1298], fam2: 550, fam3: 550, set: 1100, card: 187, callShort: 880, callLong: 1980 }, // ✅（1GB以下の月は -1,298円）
       { id: "komikomi-plus", name: "コミコミプラン＋", ended: "2025年", tiers: [[30, 3498]], set: false, card: false, callShort: 0, callLong: 1100 },                    // ✅ 10分込み / 完全かけ放題⚠
       { id: "komikomi",  name: "コミコミプラン", ended: "2024年", tiers: [[20, 3498]], set: false, card: false, callShort: 0, callLong: 1100 },                           // ✅ 10分込み / 完全かけ放題⚠
       { id: "minimini",  name: "ミニミニプラン", ended: "2025年", tiers: [[5, 2475]], fam2: 550, fam3: 550, set: 1100, card: 187, callShort: 880, callLong: 1980 },          // ✅
