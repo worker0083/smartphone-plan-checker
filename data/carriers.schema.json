@@ -200,25 +200,28 @@
       "description": "初期費用（最終提案シートに出す）",
       "properties": {
         "contract_yen": {
-          "$ref": "#/$defs/yen",
+          "$ref": "#/$defs/yenFee",
           "description": "契約事務手数料（新規・MNP）"
         },
         "contract_online_yen": {
-          "$ref": "#/$defs/yen",
+          "$ref": "#/$defs/yenFee",
           "description": "オンライン申込の場合"
         },
         "number_migration_yen": {
-          "$ref": "#/$defs/yen",
+          "$ref": "#/$defs/yenFee",
           "description": "au⇔UQ など番号移行の手数料"
         },
         "plan_change_yen": {
-          "$ref": "#/$defs/yen"
+          "$ref": "#/$defs/yenFee",
+          "description": ""
         },
         "sim_yen": {
-          "$ref": "#/$defs/yen"
+          "$ref": "#/$defs/yenFee",
+          "description": ""
         },
         "esim_yen": {
-          "$ref": "#/$defs/yen"
+          "$ref": "#/$defs/yenFee",
+          "description": ""
         },
         "notes": {
           "type": "array",
@@ -261,7 +264,7 @@
           "pattern": "^\\d{4}(-\\d{2})?(-\\d{2})?$"
         },
         "price": {
-          "description": "割引前の月額（税込）。使う量で変わるプランは tiered",
+          "description": "割引前の月額（税込）。flat＝定額／tiered＝使う量で段階／metered＝従量制",
           "oneOf": [
             {
               "type": "object",
@@ -314,6 +317,38 @@
                   }
                 }
               }
+            },
+            {
+              "type": "object",
+              "required": [
+                "type",
+                "base_yen",
+                "included_gb",
+                "per_gb_yen"
+              ],
+              "additionalProperties": false,
+              "description": "従量制：基本料金に included_gb まで含み、超えた分は1GBごとに per_gb_yen（端数は切り上げ）。max_gb を超えては使えない",
+              "properties": {
+                "type": {
+                  "const": "metered"
+                },
+                "base_yen": {
+                  "$ref": "#/$defs/yen"
+                },
+                "included_gb": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "per_gb_yen": {
+                  "$ref": "#/$defs/yen"
+                },
+                "max_gb": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              }
             }
           ]
         },
@@ -361,6 +396,7 @@
                 "none",
                 "5min",
                 "10min",
+                "15min",
                 "unlimited",
                 "app_unlimited"
               ],
@@ -392,6 +428,13 @@
             "type": "string"
           },
           "description": "画面に出す備考"
+        },
+        "toppings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/topping"
+          },
+          "description": "トッピング制（povo など）。基本料金は price に 0 円で書き、データや通話はここに並べる"
         }
       }
     },
@@ -422,8 +465,10 @@
           "enum": [
             "5min",
             "10min",
+            "15min",
             "60min_month",
-            "unlimited"
+            "unlimited",
+            "other"
           ]
         },
         "notes": {
@@ -601,7 +646,61 @@
           },
           "description": "type: any_of のとき、どれか1つを満たせばよい条件"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "home_internet",
+                  "electricity",
+                  "payment",
+                  "contract"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "values"
+            ],
+            "properties": {
+              "values": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "any_of"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "of"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "other"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "text"
+            ]
+          }
+        }
+      ]
     },
     "discount": {
       "allOf": [
@@ -832,8 +931,18 @@
                 "null"
               ],
               "description": "契約の種類（例：2year_n）"
+            },
+            "call_option_ids": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/id"
+              },
+              "description": "例に含まれる通話オプション（その料金を足して照合）"
             }
-          }
+          },
+          "required": [
+            "data_gb"
+          ]
         },
         "expected_yen": {
           "$ref": "#/$defs/yen"
@@ -844,6 +953,10 @@
         "checked_at": {
           "$ref": "#/$defs/date",
           "description": "この支払い例を公式ページで確認した日（任意）。料金改定で古い例が残っていないかの確認用"
+        },
+        "skip_reason": {
+          "type": "string",
+          "description": "自動照合から外す理由（例：キャンペーン価格の例）。書いておくと不一致にはせず一覧に出す"
         }
       }
     },
@@ -895,6 +1008,73 @@
           ]
         }
       }
+    },
+    "topping": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/sourced"
+        }
+      ],
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "yen"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "yen": {
+          "$ref": "#/$defs/yen"
+        },
+        "data_gb": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "追加されるデータ量。null＝使い放題"
+        },
+        "validity_days": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "validity_hours": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "data",
+            "call",
+            "voicemail",
+            "content",
+            "other"
+          ],
+          "default": "data"
+        },
+        "auto_renew": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "yenFee": {
+      "type": "number",
+      "minimum": 0,
+      "description": "初期費用は小数を許す（例：433.4）"
     }
   }
 }

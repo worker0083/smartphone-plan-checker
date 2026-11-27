@@ -1,5 +1,5 @@
 // 料金診断の画面と計算（料金データは data/carriers.json から data-adapter.js が読み込む）
-const APP_VERSION = "2.9.1";
+const APP_VERSION = "2.9.2";
 const APP_DATE = "2026-11-27";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金データ ${DATA.updated}）`;
 
@@ -240,8 +240,9 @@ function nowPlanCost(cid, p, person, ctx, famCount) {
   const famLabel = cid === "au" ? `家族割プラス（${famCount}回線）` : "家族セット割";
   if (cid === "au") { if (set) lines.push([setLabel, set]); if (fam) lines.push([famLabel, fam]); }
   else if (set >= fam) { if (set) lines.push([setLabel, set]); } else lines.push([famLabel, fam]);
-  if (ctx.card && p.card) lines.push([p.cardName || "au PAYカード払い割", p.card]);
-  if (p.contract) lines.push([`${p.contractName}（契約中の場合）`, p.contract]);
+  const cardOn = ctx.card && p.card;
+  if (cardOn) lines.push([p.cardName || "au PAYカード払い割", p.card]);
+  if (p.contract && !(p.contractOrCard && cardOn)) lines.push([`${p.contractName}（契約中の場合）`, p.contract]);
   const call = person.call === "short" ? p.callShort : person.call === "long" ? p.callLong : 0;
   const total = tier[1] - lines.reduce((a, [, v]) => a + v, 0) + call;
   const over = person.gb > tier[0];

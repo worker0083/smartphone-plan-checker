@@ -24,10 +24,26 @@ def check_schema(doc, schema):
     import jsonschema
     v = jsonschema.Draft202012Validator(schema)
     errs = []
-    for e in sorted(v.iter_errors(doc), key=lambda e: list(e.absolute_path)):
-        where = "/".join(str(p) for p in e.absolute_path) or "(全体)"
+    for e in sorted(v.iter_errors(doc), key=lambda e: [str(x) for x in e.absolute_path]):
+        where = readable_path(doc, e.absolute_path)
         errs.append(f"[形式] {where}: {e.message}")
     return errs
+
+
+def readable_path(doc, path):
+    """carriers/4/discounts/1 → softbank / 割引 paypay_card_wari のように読める場所にする"""
+    names = {"carriers": "", "plans": "プラン", "discounts": "割引", "examples": "支払い例", "call_options": "通話オプション",
+             "campaigns": "キャンペーン", "conditions": "条件", "home_internet": "光回線"}
+    out, node, key = [], doc, None
+    for p in path:
+        nxt = node[p] if isinstance(node, (list, dict)) else None
+        if isinstance(p, int) and isinstance(nxt, dict):
+            label = nxt.get("id") or (nxt.get("label", "")[:30] if "label" in nxt else None) or (nxt.get("type") if key == "conditions" else None) or f"{p + 1}番目"
+            out.append((names.get(key, key) + " " if names.get(key, key) else "") + str(label))
+        elif isinstance(p, str) and p not in names:
+            out.append(p)
+        key, node = p, nxt
+    return " / ".join(out) or "(全体)"
 
 
 # ───── 2. ID の重複・参照切れ ─────
@@ -62,6 +78,8 @@ def check_refs(doc):
                     for h in cond.get("values", []):
                         if h not in hi_ids: errs.append(f"[参照] {cid}/{d['id']}：光回線 {h} が home_internet にない")
         for ex in c.get("examples", []):
+            for o in ex.get("inputs", {}).get("call_option_ids", []):
+                if o not in opts: errs.append(f"[参照] {cid}：支払い例「{ex['label']}」の通話オプション {o} がない")
             if ex["plan_id"] not in plans: errs.append(f"[参照] {cid}：支払い例「{ex['label']}」のプラン {ex['plan_id']} がない")
         for camp in c.get("campaigns", []):
             for pid in camp.get("plan_ids", []):
@@ -81,6 +99,10 @@ def walk_conditions(conds):
 def plan_price(plan, gb):
     pr = plan["price"]
     if pr["type"] == "flat": return pr["yen"]
+    if pr["type"] == "metered":                    # 従量制：超えた分は1GBごと（切り上げ）
+        import math
+        over = max(0, math.ceil(gb - pr["included_gb"] - 1e-9))
+        return pr["base_yen"] + over * pr["per_gb_yen"]
     for t in pr["tiers"]:
         if t["up_to_gb"] is None or gb <= t["up_to_gb"]: return t["yen"]
     return pr["tiers"][-1]["yen"]
@@ -145,20 +167,24 @@ def calc(carrier, plan, inp, hi):
         keep = max(ids, key=lambda i: applied[i])
         for i in ids:
             if i != keep: applied.pop(i)
-    return plan_price(plan, inp.get("data_gb", 0)) - sum(applied.values()), applied
+    opts = {o["id"]: o["yen"] for o in carrier.get("call_options", [])}
+    calls = sum(opts.get(o, 0) for o in inp.get("call_option_ids", []))
+    return plan_price(plan, inp.get("data_gb", 0)) - sum(applied.values()) + calls, applied
 
 
 def check_examples(doc):
-    errs, ok = [], 0
+    errs, ok, skipped = [], 0, []
     hi = {h["id"]: h for h in doc.get("home_internet", [])}
     for c in doc["carriers"]:
         plans = {p["id"]: p for p in c["plans"]}
         for ex in c.get("examples", []):
             if ex["plan_id"] not in plans: continue
+            if ex.get("skip_reason"):
+                skipped.append(f"{c['id']}「{ex['label'][:40]}」：{ex['skip_reason']}"); continue
             got, applied = calc(c, plans[ex["plan_id"]], ex["inputs"], hi)
             if got == ex["expected_yen"]: ok += 1
             else: errs.append(f"[支払い例] {c['id']}「{ex['label']}」：公式 {ex['expected_yen']:,}円／計算 {got:,}円（付いた割引：{', '.join(f'{k} −{v}' for k, v in applied.items()) or 'なし'}）")
-    return errs, ok
+    return errs, ok, skipped
 
 
 # ───── 4. 確認日が古い項目 ─────
@@ -190,13 +216,14 @@ def main():
     errs = check_schema(doc, schema)
     if not errs:                    # 形式が正しいときだけ中身を見る
         errs += check_refs(doc)
-        ex_errs, ok = check_examples(doc)
+        ex_errs, ok, skipped = check_examples(doc)
         errs += ex_errs
     else:
-        ok = 0
+        ok, skipped = 0, []
     n_plans = sum(len(c["plans"]) for c in doc.get("carriers", []))
     print(f"キャリア {len(doc.get('carriers', []))}社・プラン {n_plans}件・公式の支払い例 一致 {ok}件")
     for e in errs: print("✗", e)
+    for sk in skipped: print("－ 照合から除外：", sk)
     if a.stale:
         today = datetime.date.fromisoformat(a.today) if a.today else datetime.date.today()
         rows = stale_items(doc, today)

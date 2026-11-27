@@ -100,6 +100,12 @@
 | `fees` | 店頭の契約事務手数料は `contract_yen`、オンライン手続きの額は `contract_online_yen` |
 | 契約の割引（2年契約N など） | `kind: "contract"`、条件は `{"type": "contract", "values": ["2year_n"]}`。au PAYカードの割引（`kind: "payment"`）とは別に書く。画面では、今の月額の計算で「（契約中の場合）」と付けて引く |
 | 途中から付く割引 | `starts_after_months`。例：UQコミコミおトク割は「`duration_months: 13`・条件なし」と「`starts_after_months: 13`・条件（au PAYゴールドカード等）」の2つに分ける。支払い例の `inputs.month` は加入した月を1か月目として数える |
+| `price.metered` | 従量制（日本通信 合理的シンプル290 など）：`{"type": "metered", "base_yen": 290, "included_gb": 1, "per_gb_yen": 220}`。超えた分は1GBごと（切り上げ） |
+| `toppings` | トッピング制（povo）：基本料金は `price` に 0円、データ・通話などは `plan.toppings` に `{id, name, yen, data_gb（使い放題は null）, validity_days / validity_hours, kind, …}` で並べる（`data_toppings` から改名） |
+| 条件の `values` | `home_internet`・`electricity`・`payment`・`contract` は `values` 必須（無いと機械判定できない）。`type: "other"` は `text` 必須 |
+| 支払い例の `inputs` | `data_gb` は必須。通話オプション込みの例は `call_option_ids` に入れる。照合できない例（キャンペーン価格など）は `skip_reason` に理由を書くと、不一致にせず一覧に出す |
+| 初期費用 | `fees` の金額だけは小数可（IIJmio の SIM発行手数料 433.4円 など） |
+| 通話の範囲 | `covers` / `included` に `15min`（楽天）と `other`（留守番電話など）を追加 |
 | `amount` | `fixed`（定額）／`by_plan`（プランごと）／`by_lines`（回線数ごと）／`by_plan_lines`（プラン×回線数：auの家族割プラスなど） |
 | `confidence: "estimate"` | 公式で確認できなかった値。画面に「目安」と出す |
 
@@ -125,3 +131,4 @@
 10. **`examples[].checked_at`**（クロ提案・採用）：支払い例を確認した日
 11. **`any_of` / `data_usage_min` / `by_plan_lines`**（移行時に追加）：「光回線またはでんき」「1GB超の月だけ」「プラン×回線数で変わる家族割」を表すため
 12. **`contract` / `starts_after_months`**（クロの報告を受けて追加）：2年契約Nのような契約の割引と、14か月目以降に条件付きで続く割引を表すため
+13. **`price.metered` / `toppings` / 支払い例の `call_option_ids`・`skip_reason`**（PR #1 の gaps を受けて追加）

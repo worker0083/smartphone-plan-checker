@@ -71,7 +71,11 @@
     if (pay) out.cardName = pay.name;
     // 契約の種類による割引（2年契約N など）：旧プランの人は契約していることが多いので、今の月額の計算では付けて表示する
     const contract = byKind("contract")[0];
-    if (contract) { out.contract = amountFor(contract, p.id, 1) || 0; out.contractName = contract.name; }
+    if (contract) {
+      out.contract = amountFor(contract, p.id, 1) || 0; out.contractName = contract.name;
+      // 「au PAYカード割か2年契約Nのどちらか」のように同じグループなら、両方は引かない
+      out.contractOrCard = !!(pay && contract.exclusive_group && contract.exclusive_group === pay.exclusive_group);
+    }
     return out;
   }
 
