@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-11-27",
+  "updated_at": "2026-11-28",
   "tax": "included",
   "stale_days": {
     "warn": 30,
@@ -14,11 +14,11 @@
       "kind": "mno",
       "is_proposal_target": true,
       "fees": {
-        "contract_yen": 3850,
-        "source_url": "https://www.au.com/mobile/charge/smartphone/plan/",
-        "checked_at": "2026-11-27",
-        "confidence": "estimate",
-        "note_for_dev": "契約事務手数料は旧ツールに無く未確認。クロの確認待ち"
+        "contract_yen": 4950,
+        "contract_online_yen": 3850,
+        "source_url": "https://www.au.com/mobile/information/contract/",
+        "checked_at": "2026-11-28",
+        "note_for_dev": "契約事務手数料は手続き方法で異なる：店頭等は原則4,950円、オンライン（My au／au Online Shop等）は3,850円（2026-11-28 au公式で確認）"
       },
       "plans": [
         {
@@ -33,8 +33,7 @@
             "cap_gb": null
           },
           "source_url": "https://www.au.com/mobile/charge/smartphone/plan/",
-          "checked_at": "2026-11-10",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち（旧ツールのルート版データで確認済み）",
+          "checked_at": "2026-11-28",
           "calls": {
             "included": "none",
             "per_30s_yen": 22,
@@ -74,8 +73,7 @@
             "cap_gb": 5
           },
           "source_url": "https://www.au.com/mobile/charge/smartphone/plan/",
-          "checked_at": "2026-11-10",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち（家族割2回線の額は目安）",
+          "checked_at": "2026-11-28",
           "calls": {
             "included": "none",
             "per_30s_yen": 22,
@@ -106,8 +104,7 @@
             "200GB超の月は最大5Mbps"
           ],
           "source_url": "https://www.au.com/mobile/charge/smartphone/plan/auvaluelink/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち",
+          "checked_at": "2026-11-28",
           "calls": {
             "included": "none",
             "per_30s_yen": 22,
@@ -136,8 +133,7 @@
             "tethering_cap_gb": 30
           },
           "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち",
+          "checked_at": "2026-11-28",
           "calls": {
             "included": "none",
             "per_30s_yen": 22,
@@ -167,8 +163,7 @@
             "tethering_cap_gb": 30
           },
           "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited-moneyact/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち（料金は確認済み・家族割は目安）",
+          "checked_at": "2026-11-28",
           "calls": {
             "included": "none",
             "per_30s_yen": 22,
@@ -196,8 +191,7 @@
             "tethering_cap_gb": 30
           },
           "source_url": "https://www.au.com/mobile/charge/application-ended/5g-data-max/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち",
+          "checked_at": "2026-11-28",
           "calls": {
             "included": "none",
             "per_30s_yen": 22,
@@ -209,7 +203,7 @@
           "discount_ids": [
             "au_smartvalue",
             "au_family_plus",
-            "au_pay_card",
+            "au_2year_n",
             "au_datamax_low2"
           ]
         },
@@ -226,8 +220,7 @@
             "cap_gb": null
           },
           "source_url": "https://www.au.com/mobile/charge/application-ended/data-max-pro/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち",
+          "checked_at": "2026-11-28",
           "calls": {
             "included": "none",
             "per_30s_yen": 22,
@@ -239,7 +232,7 @@
           "discount_ids": [
             "au_smartvalue",
             "au_family_plus",
-            "au_pay_card"
+            "au_2year_n"
           ]
         },
         {
@@ -255,8 +248,7 @@
             "cap_gb": 20
           },
           "source_url": "https://www.au.com/mobile/charge/application-ended/flat20-n/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち",
+          "checked_at": "2026-11-28",
           "calls": {
             "included": "none",
             "per_30s_yen": 22,
@@ -267,7 +259,7 @@
           },
           "discount_ids": [
             "au_smartvalue",
-            "au_pay_card"
+            "au_2year_n"
           ]
         },
         {
@@ -283,8 +275,7 @@
             "cap_gb": 7
           },
           "source_url": "https://www.au.com/mobile/charge/application-ended/flat7-plus-n/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち（家族割2回線の額は目安）",
+          "checked_at": "2026-11-28",
           "calls": {
             "included": "none",
             "per_30s_yen": 22,
@@ -296,7 +287,7 @@
           "discount_ids": [
             "au_smartvalue",
             "au_family_plus",
-            "au_pay_card"
+            "au_2year_n"
           ]
         },
         {
@@ -325,8 +316,7 @@
             "cap_gb": 7
           },
           "source_url": "https://www.au.com/mobile/charge/application-ended/5g-pitatto/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち",
+          "checked_at": "2026-11-28",
           "calls": {
             "included": "none",
             "per_30s_yen": 22,
@@ -371,8 +361,7 @@
             "cap_gb": 4
           },
           "source_url": "https://www.au.com/mobile/charge/application-ended/sp-mini/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち",
+          "checked_at": "2026-11-28",
           "calls": {
             "included": "none",
             "per_30s_yen": 22,
@@ -385,7 +374,8 @@
             "au_smartvalue",
             "au_family_plus",
             "au_pay_card"
-          ]
+          ],
+          "note_for_dev": "段階の金額（3,685／4,785／5,885／6,435円・上限4GB）は公式と一致。各段階のGB境界（〜1／〜2／〜3／〜4GB）は公式ページ本文のテキストでは未確認（2026-11-28照合）"
         }
       ],
       "discounts": [
@@ -427,8 +417,7 @@
           ],
           "condition_text": "対象の光回線・ケーブルテレビを「ネット＋電話」で契約（auホームルーター等は対象の料金プランで電話不要）。auでんきだけでは対象外",
           "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-          "checked_at": "2026-11-14",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "au_smartvalue_pitatto",
@@ -461,8 +450,7 @@
           ],
           "condition_text": "対象の光回線を「ネット＋電話」で契約。データ利用が1GB以下の月は割引なし",
           "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-          "checked_at": "2026-11-14",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち。1GB以下の月は対象外（スマートバリュー公式ページで確認・旧ツールは未反映だった）"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "au_family_plus",
@@ -502,16 +490,6 @@
                 }
               ],
               "max": [
-                {
-                  "min_lines": 2,
-                  "yen": 550
-                },
-                {
-                  "min_lines": 3,
-                  "yen": 1100
-                }
-              ],
-              "manekatsu": [
                 {
                   "min_lines": 2,
                   "yen": 550
@@ -586,14 +564,13 @@
             }
           ],
           "condition_text": "家族で au の対象プランを2回線以上（回線数で割引額が変わる）",
-          "source_url": "https://www.au.com/mobile/charge/smartphone/plan/",
-          "checked_at": "2026-11-15",
-          "confidence": "estimate",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち。目安：mini_plus の2回線・manekatsu・flat7n の2回線の額は公式で未確認"
+          "source_url": "https://www.au.com/mobile/charge/charge-discount/kazoku-wari-plus/",
+          "checked_at": "2026-11-28",
+          "note_for_dev": "auマネ活プランは家族割プラスの割引対象外（人数カウントのみ対象）のため表に含めない（2026-11-28 au公式FAQで確認）。スマホミニプラン＋ 2回線660円、フラットプラン7プラスN 2回線550円、データMAX 5G 4回線以上2,222円は公式で確定"
         },
         {
           "id": "au_pay_card",
-          "name": "au PAYカードお支払い割（旧プランは2年契約Nを含む）",
+          "name": "au PAYカードお支払い割",
           "kind": "payment",
           "amount": {
             "type": "by_plan",
@@ -602,10 +579,6 @@
               "mini_plus": 220,
               "valuelink": 220,
               "max": 110,
-              "datamax5g": 187,
-              "datamaxpro": 187,
-              "flat20n": 187,
-              "flat7n": 187,
               "pitatto": 187,
               "mini": 187
             }
@@ -620,10 +593,13 @@
               ]
             }
           ],
-          "condition_text": "毎月の料金を au PAYカードで支払い（旧プランは2年契約Nの場合も同額）",
-          "source_url": "https://www.au.com/mobile/charge/smartphone/plan/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "condition_text": "毎月の料金を au PAYカードで支払い",
+          "source_url": "https://www.au.com/mobile/charge/discount-option/aupay-card-wari/",
+          "checked_at": "2026-11-28",
+          "not_combinable_with": [
+            "au_2year_n"
+          ],
+          "note_for_dev": "ピタットプラン／スマホミニプラン（旧）の187円はPAYカード割として実在（2年契約Nでも同額187円だが重畳不可・最大187円）。データMAX 5G／データMAXプランPro／フラット20N／フラット7プラスN はPAYカード割の対象外のため、187円は au_2year_n 側へ分離した（2026-11-28照合）"
         },
         {
           "id": "au_max_low3",
@@ -643,8 +619,7 @@
           ],
           "condition_text": "その月のデータ利用（テザリング等を含む）が3GB以下のとき自動で適用",
           "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "au_datamax_low2",
@@ -664,8 +639,38 @@
           ],
           "condition_text": "その月のデータ利用が2GB以下のとき自動で適用",
           "source_url": "https://www.au.com/mobile/charge/application-ended/5g-data-max/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "au_2year_n",
+          "name": "2年契約N",
+          "kind": "contract",
+          "amount": {
+            "type": "by_plan",
+            "table": {
+              "datamax5g": 187,
+              "datamaxpro": 187,
+              "flat20n": 187,
+              "flat7n": 187
+            }
+          },
+          "unit": "per_line",
+          "duration_months": null,
+          "conditions": [
+            {
+              "type": "contract",
+              "values": [
+                "2year_n"
+              ]
+            }
+          ],
+          "condition_text": "「2年契約N」（2年単位・自動更新の契約）に加入していること",
+          "not_combinable_with": [
+            "au_pay_card"
+          ],
+          "source_url": "https://www.au.com/mobile/charge/charge-discount/2yr-contract-auto-renewal-n/",
+          "checked_at": "2026-11-28",
+          "note_for_dev": "旧データでは au PAYカードお支払い割に混在していた187円を分離（監査・第6節）。ピタットプラン／スマホミニプラン（旧）にも2年契約Nの187円があるが、今回はPAYカード割側のみ収録"
         }
       ],
       "call_options": [
@@ -675,8 +680,7 @@
           "yen": 880,
           "covers": "5min",
           "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "au_call_unlimited",
@@ -684,8 +688,7 @@
           "yen": 1980,
           "covers": "unlimited",
           "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         }
       ],
       "examples": [
@@ -701,7 +704,7 @@
           },
           "expected_yen": 5258,
           "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/",
-          "checked_at": "2026-11-15"
+          "checked_at": "2026-11-28"
         },
         {
           "label": "auバリューリンクプラン：家族割プラス3人以上＋スマートバリュー＋au PAYカード",
@@ -715,7 +718,7 @@
           },
           "expected_yen": 5478,
           "source_url": "https://www.au.com/mobile/charge/smartphone/plan/auvaluelink/",
-          "checked_at": "2026-11-15"
+          "checked_at": "2026-11-28"
         },
         {
           "label": "ピタットプラン：家族3人・1GB以下（スマートバリューは付かない）＋au PAYカード",
@@ -729,7 +732,7 @@
           },
           "expected_yen": 2398,
           "source_url": "https://www.au.com/mobile/charge/application-ended/5g-pitatto/",
-          "checked_at": "2026-11-15"
+          "checked_at": "2026-11-28"
         },
         {
           "label": "ピタットプラン：家族3人・1GB超〜4GB＋スマートバリュー＋au PAYカード",
@@ -743,7 +746,7 @@
           },
           "expected_yen": 3498,
           "source_url": "https://www.au.com/mobile/charge/application-ended/5g-pitatto/",
-          "checked_at": "2026-11-15"
+          "checked_at": "2026-11-28"
         },
         {
           "label": "スマホミニプラン 5G/4G：1GB以下・家族3人＋スマートバリュー＋au PAYカード",
@@ -757,7 +760,7 @@
           },
           "expected_yen": 2398,
           "source_url": "https://www.au.com/mobile/charge/application-ended/sp-mini/",
-          "checked_at": "2026-11-15"
+          "checked_at": "2026-11-28"
         },
         {
           "label": "データMAX 5G：家族4人＋スマートバリュー＋2年契約N",
@@ -767,16 +770,16 @@
             "family_lines": 4,
             "home_internet": "au_hikari_plus",
             "with_phone": true,
-            "payment": "au_pay_card"
+            "payment": "au_pay_card",
+            "contract": "2year_n"
           },
           "expected_yen": 5236,
           "source_url": "https://www.au.com/mobile/charge/application-ended/5g-data-max/",
-          "checked_at": "2026-11-15"
+          "checked_at": "2026-11-28"
         }
       ],
       "source_url": "https://www.au.com/mobile/charge/smartphone/plan/",
-      "checked_at": "2026-11-15",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "checked_at": "2026-11-28"
     },
     {
       "id": "uq",
@@ -785,11 +788,11 @@
       "kind": "subbrand",
       "is_proposal_target": true,
       "fees": {
-        "contract_yen": 3850,
-        "source_url": "https://www.uqwimax.jp/mobile/plan/",
-        "checked_at": "2026-11-27",
-        "confidence": "estimate",
-        "note_for_dev": "契約事務手数料は旧ツールに無く未確認。クロの確認待ち"
+        "contract_yen": 4950,
+        "contract_online_yen": 3850,
+        "source_url": "https://www.uqwimax.jp/mobile/support/faq/pages/pg00000343.html",
+        "checked_at": "2026-11-28",
+        "note_for_dev": "契約事務手数料は店舗 4,950円／オンラインショップ 3,850円（2026-11-28 UQ公式FAQで確認）"
       },
       "plans": [
         {
@@ -824,8 +827,7 @@
             "5GB以下の月は自動で1,100円引き（UQ親子応援割とは重ねられない）"
           ],
           "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku2/",
-          "checked_at": "2026-11-21",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "komivalue",
@@ -846,15 +848,16 @@
             ]
           },
           "discount_ids": [
-            "uq_oyako"
+            "uq_oyako",
+            "uq_komikomi_otoku",
+            "uq_komikomi_otoku_14"
           ],
           "notes": [
             "1回10分以内の国内通話込み",
             "家族セット割・自宅セット割・au PAYカード払い割の対象外"
           ],
           "source_url": "https://www.uqwimax.jp/mobile/plan/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "tokutoku",
@@ -884,8 +887,7 @@
           ],
           "ended_on": "2025",
           "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "komikomi_plus",
@@ -896,7 +898,7 @@
             "yen": 3498
           },
           "data": {
-            "cap_gb": 30
+            "cap_gb": 35
           },
           "calls": {
             "included": "10min",
@@ -908,8 +910,7 @@
           "discount_ids": [],
           "ended_on": "2025",
           "source_url": "https://www.uqwimax.jp/mobile/plan/komikomi-plus/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "komikomi",
@@ -920,7 +921,7 @@
             "yen": 3498
           },
           "data": {
-            "cap_gb": 20
+            "cap_gb": 22
           },
           "calls": {
             "included": "10min",
@@ -932,8 +933,7 @@
           "discount_ids": [],
           "ended_on": "2024",
           "source_url": "https://www.uqwimax.jp/mobile/plan/komikomi/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "minimini",
@@ -962,8 +962,7 @@
           ],
           "ended_on": "2025",
           "source_url": "https://www.uqwimax.jp/mobile/plan/minimini/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "kurikoshi5g_s",
@@ -990,8 +989,7 @@
           ],
           "ended_on": "2023-05",
           "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "kurikoshi5g_m",
@@ -1018,8 +1016,7 @@
           ],
           "ended_on": "2023-05",
           "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "kurikoshi5g_l",
@@ -1046,8 +1043,7 @@
           ],
           "ended_on": "2023-05",
           "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "kurikoshi_s",
@@ -1072,8 +1068,7 @@
           "discount_ids": [],
           "ended_on": "2021",
           "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "kurikoshi_m",
@@ -1098,8 +1093,7 @@
           "discount_ids": [],
           "ended_on": "2021",
           "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "kurikoshi_l",
@@ -1124,8 +1118,7 @@
           "discount_ids": [],
           "ended_on": "2021",
           "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         }
       ],
       "discounts": [
@@ -1175,8 +1168,7 @@
           "condition_text": "対象の光回線を「ネット＋電話」で契約（インターネットコース）、または auでんき（でんきコース）。両方あってもどちらか1つ。家族セット割とは併用不可（自宅セット割を優先）",
           "exclusive_group": "uq_set_or_family",
           "source_url": "https://www.uqwimax.jp/mobile/newplan/setwari/jitaku/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "uq_family_set",
@@ -1202,8 +1194,8 @@
           "condition_text": "家族で UQ mobile を2回線以上（コミコミプランバリューも回線数に数える）。自宅セット割とは併用不可",
           "exclusive_group": "uq_set_or_family",
           "source_url": "https://www.uqwimax.jp/mobile/newplan/kazoku/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28",
+          "note_for_dev": "金額（550円／回線）は公式と一致。条件の「2回線以上」という文言自体は公式ページで明記を確認できなかった（2026-11-28照合）"
         },
         {
           "id": "uq_pay_card",
@@ -1229,8 +1221,7 @@
           ],
           "condition_text": "毎月の料金を au PAYカードで支払い",
           "source_url": "https://www.uqwimax.jp/mobile/newplan/aupaycard/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "uq_low5",
@@ -1250,8 +1241,7 @@
           ],
           "condition_text": "その月のデータ利用（くりこし分・テザリング等を含む）が5GB以下のとき自動で適用。UQ親子応援割とは重ねられない",
           "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku2/",
-          "checked_at": "2026-11-21",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "uq_tokutoku_low1",
@@ -1271,8 +1261,7 @@
           ],
           "condition_text": "その月のデータ利用が1GB以下のとき自動で適用",
           "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "uq_oyako",
@@ -1300,8 +1289,60 @@
             "uq_low5"
           ],
           "source_url": "https://www.uqwimax.jp/mobile/ouenwari/",
-          "checked_at": "2026-11-21",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち。他のUQプランからの変更が『新たに加入』に当たるかは未確認（クロに依頼済み）"
+          "checked_at": "2026-11-28",
+          "note_for_dev": "他のUQプランからのプラン変更による加入も「新たに加入」の対象になる（KDDI公式ニュースリリース 2026-11-18 の注2で確認）"
+        },
+        {
+          "id": "uq_komikomi_otoku",
+          "name": "UQコミコミおトク割",
+          "kind": "campaign_like",
+          "amount": {
+            "type": "fixed",
+            "yen": 660
+          },
+          "unit": "per_line",
+          "duration_months": 13,
+          "conditions": [],
+          "condition_text": "受付期間（2026年6月25日〜・終了日未定）中にコミコミプランバリューに新たに加入すると、加入当月から最大13か月間、月660円引き",
+          "source_url": "https://www.uqwimax.jp/mobile/otokuwari/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "uq_komikomi_otoku_14",
+          "name": "UQコミコミおトク割（14か月目以降）",
+          "kind": "campaign_like",
+          "amount": {
+            "type": "fixed",
+            "yen": 660
+          },
+          "unit": "per_line",
+          "duration_months": null,
+          "starts_after_months": 13,
+          "conditions": [
+            {
+              "type": "any_of",
+              "of": [
+                {
+                  "type": "payment",
+                  "values": [
+                    "au_pay_gold_card"
+                  ],
+                  "text": "au PAY ゴールドカード会員であること"
+                },
+                {
+                  "type": "payment",
+                  "values": [
+                    "au_pay_gold_card_payment"
+                  ],
+                  "text": "au PAY ゴールドカードで利用料金の支払い設定をしていること"
+                }
+              ]
+            }
+          ],
+          "condition_text": "14か月目以降は、au PAY ゴールドカード会員であること、または同カードで利用料金の支払い設定をしていることが条件（2026年11月19日から対象拡大）。判定は毎月月末時点、ゴールドカードのau IDと対象回線のau IDが同一であること。条件を満たさなくなると終了し、再適用はない",
+          "source_url": "https://www.uqwimax.jp/mobile/otokuwari/",
+          "checked_at": "2026-11-28",
+          "note_for_dev": "画面への反映は計算の汎用化（ステップ2）で行う前提。それまでは月額に入らない"
         }
       ],
       "call_options": [
@@ -1311,8 +1352,7 @@
           "yen": 880,
           "covers": "10min",
           "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "uq_call_unlimited",
@@ -1320,8 +1360,7 @@
           "yen": 1980,
           "covers": "unlimited",
           "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "uq_call60",
@@ -1329,8 +1368,7 @@
           "yen": 660,
           "covers": "60min_month",
           "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
-          "checked_at": "2026-11-15",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+          "checked_at": "2026-11-28"
         },
         {
           "id": "uq_komi_unlimited",
@@ -1338,9 +1376,7 @@
           "yen": 1100,
           "covers": "unlimited",
           "source_url": "https://www.uqwimax.jp/mobile/plan/",
-          "checked_at": "2026-11-15",
-          "confidence": "estimate",
-          "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち。コミコミ系の完全かけ放題の追加料金は未確認（クロに依頼済み）"
+          "checked_at": "2026-11-28"
         }
       ],
       "examples": [
@@ -1355,7 +1391,7 @@
           },
           "expected_yen": 1628,
           "source_url": "https://www.uqwimax.jp/mobile/ouenwari/",
-          "checked_at": "2026-11-21"
+          "checked_at": "2026-11-28"
         },
         {
           "label": "トクトクプラン2：自宅セット割＋au PAYカード・5GB超",
@@ -1368,7 +1404,7 @@
           },
           "expected_yen": 2728,
           "source_url": "https://www.uqwimax.jp/mobile/ouenwari/",
-          "checked_at": "2026-11-21"
+          "checked_at": "2026-11-28"
         },
         {
           "label": "トクトクプラン2：家族セット割＋au PAYカード・5GB超",
@@ -1380,7 +1416,7 @@
           },
           "expected_yen": 3278,
           "source_url": "https://www.uqwimax.jp/mobile/ouenwari/",
-          "checked_at": "2026-11-21"
+          "checked_at": "2026-11-28"
         },
         {
           "label": "トクトクプラン2：UQ親子応援割＋自宅セット割＋au PAYカード（1年目・5GB以下でも同じ）",
@@ -1396,7 +1432,7 @@
           },
           "expected_yen": 1628,
           "source_url": "https://www.uqwimax.jp/mobile/ouenwari/",
-          "checked_at": "2026-11-21"
+          "checked_at": "2026-11-28"
         },
         {
           "label": "トクトクプラン2：UQ親子応援割＋家族セット割＋au PAYカード（1年目）",
@@ -1411,7 +1447,7 @@
           },
           "expected_yen": 2178,
           "source_url": "https://www.uqwimax.jp/mobile/ouenwari/",
-          "checked_at": "2026-11-21"
+          "checked_at": "2026-11-28"
         },
         {
           "label": "ミニミニプラン：自宅セット割＋au PAYカード",
@@ -1424,7 +1460,7 @@
           },
           "expected_yen": 1188,
           "source_url": "https://www.uqwimax.jp/mobile/plan/minimini/",
-          "checked_at": "2026-11-15"
+          "checked_at": "2026-11-28"
         },
         {
           "label": "トクトクプラン：自宅セット割＋au PAYカード・17GB",
@@ -1437,7 +1473,7 @@
           },
           "expected_yen": 2398,
           "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku/",
-          "checked_at": "2026-11-15"
+          "checked_at": "2026-11-28"
         },
         {
           "label": "トクトクプラン：自宅セット割＋au PAYカード・1GB以下",
@@ -1450,12 +1486,2728 @@
           },
           "expected_yen": 1100,
           "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku/",
-          "checked_at": "2026-11-15"
+          "checked_at": "2026-11-28"
         }
       ],
       "source_url": "https://www.uqwimax.jp/mobile/plan/",
-      "checked_at": "2026-11-15",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "checked_at": "2026-11-28"
+    },
+    {
+      "call_options": [
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "kakehoudai",
+          "name": "かけ放題オプション",
+          "notes": [
+            "国内通話かけ放題（一部対象外通話あり）"
+          ],
+          "source_url": "https://www.docomo.ne.jp/charge/eximo/",
+          "yen": 1980
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "5min",
+          "id": "free_5min",
+          "name": "5分通話無料オプション",
+          "notes": [
+            "1回5分以内の国内通話が無料、超過分は22円/30秒"
+          ],
+          "source_url": "https://www.docomo.ne.jp/charge/eximo/",
+          "yen": 880
+        }
+      ],
+      "checked_at": "2026-11-28",
+      "discounts": [
+        {
+          "amount": {
+            "table": [
+              {
+                "min_lines": 2,
+                "yen": 550
+              },
+              {
+                "min_lines": 3,
+                "yen": 1100
+              }
+            ],
+            "type": "by_lines"
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "同一「ファミリー割引」グループ内の対象音声回線数に応じて割引。1回線は割引なし、2回線で550円、3回線以上で1,100円（各回線ごと）。カウント対象は音声通話可能な料金プラン契約回線（2in1、キッズケータイプラス、キッズケータイプラン、irumo（0.5GB）を除く）。irumo各プランは割引対象外で、3GB以上はカウント対象のみ。本割引が付くのは eximo のみ（plan.discount_ids で表現）",
+          "conditions": [
+            {
+              "min": 2,
+              "type": "family_lines"
+            }
+          ],
+          "duration_months": null,
+          "id": "minna_docomo_wari",
+          "kind": "family",
+          "name": "みんなドコモ割",
+          "source_url": "https://www.docomo.ne.jp/charge/eximo/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 1100
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "同一「ファミリー割引」グループ内に「ドコモ光」の契約がある場合に永年1,100円割引（別途ドコモ光の料金が必要）。irumo（0.5GB）は対象外",
+          "conditions": [
+            {
+              "type": "home_internet",
+              "values": [
+                "docomo_hikari"
+              ]
+            }
+          ],
+          "duration_months": null,
+          "exclusive_group": "docomo_set_wari",
+          "id": "docomo_hikari_set_wari",
+          "kind": "set_home",
+          "name": "ドコモ光セット割",
+          "not_combinable_with": [
+            "home_5g_set_wari"
+          ],
+          "source_url": "https://www.docomo.ne.jp/charge/eximo/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 1100
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "同一「ファミリー割引」グループ内に「home 5G プラン」の契約がある場合に1,100円割引（別途home 5Gプラン月5,280円と端末購入が必要）。同一グループにドコモ光とhome 5Gの両方がある場合はドコモ光セット割が適用される。irumo（0.5GB）は対象外",
+          "conditions": [
+            {
+              "type": "home_internet",
+              "values": [
+                "home_5g"
+              ]
+            }
+          ],
+          "duration_months": null,
+          "exclusive_group": "docomo_set_wari",
+          "id": "home_5g_set_wari",
+          "kind": "set_home",
+          "name": "home 5G セット割",
+          "not_combinable_with": [
+            "docomo_hikari_set_wari"
+          ],
+          "source_url": "https://www.docomo.ne.jp/charge/eximo/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 187
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "各利用月の末日時点で、利用料金の支払方法をdカード／dカード GOLD U／dカード GOLD／dカード PLATINUM（家族カード含む）に設定していること（一括請求グループは代表回線での設定）。irumo（0.5GB）は対象外。なお割引額増額（最大550円等）は新プラン「ドコモ MAX」等向けの改定であり、eximo／irumoには従来の187円が公式ページに掲載されている",
+          "conditions": [
+            {
+              "type": "payment",
+              "values": [
+                "d_card",
+                "d_card_gold_u",
+                "d_card_gold",
+                "d_card_platinum"
+              ]
+            }
+          ],
+          "duration_months": null,
+          "id": "dcard_oshiharai_wari",
+          "kind": "payment",
+          "name": "dカードお支払割",
+          "source_url": "https://www.docomo.ne.jp/charge/eximo/",
+          "unit": "per_line"
+        }
+      ],
+      "examples": [
+        {
+          "expected_yen": 2178,
+          "inputs": {
+            "data_gb": 1,
+            "family_lines": 3,
+            "home_internet": "docomo_hikari",
+            "payment": "d_card"
+          },
+          "label": "eximo ～1GB・全割引適用（みんなドコモ割3回線以上＋ドコモ光セット割＋dカードお支払割）",
+          "plan_id": "eximo",
+          "source_url": "https://www.docomo.ne.jp/charge/eximo/"
+        },
+        {
+          "expected_yen": 3278,
+          "inputs": {
+            "data_gb": 3,
+            "family_lines": 3,
+            "home_internet": "docomo_hikari",
+            "payment": "d_card"
+          },
+          "label": "eximo 1GB～3GB・全割引適用（みんなドコモ割3回線以上＋ドコモ光セット割＋dカードお支払割）",
+          "plan_id": "eximo",
+          "source_url": "https://www.docomo.ne.jp/charge/eximo/"
+        },
+        {
+          "expected_yen": 4928,
+          "inputs": {
+            "data_gb": 10,
+            "family_lines": 3,
+            "home_internet": "docomo_hikari",
+            "payment": "d_card"
+          },
+          "label": "eximo 3GB～無制限・全割引適用（みんなドコモ割3回線以上＋ドコモ光セット割＋dカードお支払割）",
+          "plan_id": "eximo",
+          "source_url": "https://www.docomo.ne.jp/charge/eximo/"
+        },
+        {
+          "expected_yen": 880,
+          "inputs": {
+            "data_gb": 3,
+            "family_lines": 1,
+            "home_internet": "docomo_hikari",
+            "payment": "d_card"
+          },
+          "label": "irumo 3GB・セット割＋dカードお支払割適用後",
+          "plan_id": "irumo_3gb",
+          "source_url": "https://irumo.docomo.ne.jp/plan/"
+        },
+        {
+          "expected_yen": 1540,
+          "inputs": {
+            "data_gb": 6,
+            "family_lines": 1,
+            "home_internet": "docomo_hikari",
+            "payment": "d_card"
+          },
+          "label": "irumo 6GB・セット割＋dカードお支払割適用後",
+          "plan_id": "irumo_6gb",
+          "source_url": "https://irumo.docomo.ne.jp/plan/"
+        },
+        {
+          "expected_yen": 2090,
+          "inputs": {
+            "data_gb": 9,
+            "family_lines": 1,
+            "home_internet": "docomo_hikari",
+            "payment": "d_card"
+          },
+          "label": "irumo 9GB・セット割＋dカードお支払割適用後",
+          "plan_id": "irumo_9gb",
+          "source_url": "https://irumo.docomo.ne.jp/plan/"
+        }
+      ],
+      "fees": {
+        "checked_at": "2026-11-28",
+        "contract_online_yen": 0,
+        "contract_yen": 4950,
+        "notes": [
+          "契約事務手数料は店頭4,950円、ドコモオンラインショップでの手続きは無料。irumo公式ページでも店頭4,950円／オンライン無料と同額を確認"
+        ],
+        "source_url": "https://www.docomo.ne.jp/support/subscribe/"
+      },
+      "group": "docomo",
+      "id": "docomo",
+      "kind": "mno",
+      "name": "NTTドコモ",
+      "note_for_dev": "eximo／irumo は2025年6月4日に新規申込受付終了（後継はドコモMAX）。スキーマの status は active/ended の2値のため、検収時に ended（ended_on=2025-06-04）へ変換した。既存契約者の「今のプラン」としては選択可、提案先にはしない想定。また eximo／irumo／ahamo とも2026年12月1日からの料金改定が公式告知済みで、本データは改定前の現行料金。改定額は公式ページ本文では未確認（gaps.md参照）",
+      "plans": [
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "kakehoudai",
+              "free_5min"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": null,
+            "rollover": false
+          },
+          "discount_ids": [
+            "minna_docomo_wari",
+            "docomo_hikari_set_wari",
+            "home_5g_set_wari",
+            "dcard_oshiharai_wari"
+          ],
+          "ended_on": "2025-06-04",
+          "id": "eximo",
+          "name": "ドコモ eximo",
+          "notes": [
+            "段階制（～1GB／1GB～3GB／3GB～無制限）",
+            "家族間（同一ファミリー割引グループ内）通話は無料、家族以外は22円/30秒のため included は none とした",
+            "2025年6月4日に新規申込受付終了（公式ページ明記、後継はドコモMAX）",
+            "2026年12月1日から月額料金改定の告知あり（改定額は未確認）",
+            "指定ISP（spモード等330円）利用料を含む"
+          ],
+          "price": {
+            "tiers": [
+              {
+                "up_to_gb": 1,
+                "yen": 4565
+              },
+              {
+                "up_to_gb": 3,
+                "yen": 5665
+              },
+              {
+                "up_to_gb": null,
+                "yen": 7315
+              }
+            ],
+            "type": "tiered"
+          },
+          "source_url": "https://www.docomo.ne.jp/charge/eximo/",
+          "status": "ended"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "kakehoudai",
+              "free_5min"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.128,
+            "cap_gb": 0.5,
+            "rollover": false
+          },
+          "discount_ids": [],
+          "ended_on": "2025-06-04",
+          "id": "irumo_0_5gb",
+          "name": "irumo 0.5GB",
+          "notes": [
+            "irumoは自動段階制ではなく容量別の別プランとして公式掲載されているため、容量ごとに plan を分けた",
+            "通常時も送受信最大3Mbps（4Gのみ）。容量超過後は最大128kbps",
+            "ドコモ光セット割／home 5Gセット割・dカードお支払割は対象外、みんなドコモ割も対象外（公式明記）",
+            "2025年6月4日に新規申込受付終了"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 550
+          },
+          "source_url": "https://irumo.docomo.ne.jp/plan/",
+          "status": "ended"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "kakehoudai",
+              "free_5min"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.3,
+            "cap_gb": 3,
+            "rollover": false
+          },
+          "discount_ids": [
+            "docomo_hikari_set_wari",
+            "home_5g_set_wari",
+            "dcard_oshiharai_wari"
+          ],
+          "ended_on": "2025-06-04",
+          "id": "irumo_3gb",
+          "name": "irumo 3GB",
+          "notes": [
+            "容量超過後は最大300kbps",
+            "みんなドコモ割は割引対象外（カウント対象のみ）",
+            "全割引適用後の公式例は880円",
+            "2025年6月4日に新規申込受付終了。2026年12月1日料金改定の告知あり"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 2167
+          },
+          "source_url": "https://irumo.docomo.ne.jp/plan/",
+          "status": "ended"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "kakehoudai",
+              "free_5min"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.3,
+            "cap_gb": 6,
+            "rollover": false
+          },
+          "discount_ids": [
+            "docomo_hikari_set_wari",
+            "home_5g_set_wari",
+            "dcard_oshiharai_wari"
+          ],
+          "ended_on": "2025-06-04",
+          "id": "irumo_6gb",
+          "name": "irumo 6GB",
+          "notes": [
+            "容量超過後は最大300kbps",
+            "みんなドコモ割は割引対象外（カウント対象のみ）",
+            "全割引適用後の公式例は1,540円",
+            "2025年6月4日に新規申込受付終了"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 2827
+          },
+          "source_url": "https://irumo.docomo.ne.jp/plan/",
+          "status": "ended"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "kakehoudai",
+              "free_5min"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.3,
+            "cap_gb": 9,
+            "rollover": false
+          },
+          "discount_ids": [
+            "docomo_hikari_set_wari",
+            "home_5g_set_wari",
+            "dcard_oshiharai_wari"
+          ],
+          "ended_on": "2025-06-04",
+          "id": "irumo_9gb",
+          "name": "irumo 9GB",
+          "notes": [
+            "容量超過後は最大300kbps",
+            "みんなドコモ割は割引対象外（カウント対象のみ）",
+            "全割引適用後の公式例は2,090円",
+            "2025年6月4日に新規申込受付終了"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 3377
+          },
+          "source_url": "https://irumo.docomo.ne.jp/plan/",
+          "status": "ended"
+        }
+      ],
+      "source_url": "https://www.docomo.ne.jp/charge/eximo/"
+    },
+    {
+      "call_options": [
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "kakehoudai",
+          "name": "かけ放題オプション",
+          "notes": [
+            "国内通話かけ放題（一部対象外通話あり）。基本プランには5分無料が含まれる"
+          ],
+          "source_url": "https://ahamo.com/plan/index.html",
+          "yen": 1100
+        }
+      ],
+      "checked_at": "2026-11-28",
+      "discounts": [],
+      "examples": [
+        {
+          "expected_yen": 2970,
+          "inputs": {
+            "data_gb": 30,
+            "family_lines": 1,
+            "home_internet": null,
+            "payment": null
+          },
+          "label": "ahamo 基本プラン（30GB・割引なし）",
+          "plan_id": "ahamo",
+          "source_url": "https://ahamo.com/plan/index.html"
+        },
+        {
+          "expected_yen": 4950,
+          "inputs": {
+            "data_gb": 110,
+            "family_lines": 1,
+            "home_internet": null,
+            "payment": null
+          },
+          "label": "ahamo 大盛り（110GB＝基本＋大盛りオプション）",
+          "plan_id": "ahamo_oomori",
+          "source_url": "https://ahamo.com/plan/index.html"
+        }
+      ],
+      "fees": {
+        "checked_at": "2026-11-28",
+        "contract_online_yen": 0,
+        "contract_yen": 0,
+        "notes": [
+          "事務手数料は新規・乗り換えとも0円（公式明記）。送料も無料"
+        ],
+        "source_url": "https://ahamo.com/plan/index.html"
+      },
+      "group": "docomo",
+      "id": "ahamo",
+      "kind": "online",
+      "name": "ahamo",
+      "note_for_dev": "公式現行ページでは基本容量は30GB（調査依頼の前提だった20GBではない）。2026年12月1日から40GB 3,135円～120GB 5,115円の段階制へ改定予定（公式告知）。本データは改定前の現行料金",
+      "plans": [
+        {
+          "calls": {
+            "included": "5min",
+            "option_ids": [
+              "kakehoudai"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 1,
+            "cap_gb": 30,
+            "rollover": false
+          },
+          "discount_ids": [],
+          "id": "ahamo",
+          "name": "ahamo",
+          "notes": [
+            "基本容量は30GB（旧仕様の20GBではない）",
+            "国内通話5分無料込み、超過後は22円/30秒",
+            "容量超過後は最大1Mbps（提供条件書で確認）",
+            "海外91の国・地域で30GBまで追加料金なし",
+            "2026年12月1日から40GB 3,135円～120GB 5,115円の段階制へ改定予定（公式告知）",
+            "dカード支払いでボーナスパケット（dカード+1GB、GOLD系/PLATINUM+5GB）が付くが金額割引ではないため discounts には入れていない"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 2970
+          },
+          "source_url": "https://ahamo.com/plan/index.html",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "5min",
+            "option_ids": [
+              "kakehoudai"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 1,
+            "cap_gb": 110,
+            "rollover": false
+          },
+          "discount_ids": [],
+          "id": "ahamo_oomori",
+          "name": "ahamo 大盛り",
+          "notes": [
+            "基本プラン2,970円＋大盛りオプション（+80GB、1,980円/月）の合計110GB・4,950円を1プランとして表現した",
+            "大盛りオプションは2026年11月30日をもって提供終了（公式明記）"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 4950
+          },
+          "source_url": "https://ahamo.com/plan/index.html",
+          "status": "active"
+        }
+      ],
+      "source_url": "https://ahamo.com/plan/index.html"
+    },
+    {
+      "call_options": [
+        {
+          "checked_at": "2026-11-28",
+          "covers": "5min",
+          "id": "junteigaku_option_plus",
+          "name": "準定額オプション＋",
+          "notes": [
+            "1回5分以内の国内通話が無料（対象外通話あり）。留守番電話プラス／割込通話／グループ通話／一定額ストップサービスを含む"
+          ],
+          "source_url": "https://www.softbank.jp/mobile/price_plan/data/minifit-plan-plus/",
+          "yen": 880
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "teigaku_option_plus",
+          "name": "定額オプション＋",
+          "notes": [
+            "24時間いつでも国内通話が無料（対象外通話あり）。留守番電話プラス／割込通話／グループ通話／一定額ストップサービスを含む"
+          ],
+          "source_url": "https://www.softbank.jp/mobile/price_plan/data/minifit-plan-plus/",
+          "yen": 1980
+        }
+      ],
+      "campaigns": [],
+      "checked_at": "2026-11-28",
+      "discounts": [
+        {
+          "amount": {
+            "table": [
+              {
+                "min_lines": 2,
+                "yen": 660
+              },
+              {
+                "min_lines": 3,
+                "yen": 1210
+              }
+            ],
+            "type": "by_lines"
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "同一の家族割引グループで当社指定サービスの回線数が2回線以上あること。割引額はメリハリ無制限＋の場合、2回線で660円／回線、3回線以上で1,210円／回線。ミニフィットプラン＋は割引対象外（回線数カウントの対象のみ）。本割引が付くのはメリハリ無制限＋のみ（plan.discount_ids で表現）",
+          "conditions": [
+            {
+              "max": 10,
+              "min": 2,
+              "type": "family_lines"
+            }
+          ],
+          "duration_months": null,
+          "id": "shin_minna_kazoku",
+          "kind": "family",
+          "name": "新みんな家族割",
+          "source_url": "https://www.softbank.jp/mobile/set/common/pdf/legal/spguide/price_plan/minna-kazoku.pdf",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 1100
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "対象固定通信サービス（SoftBank 光・SoftBank Air等）とセットで加入すること。対象固定通信サービス1回線につき携帯電話回線は最大10回線まで。メリハリ無制限＋／ミニフィットプラン＋とも毎月1,100円割引（永年）。固定通信サービスの月額料金・指定オプション料が別途必要。家族おトク割とは併用不可（割引額が大きい方のみ適用、公式プランページ記載）",
+          "conditions": [
+            {
+              "type": "home_internet"
+            }
+          ],
+          "duration_months": null,
+          "id": "ouchiwari_hikari_set",
+          "kind": "set_home",
+          "name": "おうち割 光セット",
+          "source_url": "https://www.softbank.jp/mobile/special/ouchiwari-hikari/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 187
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "請求締日時点で、PayPayカードまたはPayPayカード ゴールド（家族カード含む）が利用料金の支払い方法として適用されていること。メリハリ無制限＋の割引額はカード種別を問わず187円。ミニフィットプラン＋は対象データプランに含まれないため適用不可。請求代行サービス利用時は適用されない。本割引が付くのはメリハリ無制限＋のみ（plan.discount_ids で表現）",
+          "conditions": [
+            {
+              "type": "payment"
+            }
+          ],
+          "duration_months": null,
+          "id": "paypay_card_wari",
+          "kind": "payment",
+          "name": "PayPayカード割",
+          "source_url": "https://www.softbank.jp/mobile/set/common/pdf/legal/spguide/price_plan/paypay-card.pdf",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 1650
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "メリハリ無制限＋で、テザリング・データシェアを含めた月間のデータ利用量が2GB以下の月に、定額料から1,650円を割引する",
+          "conditions": [
+            {
+              "max": 2,
+              "type": "data_usage_max"
+            }
+          ],
+          "duration_months": null,
+          "id": "merihari_under_2gb",
+          "kind": "usage",
+          "name": "メリハリ無制限＋ 2GB以下割引",
+          "source_url": "https://www.softbank.jp/mobile/price_plan/data/merihari-unlimited-plus/",
+          "unit": "per_line"
+        }
+      ],
+      "examples": [
+        {
+          "expected_yen": 5478,
+          "inputs": {
+            "family_lines": 3,
+            "home_internet": "softbank_hikari",
+            "payment": "paypay_card"
+          },
+          "label": "メリハリ無制限＋ 家族3人加入／SoftBank 光・Air加入／PayPayカード支払い（1人あたり、翌月から）",
+          "plan_id": "merihari_unlimited_plus",
+          "source_url": "https://www.softbank.jp/mobile/price_plan/data/merihari-unlimited-plus/"
+        },
+        {
+          "expected_yen": 3828,
+          "inputs": {
+            "data_gb": 2,
+            "family_lines": 3,
+            "home_internet": "softbank_hikari",
+            "payment": "paypay_card"
+          },
+          "label": "メリハリ無制限＋ 同上条件＋月間データ利用量2GB以下の月",
+          "plan_id": "merihari_unlimited_plus",
+          "source_url": "https://www.softbank.jp/mobile/price_plan/data/merihari-unlimited-plus/"
+        },
+        {
+          "expected_yen": 2508,
+          "inputs": {
+            "data_gb": 1,
+            "home_internet": "softbank_hikari"
+          },
+          "label": "ミニフィットプラン＋ SoftBank 光・Air加入／～1GBの場合（翌月から）",
+          "plan_id": "minifit_plan_plus",
+          "source_url": "https://www.softbank.jp/mobile/price_plan/data/minifit-plan-plus/"
+        }
+      ],
+      "fees": {
+        "checked_at": "2026-11-28",
+        "contract_online_yen": 3850,
+        "contract_yen": 4950,
+        "notes": [
+          "新規・のりかえ（MNP）の契約事務手数料。店頭4,950円／オンライン3,850円。初回利用料金に合算して請求"
+        ],
+        "source_url": "https://www.softbank.jp/mobile/shop/buy/fee/"
+      },
+      "group": "softbank",
+      "id": "softbank",
+      "kind": "mno",
+      "name": "ソフトバンク",
+      "note_for_dev": "両プランとも2026年6月1日で新規受付終了、2026年7月1日から料金改定済み。金額は改定後の値（メリハリ無制限＋ 7,975円、ミニフィットプラン＋ 3,608円〜）。status はスキーマの2値に合わせ ended（ended_on=2026-06-01）とした。既存契約者の「今のプラン」としては選択可、提案先にはしない想定",
+      "plans": [
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "junteigaku_option_plus",
+              "teigaku_option_plus"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": null,
+            "rollover": false,
+            "tethering_cap_gb": null
+          },
+          "discount_ids": [
+            "shin_minna_kazoku",
+            "ouchiwari_hikari_set",
+            "paypay_card_wari",
+            "merihari_under_2gb"
+          ],
+          "ended_on": "2026-06-01",
+          "id": "merihari_unlimited_plus",
+          "name": "メリハリ無制限＋",
+          "notes": [
+            "基本プラン（音声）1,078円＋データプランメリハリ無制限＋ 6,897円＝7,975円（2026年7月1日改定後の料金）",
+            "2026年6月1日に新規受付終了（公式ページ表題に明記）",
+            "データ容量無制限（時間帯により速度制御の場合あり、直近30日間で300GB超の場合に最大4.5Mbpsで速度制御）",
+            "テザリング・データシェア含め月2GB以下の月は1,650円割引（merihari_under_2gb）",
+            "余ったデータ量の繰り越しは不可",
+            "改定後のテザリング上限は公式プランページで確認できなかったため tethering_cap_gb は null"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 7975
+          },
+          "source_url": "https://www.softbank.jp/mobile/price_plan/data/merihari-unlimited-plus/",
+          "status": "ended"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "junteigaku_option_plus",
+              "teigaku_option_plus"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.128,
+            "cap_gb": 3,
+            "rollover": false,
+            "tethering_cap_gb": null
+          },
+          "discount_ids": [
+            "ouchiwari_hikari_set"
+          ],
+          "ended_on": "2026-06-01",
+          "id": "minifit_plan_plus",
+          "name": "ミニフィットプラン＋",
+          "notes": [
+            "基本プラン（音声）1,078円＋データプランミニフィット＋（～1GB 2,530円／～2GB 3,630円／～3GB 4,730円、2026年7月1日改定後）＝段階制合計 3,608円／4,708円／5,808円",
+            "2026年6月1日に新規受付終了（公式ページ表題に明記）",
+            "3GB超で請求月末まで送受信時最大128kbpsに低速化",
+            "余ったデータ量の繰り越しは不可",
+            "新みんな家族割は割引対象外（同一家族割引グループの回線数カウントには含まれる）ため discount_ids に含めていない",
+            "PayPayカード割の対象データプランにも含まれていない（提供条件書の対象一覧で確認）ため含めていない",
+            "テザリング上限は公式プランページで確認できなかったため null"
+          ],
+          "price": {
+            "tiers": [
+              {
+                "up_to_gb": 1,
+                "yen": 3608
+              },
+              {
+                "up_to_gb": 2,
+                "yen": 4708
+              },
+              {
+                "up_to_gb": 3,
+                "yen": 5808
+              }
+            ],
+            "type": "tiered"
+          },
+          "source_url": "https://www.softbank.jp/mobile/price_plan/data/minifit-plan-plus/",
+          "status": "ended"
+        }
+      ],
+      "source_url": "https://www.softbank.jp/mobile/price_plan/data/merihari-unlimited-plus/"
+    },
+    {
+      "call_options": [
+        {
+          "checked_at": "2026-11-28",
+          "covers": "10min",
+          "id": "daretodemo_teigaku_plus",
+          "name": "だれとでも定額＋",
+          "notes": [
+            "シンプル3 S/M向け。要申込。1回10分以内の国内通話かけ放題、超過分22円/30秒"
+          ],
+          "source_url": "https://www.ymobile.jp/plan/",
+          "yen": 880
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "super_daretodemo_teigaku_plus",
+          "name": "スーパーだれとでも定額＋",
+          "notes": [
+            "シンプル3 S/M向け。要申込。24時間国内通話かけ放題",
+            "60歳以上は通話ずーっと割引キャンペーンで880円になる旨公式ページに記載"
+          ],
+          "source_url": "https://www.ymobile.jp/plan/",
+          "yen": 1980
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "super_daretodemo_teigaku_plus_l",
+          "name": "スーパーだれとでも定額＋（L）",
+          "notes": [
+            "シンプル3 L向け。要申込。24時間国内通話かけ放題",
+            "60歳以上は通話ずーっと割引キャンペーンで0円になる旨公式ページに記載"
+          ],
+          "source_url": "https://www.ymobile.jp/plan/",
+          "yen": 1100
+        }
+      ],
+      "checked_at": "2026-11-28",
+      "discounts": [
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 1650
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "SoftBank 光（自動更新ありプラン）またはSoftBank Air等の対象固定通信サービスとセット契約すること。固定通信1回線につき携帯最大10回線まで。SoftBank 光（自動更新なしプラン）は対象外",
+          "conditions": [
+            {
+              "type": "home_internet",
+              "values": [
+                "softbank_hikari",
+                "softbank_air"
+              ]
+            }
+          ],
+          "duration_months": null,
+          "exclusive_group": "ymobile_set_discount",
+          "id": "ouchiwari_hikari_a",
+          "kind": "set_home",
+          "name": "おうち割 光セット（A）",
+          "not_combinable_with": [
+            "kazoku_wari",
+            "ouchiwari_denki_e",
+            "cho_otoku_wari"
+          ],
+          "source_url": "https://www.ymobile.jp/plan/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 1100
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "家族割引グループの2回線目以降に適用される。最大9回線まで割引適用（公式注記）。家族の定義・同一住所要否等の詳細条件文は料金ページ本文だけでは確認できなかった",
+          "conditions": [
+            {
+              "min": 2,
+              "type": "family_lines"
+            }
+          ],
+          "duration_months": null,
+          "exclusive_group": "ymobile_set_discount",
+          "id": "kazoku_wari",
+          "kind": "family",
+          "name": "家族割引サービス",
+          "not_combinable_with": [
+            "ouchiwari_hikari_a",
+            "ouchiwari_denki_e",
+            "cho_otoku_wari"
+          ],
+          "source_url": "https://www.ymobile.jp/plan/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 330
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "請求締日時点で対象プランに加入し、支払方法にPayPayカード（通常カード）を設定し、個人名義契約であること。家族カードも対象。年会費無料",
+          "conditions": [
+            {
+              "type": "payment",
+              "values": [
+                "paypay_card"
+              ]
+            }
+          ],
+          "duration_months": null,
+          "exclusive_group": "ymobile_paypay_card",
+          "id": "paypay_card_wari",
+          "kind": "payment",
+          "name": "PayPayカード割",
+          "not_combinable_with": [
+            "paypay_card_gold_wari"
+          ],
+          "source_url": "https://www.ymobile.jp/plan/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 770
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "支払方法にPayPayカード ゴールドを設定すること。内訳はPayPayカード割（ゴールド）550円＋増額特典（ゴールド）220円。ゴールド年会費11,000円（税込）要。家族カードも対象",
+          "conditions": [
+            {
+              "type": "payment",
+              "values": [
+                "paypay_card_gold"
+              ]
+            }
+          ],
+          "duration_months": null,
+          "exclusive_group": "ymobile_paypay_card",
+          "id": "paypay_card_gold_wari",
+          "kind": "payment",
+          "name": "PayPayカード割（ゴールド）＋増額特典",
+          "not_combinable_with": [
+            "paypay_card_wari"
+          ],
+          "source_url": "https://www.ymobile.jp/plan/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 1100
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "対象電力サービスとセット契約すること。シンプル3 Sは対象外（付くのは M/L のみ）。適用開始月から24ヵ月目まで。対象電力1契約につき最大10回線まで指定可",
+          "conditions": [
+            {
+              "type": "electricity"
+            }
+          ],
+          "duration_months": 24,
+          "exclusive_group": "ymobile_set_discount",
+          "id": "ouchiwari_denki_e",
+          "kind": "set_electricity",
+          "name": "おうち割 でんきセット（E）",
+          "not_combinable_with": [
+            "ouchiwari_hikari_a",
+            "kazoku_wari",
+            "cho_otoku_wari"
+          ],
+          "source_url": "https://www.ymobile.jp/plan/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 1100
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "シンプル3 M/Lが対象で自動適用、12ヵ月間。シンプル3 Sは対象外",
+          "conditions": [
+            {
+              "type": "other"
+            }
+          ],
+          "duration_months": 12,
+          "exclusive_group": "ymobile_set_discount",
+          "id": "cho_otoku_wari",
+          "kind": "campaign_like",
+          "name": "超！おトク割",
+          "not_combinable_with": [
+            "ouchiwari_hikari_a",
+            "kazoku_wari",
+            "ouchiwari_denki_e"
+          ],
+          "source_url": "https://www.ymobile.jp/plan/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 1100
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "5歳以上18歳以下の使用者（学生）とその家族が対象。シンプル3 M/Lのみ対象、翌月から12ヵ月間。シンプル3 Sは対象外。なお公式表示は「翌月から12ヵ月間」と「最大13ヶ月間」で表記が揺れており、duration_months は12とした（提供条件書での最終確認が望ましい）",
+          "conditions": [
+            {
+              "max": 18,
+              "min": 5,
+              "type": "age"
+            }
+          ],
+          "duration_months": 12,
+          "id": "oyako_wari",
+          "kind": "age",
+          "name": "ワイモバ親子割",
+          "source_url": "https://www.ymobile.jp/plan/",
+          "unit": "per_line"
+        }
+      ],
+      "examples": [
+        {
+          "expected_yen": 858,
+          "inputs": {},
+          "label": "シンプル3 S＋おうち割光セット(A)＋PayPayカードゴールド支払い",
+          "plan_id": "simple3_s",
+          "source_url": "https://www.ymobile.jp/plan/"
+        },
+        {
+          "expected_yen": 1958,
+          "inputs": {},
+          "label": "シンプル3 M＋おうち割光セット(A)＋PayPayカードゴールド支払い（親子割なしの2年間割引後料金として公式表示）",
+          "plan_id": "simple3_m",
+          "source_url": "https://www.ymobile.jp/plan/"
+        },
+        {
+          "expected_yen": 3058,
+          "inputs": {},
+          "label": "シンプル3 L＋おうち割光セット(A)＋PayPayカードゴールド支払い（親子割なしの2年間割引後料金として公式表示）",
+          "plan_id": "simple3_l",
+          "source_url": "https://www.ymobile.jp/plan/"
+        }
+      ],
+      "fees": {
+        "checked_at": "2026-11-28",
+        "contract_online_yen": 3850,
+        "contract_yen": 4950,
+        "notes": [
+          "契約事務手数料はオンライン3,850円、店頭4,950円（公式ページ注記）",
+          "解約時の契約解除料（シンプル3 S/M 858円・L 1,100円、加入から12ヵ月以内の解約時）は公式ページに記載があるが、スキーマの fees 対象外のため含めていない"
+        ],
+        "source_url": "https://www.ymobile.jp/plan/"
+      },
+      "group": "softbank",
+      "id": "ymobile",
+      "kind": "subbrand",
+      "name": "Y!mobile",
+      "plans": [
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "daretodemo_teigaku_plus",
+              "super_daretodemo_teigaku_plus"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.3,
+            "cap_gb": 5,
+            "rollover": true
+          },
+          "discount_ids": [
+            "ouchiwari_hikari_a",
+            "kazoku_wari",
+            "paypay_card_wari",
+            "paypay_card_gold_wari"
+          ],
+          "id": "simple3_s",
+          "name": "シンプル3 S",
+          "notes": [
+            "容量超過後は最大300kbps、さらに規定容量の半分（2.5GB）消費後は最大128kbps",
+            "データくりこし対象",
+            "おうち割でんきセット(E)・超！おトク割・親子割は対象外"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 3278
+          },
+          "source_url": "https://www.ymobile.jp/plan/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "daretodemo_teigaku_plus",
+              "super_daretodemo_teigaku_plus"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 1,
+            "cap_gb": 30,
+            "rollover": true
+          },
+          "discount_ids": [
+            "ouchiwari_hikari_a",
+            "kazoku_wari",
+            "paypay_card_wari",
+            "paypay_card_gold_wari",
+            "ouchiwari_denki_e",
+            "cho_otoku_wari",
+            "oyako_wari"
+          ],
+          "id": "simple3_m",
+          "name": "シンプル3 M",
+          "notes": [
+            "容量超過後は最大1Mbps、さらに規定容量の半分（15GB）消費後は最大128kbps",
+            "データくりこし対象"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 4378
+          },
+          "source_url": "https://www.ymobile.jp/plan/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "10min",
+            "option_ids": [
+              "super_daretodemo_teigaku_plus_l"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 1,
+            "cap_gb": 35,
+            "rollover": true
+          },
+          "discount_ids": [
+            "ouchiwari_hikari_a",
+            "kazoku_wari",
+            "paypay_card_wari",
+            "paypay_card_gold_wari",
+            "ouchiwari_denki_e",
+            "cho_otoku_wari",
+            "oyako_wari"
+          ],
+          "id": "simple3_l",
+          "name": "シンプル3 L",
+          "notes": [
+            "1回10分以内の国内通話かけ放題（だれとでも定額＋相当）が申込不要で含まれる。10分超過分は22円/30秒",
+            "容量超過後は最大1Mbps、さらに半分（17.5GB）消費後は最大128kbps"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 5478
+          },
+          "source_url": "https://www.ymobile.jp/plan/",
+          "status": "active"
+        }
+      ],
+      "source_url": "https://www.ymobile.jp/plan/"
+    },
+    {
+      "call_options": [
+        {
+          "checked_at": "2026-11-28",
+          "covers": "5min",
+          "id": "tsuwa_junteigaku",
+          "name": "通話準定額",
+          "notes": [
+            "LINEMOベストプラン向け。1回5分以内の国内通話無料、超過分22円/30秒。ベストプランVは同内容がプランに含まれるため追加料金なし",
+            "通話オプション割引キャンペーン実施中（詳細は公式ページ。割引額・期間はプランページ本文では確定できず割引としては登録していない）"
+          ],
+          "source_url": "https://www.linemo.jp/plan/",
+          "yen": 550
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "tsuwa_teigaku",
+          "name": "通話定額",
+          "notes": [
+            "LINEMOベストプラン向け。国内通話かけ放題"
+          ],
+          "source_url": "https://www.linemo.jp/plan/",
+          "yen": 1650
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "tsuwa_teigaku_for_v",
+          "name": "通話定額 for LINEMOベストプランV",
+          "notes": [
+            "LINEMOベストプランV向け。国内通話かけ放題"
+          ],
+          "source_url": "https://www.linemo.jp/plan/",
+          "yen": 1100
+        }
+      ],
+      "checked_at": "2026-11-28",
+      "discounts": [],
+      "examples": [],
+      "fees": {
+        "checked_at": "2026-11-28",
+        "contract_yen": 3850,
+        "notes": [
+          "新規契約・MNP・番号移行等の契約事務手数料3,850円（税込）。SIM再発行は1,100円",
+          "解約時の契約解除料（ベストプラン990円・ベストプランV 1,100円、加入から12ヵ月以内の解約時）は公式ページに記載があるが、スキーマの fees 対象外のため含めていない"
+        ],
+        "source_url": "https://www.linemo.jp/plan/"
+      },
+      "group": "softbank",
+      "id": "linemo",
+      "kind": "online",
+      "name": "LINEMO",
+      "note_for_dev": "恒常的な月額割引（家族割・セット割・支払い割等）は公式ページFAQで「家族割引サービスのご提供はありません」と明記されており、その他の恒常割引も確認できなかったため discounts は空配列。料金数値は公式料金ページが画像中心のため、ページ内FAQ・注意事項・提供条件書および公式ガイドページで確認した",
+      "plans": [
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "tsuwa_junteigaku",
+              "tsuwa_teigaku"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.3,
+            "cap_gb": 10,
+            "rollover": false
+          },
+          "discount_ids": [],
+          "id": "best_plan",
+          "name": "LINEMOベストプラン",
+          "notes": [
+            "利用データ量で料金が変化する2段階制（～3GB 990円／～10GB 2,090円）",
+            "10GB超で最大300kbps、15GB超（追加データ除く）で最大128kbps",
+            "余ったデータ量は翌月以降に繰り越せない",
+            "LINEギガフリー対象"
+          ],
+          "price": {
+            "tiers": [
+              {
+                "up_to_gb": 3,
+                "yen": 990
+              },
+              {
+                "up_to_gb": 10,
+                "yen": 2090
+              }
+            ],
+            "type": "tiered"
+          },
+          "source_url": "https://www.linemo.jp/plan/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "5min",
+            "option_ids": [
+              "tsuwa_teigaku_for_v"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 1,
+            "cap_gb": 30,
+            "rollover": false
+          },
+          "discount_ids": [],
+          "id": "best_plan_v",
+          "name": "LINEMOベストプランV",
+          "notes": [
+            "現行は30GB定額（旧20GB/30GB段階制は2025年2月改定で終了）",
+            "1回5分以内の国内通話無料、超過分22円/30秒",
+            "30GB超で最大1Mbps、45GB超（追加データ除く）で最大128kbps。繰り越し不可",
+            "LINEギガフリー、LINEスタンププレミアム for LINEMO追加料金なし対象"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 2970
+          },
+          "source_url": "https://www.linemo.jp/plan/",
+          "status": "active"
+        }
+      ],
+      "source_url": "https://www.linemo.jp/plan/"
+    },
+    {
+      "call_options": [
+        {
+          "checked_at": "2026-11-28",
+          "covers": "5min",
+          "id": "povo_call_5min",
+          "name": "5分以内通話かけ放題",
+          "notes": [
+            "通話トッピング（継続購入）。シミュレーターページでは『通話トッピング（継続購入）』に分類され、料金は月額相当550円/回と表示。正確な課金周期・更新日・解約条件はトッピング詳細ページ本文では未確認",
+            "0570等他社料金設定番号、104、188、#ダイヤル、SMS送信、衛星電話、国際電話・海外発着信は無料対象外",
+            "povo2.0データ専用では利用不可"
+          ],
+          "source_url": "https://povo.jp/topping-list/detail/5-kakeho/",
+          "yen": 550
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "povo_call_unlimited",
+          "name": "通話かけ放題",
+          "notes": [
+            "通話トッピング（継続購入）。料金は月額相当1,650円/回",
+            "対象外通話は5分以内通話かけ放題と同様（0570等、104、188、#ダイヤル、SMS、衛星電話、国際電話・海外発着信）",
+            "povo2.0データ専用では利用不可"
+          ],
+          "source_url": "https://povo.jp/topping-list/detail/kakeho/",
+          "yen": 1650
+        }
+      ],
+      "campaigns": [],
+      "checked_at": "2026-11-28",
+      "discounts": [],
+      "fees": {
+        "checked_at": "2026-11-28",
+        "contract_yen": 0,
+        "notes": [
+          "契約事務手数料は発生しない。ただし同一名義で5回線契約の場合、累計6回線目以降は税込3,850円/回線の契約事務手数料がかかる（過去1年以内に解約済・当社キャンセルした回線を含む）",
+          "契約期間の縛りなし（LPのFAQで確認）"
+        ],
+        "source_url": "https://povo.jp/lp/0yen_202507/"
+      },
+      "group": "kddi",
+      "id": "povo",
+      "kind": "online",
+      "name": "povo",
+      "note_for_dev": "povo2.0は月額固定プランではない。基本料0円のベースプランに、都度購入型（プリペイド型）のデータトッピングと、継続購入型の通話トッピング等を組み合わせる制度。plans は便宜上の表現であり、実態は1つのベースプラン＋トッピング群である。データトッピングはスキーマに専用フィールドがないため、plan に非標準フィールド data_toppings を追加した（詳細は gaps.md）。price.yen=0 は『月額料金』ではなく基本料。ユーザーの実支出は購入したトッピング合計で決まり月ごとに変動するため、UI側で『基本料0円＋都度購入』の注記が必須",
+      "plans": [
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "povo_call_5min",
+              "povo_call_unlimited"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.128,
+            "cap_gb": 0,
+            "fair_use_note": "トッピング未購入時（0円0GB時）は送受信最大128kbps。データ容量はデータトッピング購入で都度追加される。複数購入時は有効期限が早いものから消費され、有効期限は延長されない"
+          },
+          "data_toppings": [
+            {
+              "billing": "per_purchase",
+              "cap_gb": null,
+              "checked_at": "2026-11-28",
+              "id": "ul_6h",
+              "name": "データ使い放題（6時間）",
+              "notes": "混雑時・動画/クラウドゲーム利用時に速度制限の場合あり",
+              "source_url": "https://povo.jp/topping-list/detail/6h/",
+              "unlimited": true,
+              "validity_days": null,
+              "validity_hours": 6,
+              "yen": 250
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": null,
+              "checked_at": "2026-11-28",
+              "id": "ul_24h",
+              "name": "データ使い放題（24時間）",
+              "notes": "混雑時・動画/クラウドゲーム利用時に速度制限の場合あり",
+              "source_url": "https://povo.jp/topping-list/detail/24/",
+              "unlimited": true,
+              "validity_days": 1,
+              "validity_hours": 24,
+              "yen": 330
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 1,
+              "checked_at": "2026-11-28",
+              "id": "data_1gb_7d",
+              "name": "データ追加1GB（7日間）",
+              "source_url": "https://povo.jp/topping-list/detail/1G_7d/",
+              "unlimited": false,
+              "validity_days": 7,
+              "yen": 390
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 3,
+              "checked_at": "2026-11-28",
+              "id": "data_3gb_30d",
+              "name": "データ追加3GB（30日間）",
+              "source_url": "https://povo.jp/topping-list/detail/3G_30d/",
+              "unlimited": false,
+              "validity_days": 30,
+              "yen": 990
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 5,
+              "checked_at": "2026-11-28",
+              "id": "data_5gb_30d",
+              "name": "データ追加5GB（30日間）",
+              "source_url": "https://povo.jp/topping-list/detail/5G_30d/",
+              "unlimited": false,
+              "validity_days": 30,
+              "yen": 1380
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 1,
+              "checked_at": "2026-11-28",
+              "id": "data_1gb_180d",
+              "name": "データ追加1GB（180日間）",
+              "source_url": "https://povo.jp/topping-list/detail/1G_180d/",
+              "unlimited": false,
+              "validity_days": 180,
+              "yen": 1260
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 30,
+              "checked_at": "2026-11-28",
+              "id": "data_30gb_30d",
+              "name": "データ追加30GB（30日間）",
+              "source_url": "https://povo.jp/topping-list/detail/30G_30d/",
+              "unlimited": false,
+              "validity_days": 30,
+              "yen": 2780
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 60,
+              "checked_at": "2026-11-28",
+              "id": "data_60gb_90d",
+              "name": "データ追加60GB（90日間）",
+              "notes": "LP『いつものトッピング』表で確認。シミュレーターのデータトッピング一覧には単独項目として現れなかったため詳細ページURLは未確認",
+              "source_url": "https://povo.jp/lp/0yen_202507/",
+              "unlimited": false,
+              "validity_days": 90,
+              "yen": 6490
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 90,
+              "checked_at": "2026-11-28",
+              "id": "data_90gb_90d",
+              "name": "データ追加90GB（90日間）",
+              "source_url": "https://povo.jp/topping-list/detail/90G_90d/",
+              "unlimited": false,
+              "validity_days": 90,
+              "yen": 7980
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 300,
+              "checked_at": "2026-11-28",
+              "id": "data_300gb_90d",
+              "name": "データ追加300GB（90日間）",
+              "notes": "LP『いつものトッピング』表で確認",
+              "source_url": "https://povo.jp/lp/0yen_202507/",
+              "unlimited": false,
+              "validity_days": 90,
+              "yen": 9834
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": null,
+              "checked_at": "2026-11-28",
+              "id": "ul_7d_12tickets",
+              "name": "データ使い放題（7日間）12回分",
+              "notes": "購入後1回目が即時適用、残り11回分はプリペイドコードとしてメール送付（LP表記。シミュレーターでは購入後7日以内に送付と表記揺れあり）",
+              "quantity": 12,
+              "source_url": "https://povo.jp/topping-list/detail/ul_7d_12tickets/",
+              "unlimited": true,
+              "validity_days": 7,
+              "yen": 9834
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 150,
+              "checked_at": "2026-11-28",
+              "id": "data_150gb_180d",
+              "name": "データ追加150GB（180日間）",
+              "notes": "LP『いつものトッピング』表で確認",
+              "source_url": "https://povo.jp/lp/0yen_202507/",
+              "unlimited": false,
+              "validity_days": 180,
+              "yen": 12980
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 60,
+              "checked_at": "2026-11-28",
+              "id": "data_60gb_365d",
+              "name": "データ追加60GB（365日間）",
+              "notes": "LP表記は60GB（365日間）13,200円。シミュレーターでは増量中として63GB（365日間）13,200円で掲載されており、名称・容量に表記差がある（増量キャンペーン中の可能性）。Amazonプライム付版16,700円もシミュレーターに掲載",
+              "source_url": "https://povo.jp/lp/0yen_202507/",
+              "unlimited": false,
+              "validity_days": 365,
+              "yen": 13200
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 180,
+              "checked_at": "2026-11-28",
+              "id": "data_180gb_180d",
+              "name": "データ追加180GB（180日間）",
+              "source_url": "https://povo.jp/topping-list/detail/180G_180d/",
+              "unlimited": false,
+              "validity_days": 180,
+              "yen": 14880
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 120,
+              "checked_at": "2026-11-28",
+              "id": "data_120gb_365d",
+              "name": "データ追加120GB（365日間）",
+              "notes": "LP表記は120GB 21,600円。シミュレーターでは増量中として125GB（365日間）21,600円で掲載。Amazonプライム付版25,100円も掲載",
+              "source_url": "https://povo.jp/lp/0yen_202507/",
+              "unlimited": false,
+              "validity_days": 365,
+              "yen": 21600
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 360,
+              "checked_at": "2026-11-28",
+              "id": "data_360gb_365d",
+              "name": "データ追加360GB（365日間）",
+              "notes": "LP表記は360GB 26,400円。シミュレーターでは増量中として375GB（365日間）26,400円で掲載。Amazonプライム付版29,900円も掲載",
+              "source_url": "https://povo.jp/lp/0yen_202507/",
+              "unlimited": false,
+              "validity_days": 365,
+              "yen": 26400
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": 1351.68,
+              "checked_at": "2026-11-28",
+              "id": "data_1320gb_365d",
+              "name": "データ追加1.32TB（365日間）",
+              "notes": "シミュレーター『まとめておトク1年間トッピング』で確認。容量はシミュレーターのData_Volume値1351.68GB（1.32TB換算）。Amazonプライム付版42,740円も掲載",
+              "source_url": "https://povo.jp/topping-list/detail/1320G_365d/",
+              "unlimited": false,
+              "validity_days": 365,
+              "yen": 39240
+            },
+            {
+              "billing": "subscription",
+              "cap_gb": 0.5,
+              "checked_at": "2026-11-28",
+              "id": "sub_0_5gb",
+              "name": "データ追加0.5GB",
+              "notes": "サブスクトッピング（継続購入）。毎月自動チャージ型と案内されているが、更新・解約条件の詳細は未確認",
+              "source_url": "https://povo.jp/topping-list/detail/500M_subscription/",
+              "unlimited": false,
+              "validity_days": 30,
+              "yen": 600
+            },
+            {
+              "billing": "subscription",
+              "cap_gb": 5,
+              "checked_at": "2026-11-28",
+              "id": "sub_5gb",
+              "name": "データ追加5GB",
+              "notes": "サブスクトッピング（継続購入）",
+              "source_url": "https://povo.jp/topping-list/detail/5G_subscription/",
+              "unlimited": false,
+              "validity_days": 30,
+              "yen": 1380
+            },
+            {
+              "billing": "subscription",
+              "cap_gb": 30,
+              "checked_at": "2026-11-28",
+              "id": "sub_30gb",
+              "name": "データ追加30GB",
+              "notes": "サブスクトッピング（継続購入）。都度購入の30GB（30日間）と同額2,780円だが別商品",
+              "source_url": "https://povo.jp/topping-list/detail/30G_subscription/",
+              "unlimited": false,
+              "validity_days": 30,
+              "yen": 2780
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": null,
+              "checked_at": "2026-11-28",
+              "id": "ul_weekend_3d",
+              "name": "週末データ使い放題（3日間）",
+              "notes": "シミュレーター『使い放題トッピング』で確認。利用可能な曜日等の条件詳細は未確認",
+              "source_url": "https://povo.jp/topping-list/detail/24h_3d_limit/",
+              "unlimited": true,
+              "validity_days": 3,
+              "yen": 790
+            },
+            {
+              "billing": "per_purchase",
+              "cap_gb": null,
+              "checked_at": "2026-11-28",
+              "id": "ul_2h_limited",
+              "name": "データ使い放題（2時間）",
+              "notes": "シミュレーターでは販売終了 2026年12月31日23:59までと表示",
+              "source_url": "https://povo.jp/topping-list/detail/2h_limit/",
+              "unlimited": true,
+              "validity_hours": 2,
+              "yen": 180
+            }
+          ],
+          "discount_ids": [],
+          "id": "povo2_0_voice_data",
+          "name": "povo2.0（通話＋データ）",
+          "note_for_dev": "通話＋データとデータ専用は『別プラン』というより同一povo2.0のベースプラン種別違い。data_toppings の実体は本プラン側を正とし、データ専用側では重複させていない（二重計上防止）。データトッピングは非標準拡張フィールド：既存スキーマにトッピング配列の置き場がないため新設した。cap_gb=null＋unlimited=true は容量無制限（時間制）を示す便宜表現",
+          "notes": [
+            "基本料0円。トッピングなし時の国内通話料は22円/30秒、国内SMS送信は3.3円/通（70字まで）、受信無料",
+            "180日間以上有料トッピングの購入等がない場合、利用停止・契約解除となることがある",
+            "留守番電話サービス（継続購入トッピング、330円）があるが、call_options.covers の列挙に該当値がないため call_options には未収録（gaps.md参照）",
+            "テザリングは事前登録・追加料金なし（公式解説記事の検索結果で確認、LP本文では未確認のため参考情報）",
+            "期間限定『今だけのトッピング』として1TB（365日間）38,160円（販売期間〜11/30）がLPに掲載されていたが、期間限定のため data_toppings には含めていない",
+            "その他、海外データトッピング（21種）、コラボトッピング、コンテンツトッピング、#ギガ活等の付与系施策が存在するが本JSONの対象外とした"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 0
+          },
+          "source_url": "https://povo.jp/lp/0yen_202507/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": []
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.128,
+            "cap_gb": 0,
+            "fair_use_note": "トッピング未購入時は送受信最大128kbps。契約時に初回トッピング購入が必須（通話＋データとの大きな違い）"
+          },
+          "discount_ids": [],
+          "id": "povo2_0_data_only",
+          "name": "povo2.0 データ専用",
+          "note_for_dev": "データトッピングは povo2_0_voice_data 側の data_toppings を正とすること（重複回避のため本プランには持たせていない）。初回購入専用トッピングの有無・内容は未確認（gaps.md参照）",
+          "notes": [
+            "データ専用ベースプラン。本人確認書類不要で最短3分で加入可能とLPに記載",
+            "データ専用プランはeSIM対応端末のみ利用可能。契約者年齢13歳以上",
+            "通話トッピングは利用不可"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 0
+          },
+          "source_url": "https://povo.jp/lp/0yen_202507/",
+          "status": "active"
+        }
+      ],
+      "source_url": "https://povo.jp/topping-simulator/"
+    },
+    {
+      "call_options": [
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "call_15min_unlimited",
+          "name": "15分（標準）通話かけ放題",
+          "notes": [
+            "OS標準の電話アプリ・メッセージアプリを利用した、日本から日本の電話番号への1回15分以内の国内通話が何度でも無料、国内SMS送信し放題。15分超過分は30秒22円。一部対象外番号あり。初回申し込み時は1カ月無料（条件あり）",
+            "covers の列挙（5min/10min/60min_month/unlimited）に「1回15分」が無いため、便宜的に unlimited とした。実際は時間無制限ではない（gaps.md参照）"
+          ],
+          "source_url": "https://network.mobile.rakuten.co.jp/service/",
+          "yen": 1100
+        }
+      ],
+      "checked_at": "2026-11-28",
+      "discounts": [
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 110
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "代表者がRakuten Linkアプリで家族グループを作成し、各回線が招待によりグループに参加すると、参加した全員のプラン料金が毎月110円（税込）引き。離れて住む家族・親戚も対象、1グループ最大20回線。旧名称は最強家族プログラム（現行公式ページの名称は最強家族割）。割引後の料金は3GBまで968円、20GBまで2,068円、無制限3,168円",
+          "conditions": [
+            {
+              "text": "Rakuten Linkアプリで家族グループを作成し、招待によりグループに参加すること（最大20回線）",
+              "type": "other"
+            }
+          ],
+          "duration_months": null,
+          "id": "saikyo_family",
+          "kind": "family",
+          "name": "最強家族割",
+          "source_url": "https://network.mobile.rakuten.co.jp/ad/lp/004/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 110
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "13歳から22歳までの方が対象、要申し込み（my 楽天モバイル／Rakuten Linkアプリ内で適用）。23歳の誕生月前月まで適用。毎月110円（税込）引き。複数回線契約の場合も割引は110円。最強家族割と併用時の料金は3GBまで858円、20GBまで1,958円、無制限3,058円。旧名称は最強青春プログラム",
+          "conditions": [
+            {
+              "max": 22,
+              "min": 13,
+              "type": "age"
+            }
+          ],
+          "duration_months": null,
+          "id": "saikyo_youth",
+          "kind": "age",
+          "name": "最強青春割",
+          "source_url": "https://network.mobile.rakuten.co.jp/fee/youth/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 440
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "12歳以下（13歳の誕生月前月まで）が対象、要申し込み（my 楽天モバイル／Rakuten Linkアプリ内で適用）、お子さま名義での契約が必要。当月利用量が3GBまでは毎月440円（税込）引き、3GB超過後は毎月110円（税込）引き（3GB超過分は saikyo_kids_over3gb 側で表現）。Rakuten最強U-NEXTの場合はデータ量にかかわらず110円引き。最強家族割と併用時の料金は3GBまで528円、20GBまで1,958円、無制限3,058円。旧名称は最強こどもプログラム",
+          "conditions": [
+            {
+              "max": 12,
+              "type": "age"
+            },
+            {
+              "max": 3,
+              "type": "data_usage_max"
+            }
+          ],
+          "duration_months": null,
+          "exclusive_group": "rakuten_kids_tier",
+          "id": "saikyo_kids",
+          "kind": "age",
+          "name": "最強こども割（3GB以下）",
+          "note_for_dev": "使用量で金額が変わる割引を saikyo_kids_over3gb との2エントリ＋exclusive_group で表現した。条件（data_usage_max）と exclusive_group の評価順序は実装側で要確認",
+          "source_url": "https://network.mobile.rakuten.co.jp/fee/kids/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 110
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "12歳以下（13歳の誕生月前月まで）が対象、要申し込み、お子さま名義での契約が必要。当月の利用量が3GBを超過した月は毎月110円（税込）引き（3GB以下の月は saikyo_kids の440円引きが適用され、本割引とは併用不可）",
+          "conditions": [
+            {
+              "max": 12,
+              "type": "age"
+            }
+          ],
+          "duration_months": null,
+          "exclusive_group": "rakuten_kids_tier",
+          "id": "saikyo_kids_over3gb",
+          "kind": "age",
+          "name": "最強こども割（3GB超過）",
+          "note_for_dev": "saikyo_kids（440円・data_usage_max 3GB）と対のエントリ。データ使用量が3GB超の月にこちらが適用される想定",
+          "source_url": "https://network.mobile.rakuten.co.jp/fee/kids/",
+          "unit": "per_line"
+        }
+      ],
+      "examples": [
+        {
+          "expected_yen": 968,
+          "inputs": {
+            "data_gb": 3
+          },
+          "label": "最強家族割適用時・3GBまで",
+          "plan_id": "saikyo_plan",
+          "source_url": "https://network.mobile.rakuten.co.jp/ad/lp/004/"
+        },
+        {
+          "expected_yen": 3168,
+          "inputs": {
+            "data_gb": 25
+          },
+          "label": "最強家族割適用時・無制限（20GB超過後）",
+          "plan_id": "saikyo_plan",
+          "source_url": "https://network.mobile.rakuten.co.jp/ad/lp/004/"
+        },
+        {
+          "expected_yen": 528,
+          "inputs": {
+            "data_gb": 3
+          },
+          "label": "最強家族割＋最強こども割適用時・3GBまで",
+          "plan_id": "saikyo_plan",
+          "source_url": "https://network.mobile.rakuten.co.jp/ad/lp/004/"
+        }
+      ],
+      "fees": {
+        "checked_at": "2026-11-28",
+        "contract_yen": 0,
+        "notes": [
+          "同一名義で累計4回線目まで契約事務手数料は無料。同一名義で累計5回線以上を契約の場合、2025年11月19日より1回線につき3,500円（税込3,850円、開通翌々月に確定）"
+        ],
+        "source_url": "https://network.mobile.rakuten.co.jp/fee/saikyo-plan/"
+      },
+      "group": "rakuten",
+      "id": "rakuten_mobile",
+      "kind": "mno",
+      "name": "楽天モバイル",
+      "plans": [
+        {
+          "calls": {
+            "included": "app_unlimited",
+            "option_ids": [
+              "call_15min_unlimited"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": null,
+            "fair_use_note": "混雑時など公平なサービス提供のため速度制御する場合あり。海外ローミングは月2GBまで無料、2GB超過後は最大128kbps（公式料金ページ・料金表より）"
+          },
+          "discount_ids": [
+            "saikyo_family",
+            "saikyo_youth",
+            "saikyo_kids",
+            "saikyo_kids_over3gb"
+          ],
+          "id": "saikyo_plan",
+          "name": "Rakuten最強プラン",
+          "notes": [
+            "音声タイプ。毎月のデータ利用量により料金が3段階で自動変動",
+            "データ利用量は国内エリアおよび海外ローミングエリアでカウントされる",
+            "Rakuten Linkアプリ利用時の国内通話は無料（一部対象外番号あり）。OS標準の電話アプリ利用時は30秒22円"
+          ],
+          "price": {
+            "tiers": [
+              {
+                "up_to_gb": 3,
+                "yen": 1078
+              },
+              {
+                "up_to_gb": 20,
+                "yen": 2178
+              },
+              {
+                "up_to_gb": null,
+                "yen": 3278
+              }
+            ],
+            "type": "tiered"
+          },
+          "source_url": "https://network.mobile.rakuten.co.jp/fee/saikyo-plan/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": []
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": null,
+            "fair_use_note": "混雑時など公平なサービス提供のため速度制御する場合あり。海外ローミングは月2GBまで（料金表の注記より）"
+          },
+          "discount_ids": [
+            "saikyo_family",
+            "saikyo_youth",
+            "saikyo_kids",
+            "saikyo_kids_over3gb"
+          ],
+          "id": "saikyo_plan_data",
+          "name": "Rakuten最強プラン（データタイプ）",
+          "notes": [
+            "データタイプ。プラン料金は音声タイプのRakuten最強プランと同一の段階制（公式料金表で確認）",
+            "音声通話・SMSは利用不可",
+            "新規受付の可否は今回開いた公式ページ本文では確認できなかった（料金表には現行プランとして掲載）。割引のデータタイプ適用範囲の細部も単独明示は未確認（gaps.md参照）"
+          ],
+          "price": {
+            "tiers": [
+              {
+                "up_to_gb": 3,
+                "yen": 1078
+              },
+              {
+                "up_to_gb": 20,
+                "yen": 2178
+              },
+              {
+                "up_to_gb": null,
+                "yen": 3278
+              }
+            ],
+            "type": "tiered"
+          },
+          "source_url": "https://network.mobile.rakuten.co.jp/terms/pdf/rakuten_mobile_voice_sim_pricelist.pdf",
+          "status": "active"
+        }
+      ],
+      "source_url": "https://network.mobile.rakuten.co.jp/fee/saikyo-plan/"
+    },
+    {
+      "call_options": [
+        {
+          "checked_at": "2026-11-28",
+          "covers": "5min",
+          "id": "call-flat-5min-plus",
+          "name": "通話定額5分+",
+          "notes": [
+            "1回5分以内の国内通話無料。専用アプリ不要、標準電話アプリ発信が対象"
+          ],
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "yen": 500
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "10min",
+          "id": "call-flat-10min-plus",
+          "name": "通話定額10分+",
+          "notes": [
+            "1回10分以内の国内通話無料"
+          ],
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "yen": 700
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "kakehoudai-plus",
+          "name": "かけ放題+",
+          "notes": [
+            "無制限で国内通話無料"
+          ],
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "yen": 1400
+        }
+      ],
+      "checked_at": "2026-11-28",
+      "discounts": [
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 100
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "ギガプランの音声SIM/音声eSIMが対象。同一mioIDでギガプラン音声回線を2回線以上利用すると、複数回線利用で1回線あたり月額100円割引（2024年10月1日開始、公式ページ記載）",
+          "conditions": [
+            {
+              "min": 2,
+              "type": "family_lines"
+            }
+          ],
+          "duration_months": null,
+          "id": "family-discount",
+          "kind": "family",
+          "name": "家族割引",
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 660
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "IIJmioひかりとIIJmio SIMサービスを同一mioIDで各1契約ずつ1セットで、IIJmioひかりの月額料金から毎月税込660円割引。SIM料金自体からの割引ではない。ひかり1契約・SIM2契約でも適用は1セット分（unit は便宜的に per_account とした）",
+          "conditions": [
+            {
+              "type": "home_internet",
+              "values": [
+                "iijmio_hikari"
+              ]
+            }
+          ],
+          "duration_months": null,
+          "id": "mio-wari",
+          "kind": "set_home",
+          "name": "mio割（IIJmioひかり セット割）",
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "unit": "per_account"
+        }
+      ],
+      "examples": [
+        {
+          "expected_yen": 950,
+          "inputs": {},
+          "label": "例1 音声通話がメインでネットはWi-Fi中心：5ギガ/音声SIM",
+          "plan_id": "gigaplan-voice-5gb",
+          "source_url": "https://www.iijmio.jp/gigaplan/"
+        }
+      ],
+      "fees": {
+        "checked_at": "2026-11-28",
+        "contract_yen": 3300,
+        "notes": [
+          "初期費用 税込3,300円。公式ページに「2026年12月1日より新規申込時の初期費用を3,850円に改定」と併記あり（2026-11-28時点の現行額は3,300円）",
+          "別途SIMカード発行手数料あり：タイプD 433.4円/枚、タイプA 446.6円/枚（税込・小数金額のため整数フィールドには入れていない）",
+          "契約解除料・MNP転出料は0円と公式ページに記載"
+        ],
+        "source_url": "https://www.iijmio.jp/gigaplan/"
+      },
+      "group": "mvno",
+      "id": "iijmio",
+      "kind": "mvno",
+      "name": "IIJmio",
+      "note_for_dev": "現行公式表に20GB単独プランはなく、2/5/10/15/25/35/45/55GB。15GBはキャンペーンで20GBへ増量される表示のみ確認。容量超過後速度と繰り越しは現行ギガプランページ本文で確認できなかったため、after_cap_mbps は null、rollover は不明のためフィールド自体を省略した（スキーマ上 rollover は boolean で null 不可）",
+      "plans": [
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-flat-5min-plus",
+              "call-flat-10min-plus",
+              "kakehoudai-plus"
+            ],
+            "per_30s_yen": 11
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": 2
+          },
+          "discount_ids": [
+            "family-discount",
+            "mio-wari"
+          ],
+          "id": "gigaplan-voice-2gb",
+          "name": "ギガプラン 2ギガ 音声SIM",
+          "notes": [
+            "ドコモ網・au網、音声SIM/eSIM",
+            "定額超過時11円/30秒は公式ページ脚注で確認（オプションなしの通常通話料としての単独表記は現行ページ本文では未確認）"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 850
+          },
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-flat-5min-plus",
+              "call-flat-10min-plus",
+              "kakehoudai-plus"
+            ],
+            "per_30s_yen": 11
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": 5
+          },
+          "discount_ids": [
+            "family-discount",
+            "mio-wari"
+          ],
+          "id": "gigaplan-voice-5gb",
+          "name": "ギガプラン 5ギガ 音声SIM",
+          "notes": [
+            "公式ページの組み合わせ例でも5ギガ/音声SIM 950円/月（税込）と表示"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 950
+          },
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-flat-5min-plus",
+              "call-flat-10min-plus",
+              "kakehoudai-plus"
+            ],
+            "per_30s_yen": 11
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": 10
+          },
+          "discount_ids": [
+            "family-discount",
+            "mio-wari"
+          ],
+          "id": "gigaplan-voice-10gb",
+          "name": "ギガプラン 10ギガ 音声SIM",
+          "notes": [],
+          "price": {
+            "type": "flat",
+            "yen": 1400
+          },
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-flat-5min-plus",
+              "call-flat-10min-plus",
+              "kakehoudai-plus"
+            ],
+            "per_30s_yen": 11
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": 15
+          },
+          "discount_ids": [
+            "family-discount",
+            "mio-wari"
+          ],
+          "id": "gigaplan-voice-15gb",
+          "name": "ギガプラン 15ギガ 音声SIM",
+          "notes": [
+            "キャンペーン時は20ギガへの増量表示あり（公式表記「15ギガ 20ギガ最大3ヵ月間」）。恒常的な20GBプランとしては確認できず別プランにしていない"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 1600
+          },
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-flat-5min-plus",
+              "call-flat-10min-plus",
+              "kakehoudai-plus"
+            ],
+            "per_30s_yen": 11
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": 25
+          },
+          "discount_ids": [
+            "family-discount",
+            "mio-wari"
+          ],
+          "id": "gigaplan-voice-25gb",
+          "name": "ギガプラン 25ギガ 音声SIM",
+          "notes": [
+            "現行公式表では20GBの次は25GB"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 2000
+          },
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-flat-5min-plus",
+              "call-flat-10min-plus",
+              "kakehoudai-plus"
+            ],
+            "per_30s_yen": 11
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": 35
+          },
+          "discount_ids": [
+            "family-discount",
+            "mio-wari"
+          ],
+          "id": "gigaplan-voice-35gb",
+          "name": "ギガプラン 35ギガ 音声SIM",
+          "notes": [
+            "公式料金表で確認（25GBプランの調査時に同表で確認した金額）"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 2400
+          },
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-flat-5min-plus",
+              "call-flat-10min-plus",
+              "kakehoudai-plus"
+            ],
+            "per_30s_yen": 11
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": 45
+          },
+          "discount_ids": [
+            "family-discount",
+            "mio-wari"
+          ],
+          "id": "gigaplan-voice-45gb",
+          "name": "ギガプラン 45ギガ 音声SIM",
+          "notes": [
+            "公式料金表で確認（25GBプランの調査時に同表で確認した金額）"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 3300
+          },
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-flat-5min-plus",
+              "call-flat-10min-plus",
+              "kakehoudai-plus"
+            ],
+            "per_30s_yen": 11
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": 55
+          },
+          "discount_ids": [
+            "family-discount",
+            "mio-wari"
+          ],
+          "id": "gigaplan-voice-55gb",
+          "name": "ギガプラン 55ギガ 音声SIM",
+          "notes": [
+            "公式料金表で確認（25GBプランの調査時に同表で確認した金額）"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 3900
+          },
+          "source_url": "https://www.iijmio.jp/gigaplan/",
+          "status": "active"
+        }
+      ],
+      "source_url": "https://www.iijmio.jp/gigaplan/"
+    },
+    {
+      "call_options": [
+        {
+          "checked_at": "2026-11-28",
+          "covers": "10min",
+          "id": "call-10min-kakehoudai",
+          "name": "10分かけ放題",
+          "notes": [
+            "10分以内の通話が何回でもかけ放題。10分経過後は11円/30秒（公式料金表PDF・キャンペーン資料で確認、料金表ページでは550円/月と対象内容を確認）"
+          ],
+          "source_url": "https://mineo.jp/price/",
+          "yen": 550
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "call-unlimited-kakehoudai",
+          "name": "時間無制限かけ放題",
+          "notes": [
+            "通話時間に制限がなく何回でもかけ放題"
+          ],
+          "source_url": "https://mineo.jp/price/",
+          "yen": 1210
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "60min_month",
+          "id": "call-10min-pack",
+          "name": "10分通話パック",
+          "notes": [
+            "月最大10分分の通話パック。かけ放題（1回あたり制限型）ではなく月合計型。実際は月合計10分だが、covers の列挙に月合計10分がないため最も近い 60min_month とした（gaps.md参照）",
+            "公式プロモーションページのセット例（マイピタ3GB+パケット放題3Mbps+10分通話パック110円/月）で金額確認"
+          ],
+          "source_url": "https://mineo.jp/promotion/base/",
+          "yen": 110
+        }
+      ],
+      "checked_at": "2026-11-28",
+      "discounts": [
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 55
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "公式料金表「割引」欄：家族割引 -55円/月・回線、デュアルタイプ3回線目以降 -165円/月・回線（金額が回線順で変わる点は amount に表現しきれないため 55 を代表値とし、165円の条件は本文章で明記）",
+          "conditions": [
+            {
+              "min": 2,
+              "type": "family_lines"
+            }
+          ],
+          "duration_months": null,
+          "id": "family-discount",
+          "kind": "family",
+          "name": "家族割引",
+          "note_for_dev": "デュアルタイプ3回線目以降は165円/月・回線。by_lines テーブル（min_lines:3→165）でも表現できるが『デュアルタイプの3回線目以降』という条件は回線数だけでは判定できないため fixed 55＋文章とした",
+          "source_url": "https://mineo.jp/price/",
+          "unit": "per_line"
+        },
+        {
+          "amount": {
+            "type": "fixed",
+            "yen": 55
+          },
+          "checked_at": "2026-11-28",
+          "condition_text": "公式料金表「割引」欄：複数回線割引 -55円/月・回線。家族割引との同一回線併用条件の詳細は今回開いた料金表本文では確認できず入れていない",
+          "conditions": [
+            {
+              "text": "複数回線契約",
+              "type": "other"
+            }
+          ],
+          "duration_months": null,
+          "id": "multi-line-discount",
+          "kind": "other",
+          "name": "複数回線割引",
+          "source_url": "https://mineo.jp/price/",
+          "unit": "per_line"
+        }
+      ],
+      "examples": [
+        {
+          "expected_yen": 880,
+          "inputs": {},
+          "label": "キャンペーン適用時（2026年11月30日まで、最大6カ月間）：マイピタ音声通話付き3GB通常1,298円が880円/月。パケット放題3Mbpsセット訴求も同額880円で公式プロモーションページに表示",
+          "plan_id": "mypita-dual-3gb",
+          "source_url": "https://mineo.jp/promotion/base/"
+        }
+      ],
+      "fees": {
+        "checked_at": "2026-11-28",
+        "contract_yen": 3850,
+        "notes": [
+          "契約事務手数料 3,850円（税込）。SIMカード利用時はSIMカード発行料440円が別途かかり合計4,290円。eSIMプロファイル発行料は無料（SプランはeSIM未提供）のためeSIM時は3,850円",
+          "解約手数料・MNP転出手数料は無料"
+        ],
+        "source_url": "https://mineo.jp/price/"
+      },
+      "group": "mvno",
+      "id": "mineo",
+      "kind": "mvno",
+      "name": "mineo",
+      "note_for_dev": "現行公式料金表（2026年10月1日版）ではマイピタ デュアルタイプは 3GB/7GB/15GB/30GB/50GB の5コースのみ。調査依頼にあった1GB/5GB/10GB/20GBコースは現行表に存在を確認できなかった。親思い割引（親回線1つ達成 -110円、2つ達成 -220円）は料金表の割引欄に名称・金額は確認できたが、達成条件の詳細本文を確認できなかったため discounts には未収録（gaps.md参照）。mineoでんわアプリ利用時の通話料（半額等）は今回開いた公式本文では未確認",
+      "plans": [
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-10min-kakehoudai",
+              "call-unlimited-kakehoudai",
+              "call-10min-pack"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.2,
+            "cap_gb": 3,
+            "rollover": true
+          },
+          "discount_ids": [
+            "family-discount",
+            "multi-line-discount"
+          ],
+          "id": "mypita-dual-3gb",
+          "name": "マイピタ 3GB デュアルタイプ（音声通話+データ通信）",
+          "notes": [
+            "容量を使い切った後も最大200kbpsで通信可能（公式料金表注記）",
+            "余ったデータは翌月へ自動繰り越し、翌々月以降は消滅",
+            "パケット放題1Mbpsが無料対象（要申込）"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 1298
+          },
+          "source_url": "https://mineo.jp/price/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-10min-kakehoudai",
+              "call-unlimited-kakehoudai",
+              "call-10min-pack"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.2,
+            "cap_gb": 7,
+            "rollover": true
+          },
+          "discount_ids": [
+            "family-discount",
+            "multi-line-discount"
+          ],
+          "id": "mypita-dual-7gb",
+          "name": "マイピタ 7GB デュアルタイプ（音声通話+データ通信）",
+          "notes": [
+            "パケット放題1Mbpsが無料対象（要申込）"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 1518
+          },
+          "source_url": "https://mineo.jp/price/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-10min-kakehoudai",
+              "call-unlimited-kakehoudai",
+              "call-10min-pack"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.2,
+            "cap_gb": 15,
+            "rollover": true
+          },
+          "discount_ids": [
+            "family-discount",
+            "multi-line-discount"
+          ],
+          "id": "mypita-dual-15gb",
+          "name": "マイピタ 15GB デュアルタイプ（音声通話+データ通信）",
+          "notes": [
+            "パケット放題3Mbpsが無料対象（要申込）"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 1958
+          },
+          "source_url": "https://mineo.jp/price/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-10min-kakehoudai",
+              "call-unlimited-kakehoudai",
+              "call-10min-pack"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.2,
+            "cap_gb": 30,
+            "rollover": true
+          },
+          "discount_ids": [
+            "family-discount",
+            "multi-line-discount"
+          ],
+          "id": "mypita-dual-30gb",
+          "name": "マイピタ 30GB デュアルタイプ（音声通話+データ通信）",
+          "notes": [
+            "パケット放題3Mbpsが無料対象（要申込）"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 2178
+          },
+          "source_url": "https://mineo.jp/price/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-10min-kakehoudai",
+              "call-unlimited-kakehoudai",
+              "call-10min-pack"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 0.2,
+            "cap_gb": 50,
+            "rollover": true
+          },
+          "discount_ids": [
+            "family-discount",
+            "multi-line-discount"
+          ],
+          "id": "mypita-dual-50gb",
+          "name": "マイピタ 50GB デュアルタイプ（音声通話+データ通信）",
+          "notes": [
+            "パケット放題3Mbpsが無料対象（要申込）"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 2948
+          },
+          "source_url": "https://mineo.jp/price/",
+          "status": "active"
+        }
+      ],
+      "source_url": "https://mineo.jp/price/"
+    },
+    {
+      "call_options": [
+        {
+          "checked_at": "2026-11-28",
+          "covers": "5min",
+          "id": "call-5min-kakehoudai",
+          "name": "通話5分かけ放題オプション（合理的シンプル290プラン向け）",
+          "notes": [
+            "1回5分までの通話が何回でも無料。合理的みんなのプラン／50GBプランでは同内容がプラン料金に含まれるため追加料金なし"
+          ],
+          "source_url": "https://www.nihontsushin.com/plan/plansimple_detail.html",
+          "yen": 390
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "60min_month",
+          "id": "call-70min-free",
+          "name": "月70分無料通話オプション（合理的シンプル290プラン向け）",
+          "notes": [
+            "ひと月最大70分まで無料。coversの選択肢に70分がないため最も近い60min_monthとしたが実際は70分/月。合理的みんなのプラン／50GBプランでは選択式でプラン料金に含まれる"
+          ],
+          "source_url": "https://www.nihontsushin.com/plan/plansimple_detail.html",
+          "yen": 390
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "call-kakehoudai-simple",
+          "name": "通話かけ放題オプション（合理的シンプル290プラン／合理的みんなのプラン向け）",
+          "notes": [
+            "何分かけても国内通話かけ放題。シンプル290用・みんなのプラン用とも+1,600円（公式料金・プランページで確認）"
+          ],
+          "source_url": "https://www.nihontsushin.com/service/",
+          "yen": 1600
+        },
+        {
+          "checked_at": "2026-11-28",
+          "covers": "unlimited",
+          "id": "call-kakehoudai-50gb",
+          "name": "通話かけ放題オプション（合理的50GBプラン向け）",
+          "notes": [
+            "合理的50GBプランでは+1,200円と他プランより安い（公式料金・プランページで確認）"
+          ],
+          "source_url": "https://www.nihontsushin.com/service/",
+          "yen": 1200
+        }
+      ],
+      "checked_at": "2026-11-28",
+      "discounts": [],
+      "examples": [
+        {
+          "expected_yen": 290,
+          "inputs": {
+            "data_gb": 1
+          },
+          "label": "公式利用例：家でWi-Fi中心、データ1GB以下、電話番号維持",
+          "plan_id": "simple290",
+          "source_url": "https://www.nihontsushin.com/plan/plansimple.html"
+        },
+        {
+          "expected_yen": 510,
+          "inputs": {
+            "data_gb": 3
+          },
+          "label": "公式利用例：外出先でLINE/SNS、データ2〜3GB程度、通話はLINE中心",
+          "plan_id": "simple290",
+          "source_url": "https://www.nihontsushin.com/plan/plansimple.html"
+        },
+        {
+          "expected_yen": 1890,
+          "inputs": {},
+          "label": "公式利用例：データはあまり使わないが通話をたくさんする（かけ放題組み合わせ想定）",
+          "plan_id": "simple290",
+          "source_url": "https://www.nihontsushin.com/plan/plansimple.html"
+        }
+      ],
+      "fees": {
+        "checked_at": "2026-11-28",
+        "contract_yen": 3300,
+        "notes": [
+          "初期手数料 1件につき3,300円（SIMカード・eSIMとも）。スターターパック購入時は同梱申込コード入力で初期手数料3,300円に充当される旨が公式プランページに記載",
+          "最低利用期間・解約金なし"
+        ],
+        "source_url": "https://www.nihontsushin.com/plan/plansimple_detail.html"
+      },
+      "group": "mvno",
+      "id": "nihontsushin",
+      "kind": "mvno",
+      "name": "日本通信SIM",
+      "note_for_dev": "恒常割引（家族割・セット割・長期割）は公式料金・プランページに記載がなく discounts は空配列（割引が存在しないことの断定ではなく、公式ページで確認できなかったという意味）。みんなのプラン／50GBプランの無料通話は『5分かけ放題』または『月70分無料通話』の選択式で、included は代表値として 5min とした",
+      "plans": [
+        {
+          "calls": {
+            "included": "none",
+            "option_ids": [
+              "call-5min-kakehoudai",
+              "call-70min-free",
+              "call-kakehoudai-simple"
+            ],
+            "per_30s_yen": 11
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": 1,
+            "rollover": false
+          },
+          "discount_ids": [],
+          "id": "simple290",
+          "name": "合理的シンプル290プラン",
+          "notes": [
+            "1GB込み。超過分は1GBあたり220円で設定した上限（1〜100GB）まで従量課金、上限到達時は低速（速度数値は公式詳細ページに明記なしのため after_cap_mbps は null）",
+            "余りデータは翌料金月に繰り越せない（公式詳細ページで確認）",
+            "支払例：2〜3GB利用で510円は公式プランページの利用例（examples参照）"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 290
+          },
+          "source_url": "https://www.nihontsushin.com/plan/plansimple_detail.html",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "5min",
+            "option_ids": [
+              "call-kakehoudai-simple"
+            ],
+            "per_30s_yen": 11
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": 20
+          },
+          "discount_ids": [],
+          "id": "minna-20gb",
+          "name": "合理的みんなのプラン",
+          "notes": [
+            "無料通話は「通話5分かけ放題」または「月70分無料通話」のどちらかを選択（プラン料金に含む）。includedは代表値として5minとしたが70分選択も可",
+            "追加データ1GBあたり220円（最大50GBまでは法人向け公式ページ等で示唆されるが、個人向け料金・プランページでは上限値の明記を確認できず notes に留める）",
+            "繰り越し・超過後速度は個人向け公式ページで確認できなかったため、rollover はフィールドを省略し after_cap_mbps は null"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 1390
+          },
+          "source_url": "https://www.nihontsushin.com/service/",
+          "status": "active"
+        },
+        {
+          "calls": {
+            "included": "5min",
+            "option_ids": [
+              "call-kakehoudai-50gb"
+            ],
+            "per_30s_yen": 11
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": null,
+            "cap_gb": 50
+          },
+          "discount_ids": [],
+          "id": "goju-50gb",
+          "name": "合理的50GBプラン",
+          "notes": [
+            "無料通話は「通話5分かけ放題」または「月70分無料通話」のどちらかを選択（プラン料金に含む）",
+            "追加データ1GBあたり220円",
+            "繰り越し・超過後速度は個人向け公式ページで確認できなかったため、rollover はフィールドを省略し after_cap_mbps は null"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 2178
+          },
+          "source_url": "https://www.nihontsushin.com/service/",
+          "status": "active"
+        }
+      ],
+      "source_url": "https://www.nihontsushin.com/service/"
     }
   ],
   "home_internet": [
@@ -1469,13 +4221,13 @@
       ],
       "requires_phone": true,
       "monthly_yen": {
-        "home": 5814,
+        "home": 5715,
         "mansion": 4400
       },
-      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-      "checked_at": "2026-11-14",
+      "source_url": "https://eonet.jp/column/optical-line/eo-light-price-review.html",
+      "checked_at": "2026-11-28",
       "confidence": "estimate",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "note_for_dev": "ホーム（1ギガ・即割なし）は年次で変動：1年目 5,715円／2年目 5,660円／3年目以降 5,605円。monthly_yen.home は1年目の額。マンションは建物・配線方式で変動し標準額なし（4,400円は移行時の目安）"
     },
     {
       "id": "au_hikari",
@@ -1491,9 +4243,9 @@
         "mansion": 5000
       },
       "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-      "checked_at": "2026-11-14",
+      "checked_at": "2026-11-28",
       "confidence": "estimate",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "note_for_dev": "ホーム 6,380円は「ずっとギガ得プラン（3年）・1年目・ネット＋電話」の場合（ネット単体 5,610円＋電話 770円。2年目 6,270円〜。2027年1月より 6,710円〜への改定予告あり）。マンションはタイプ別料金で代表額なし（ギガ＝ネットのみ 4,455円、ミニギガ＝同 5,500円など）。monthly_yen.mansion の 5,000円は目安"
     },
     {
       "id": "au_hikari_plus",
@@ -1509,8 +4261,8 @@
         "mansion": 5500
       },
       "source_url": "https://www.au.com/pr/auhikari_plus/",
-      "checked_at": "2026-11-14",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "checked_at": "2026-11-28",
+      "note_for_dev": "月額は開通後〜12か月目の「お支払い合計」（13か月目〜 ホーム 7,018円／マンション 5,940円に上昇）"
     },
     {
       "id": "biglobe_hikari",
@@ -1522,8 +4274,7 @@
       ],
       "requires_phone": true,
       "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-      "checked_at": "2026-11-14",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "checked_at": "2026-11-28"
     },
     {
       "id": "sonet_hikari",
@@ -1535,8 +4286,7 @@
       ],
       "requires_phone": true,
       "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-      "checked_at": "2026-11-14",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "checked_at": "2026-11-28"
     },
     {
       "id": "nifty_hikari",
@@ -1548,8 +4298,7 @@
       ],
       "requires_phone": true,
       "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-      "checked_at": "2026-11-14",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "checked_at": "2026-11-28"
     },
     {
       "id": "jcom",
@@ -1561,8 +4310,7 @@
       ],
       "requires_phone": true,
       "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-      "checked_at": "2026-11-14",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "checked_at": "2026-11-28"
     },
     {
       "id": "au_home_router",
@@ -1574,8 +4322,7 @@
       ],
       "requires_phone": false,
       "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-      "checked_at": "2026-11-14",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "checked_at": "2026-11-28"
     },
     {
       "id": "docomo_hikari",
@@ -1589,10 +4336,8 @@
         "home": 5720,
         "mansion": 4400
       },
-      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-      "checked_at": "2026-11-14",
-      "confidence": "estimate",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "source_url": "https://www.docomo.ne.jp/biz/charge/hikari/plan/tandoku/",
+      "checked_at": "2026-11-28"
     },
     {
       "id": "softbank_hikari",
@@ -1604,13 +4349,12 @@
       ],
       "requires_phone": false,
       "monthly_yen": {
-        "home": 6050,
-        "mansion": 4510
+        "home": 5720,
+        "mansion": 4180
       },
-      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-      "checked_at": "2026-11-14",
-      "confidence": "estimate",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "source_url": "https://www.softbank.jp/internet/sbhikari/price/",
+      "checked_at": "2026-11-28",
+      "note_for_dev": "現行標準（1ギガ・2年自動更新プラン）。2026年12月以降に +330円の改定予定（改定後 ホーム 6,050円／マンション 4,510円）"
     },
     {
       "id": "nuro",
@@ -1619,30 +4363,64 @@
       "set_discount_carriers": [],
       "requires_phone": false,
       "monthly_yen": {
-        "home": 3980,
-        "mansion": 2980
+        "home": 5170,
+        "mansion": 4180
       },
-      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-      "checked_at": "2026-11-14",
-      "confidence": "estimate",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "source_url": "https://www.nuro.jp/hikari/house/price/",
+      "checked_at": "2026-11-28",
+      "note_for_dev": "標準の基本料金（NURO 光(H) 5,170円／NURO 光(M) 4,180円）。ホームゲートウェイ込みの通常料金は ホーム 5,720円／マンション 4,730円"
     },
     {
       "id": "rakuten_hikari",
       "name": "楽天ひかり",
       "kind": "fiber",
       "set_discount_carriers": [
-        "rakuten"
+        "rakuten_mobile"
       ],
       "requires_phone": false,
       "monthly_yen": {
         "home": 5280,
         "mansion": 4180
       },
-      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-      "checked_at": "2026-11-14",
-      "confidence": "estimate",
-      "note_for_dev": "今のツール（au-uq/plans.js）から移行。クロの照合待ち"
+      "source_url": "https://network.mobile.rakuten.co.jp/hikari/fee/pricelist/",
+      "checked_at": "2026-11-28"
+    },
+    {
+      "id": "home_5g",
+      "name": "ドコモ home 5G",
+      "kind": "home_router",
+      "set_discount_carriers": [
+        "docomo"
+      ],
+      "requires_phone": false,
+      "source_url": "https://www.docomo.ne.jp/charge/eximo/",
+      "checked_at": "2026-11-28",
+      "note_for_dev": "他キャリア調査ドラフトの割引条件（home 5G セット割）が参照していたため登録のみ追加。月額は未調査"
+    },
+    {
+      "id": "softbank_air",
+      "name": "SoftBank Air",
+      "kind": "home_router",
+      "set_discount_carriers": [
+        "softbank",
+        "ymobile"
+      ],
+      "requires_phone": false,
+      "source_url": "https://www.ymobile.jp/plan/",
+      "checked_at": "2026-11-28",
+      "note_for_dev": "他キャリア調査ドラフトの割引条件（おうち割 光セット）が参照していたため登録のみ追加。月額は未調査"
+    },
+    {
+      "id": "iijmio_hikari",
+      "name": "IIJmioひかり",
+      "kind": "fiber",
+      "set_discount_carriers": [
+        "iijmio"
+      ],
+      "requires_phone": false,
+      "source_url": "https://www.iijmio.jp/gigaplan/",
+      "checked_at": "2026-11-28",
+      "note_for_dev": "他キャリア調査ドラフトの割引条件（mio割）が参照していたため登録のみ追加。月額は未調査"
     }
   ]
 }
