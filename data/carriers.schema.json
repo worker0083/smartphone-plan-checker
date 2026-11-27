@@ -557,6 +557,7 @@
             "family_lines",
             "age",
             "payment",
+            "contract",
             "data_usage_max",
             "data_usage_min",
             "new_subscription",
@@ -570,7 +571,7 @@
           "items": {
             "type": "string"
           },
-          "description": "home_internet / electricity / payment の対象（id）"
+          "description": "home_internet / electricity / payment / contract の対象（id）。contract の例：2year_n（2年契約N）"
         },
         "with_phone": {
           "type": "boolean",
@@ -631,6 +632,7 @@
             "set_electricity",
             "family",
             "payment",
+            "contract",
             "usage",
             "age",
             "campaign_like",
@@ -651,7 +653,7 @@
             "integer",
             "null"
           ],
-          "description": "null＝ずっと。12＝翌月から1年間 など"
+          "description": "null＝ずっと。12＝翌月から1年間 など（starts_after_months があればその後の期間）"
         },
         "conditions": {
           "type": "array",
@@ -680,6 +682,11 @@
             "$ref": "#/$defs/id"
           },
           "description": "これが付くと外れる割引（例：親子応援割が付くと5GB以下割は外れる）"
+        },
+        "starts_after_months": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "この月数が過ぎてから付く割引（例：UQコミコミおトク割の14か月目以降の継続分は 13）"
         }
       }
     },
@@ -818,6 +825,13 @@
             "month": {
               "type": "integer",
               "description": "加入から何か月目か（期間限定の割引の確認用）"
+            },
+            "contract": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "契約の種類（例：2year_n）"
             }
           }
         },

@@ -97,6 +97,9 @@
 | `campaigns` | ポイント・キャッシュバックは月額に入れず別枠で表示。`apply_by` の申込期限を過ぎたものは自動で非表示 |
 | `examples` | 公式ページの支払い例を1プラン1〜3件。計算結果と一致するか自動テストで確認する。`checked_at`（任意）を付けると、料金改定で古い例が残っていないかの確認に使える |
 | `conditions` | 配列はすべて満たす（AND）。「光回線 **または** auでんき」のようにどれか1つでよいときは `{"type": "any_of", "of": [ … ]}`。「1GBを超える月だけ」は `data_usage_min` |
+| `fees` | 店頭の契約事務手数料は `contract_yen`、オンライン手続きの額は `contract_online_yen` |
+| 契約の割引（2年契約N など） | `kind: "contract"`、条件は `{"type": "contract", "values": ["2year_n"]}`。au PAYカードの割引（`kind: "payment"`）とは別に書く。画面では、今の月額の計算で「（契約中の場合）」と付けて引く |
+| 途中から付く割引 | `starts_after_months`。例：UQコミコミおトク割は「`duration_months: 13`・条件なし」と「`starts_after_months: 13`・条件（au PAYゴールドカード等）」の2つに分ける。支払い例の `inputs.month` は加入した月を1か月目として数える |
 | `amount` | `fixed`（定額）／`by_plan`（プランごと）／`by_lines`（回線数ごと）／`by_plan_lines`（プラン×回線数：auの家族割プラスなど） |
 | `confidence: "estimate"` | 公式で確認できなかった値。画面に「目安」と出す |
 
@@ -121,3 +124,4 @@
 9. **`home_internet`**：自宅の光回線ごとのセット割対象キャリアと「電話も必要か」
 10. **`examples[].checked_at`**（クロ提案・採用）：支払い例を確認した日
 11. **`any_of` / `data_usage_min` / `by_plan_lines`**（移行時に追加）：「光回線またはでんき」「1GB超の月だけ」「プラン×回線数で変わる家族割」を表すため
+12. **`contract` / `starts_after_months`**（クロの報告を受けて追加）：2年契約Nのような契約の割引と、14か月目以降に条件付きで続く割引を表すため

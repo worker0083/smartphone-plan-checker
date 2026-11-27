@@ -393,14 +393,14 @@
   </div>
 </main>
 
-<script src="plans.js?v=2.9.0"></script>
-<script src="data-adapter.js?v=2.9.0"></script>
+<script src="plans.js?v=2.9.1"></script>
+<script src="data-adapter.js?v=2.9.1"></script>
 <script>
 // 料金データ（data/carriers.json）を読み込んでから画面を動かす
 loadCarrierData().then(json => {
   applyCarrierData(json);
   const s = document.createElement("script");
-  s.src = "app.js?v=2.9.0";
+  s.src = "app.js?v=2.9.1";
   document.body.appendChild(s);
 }).catch(err => {
   const el = document.getElementById("loadError");

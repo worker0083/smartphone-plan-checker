@@ -100,6 +100,7 @@ def cond_ok(c, inp, hi):
         a = inp.get("age")
         return a is not None and c.get("min", 0) <= a <= c.get("max", 200)
     if t == "payment": return inp.get("payment") in c.get("values", [])
+    if t == "contract": return inp.get("contract") in c.get("values", [])
     if t == "data_usage_max": return inp.get("data_gb", 0) <= c["max"]
     if t == "data_usage_min": return inp.get("data_gb", 0) > c["min"]
     if t == "new_subscription": return bool(inp.get("new_subscription"))
@@ -124,7 +125,10 @@ def calc(carrier, plan, inp, hi):
     for did in plan.get("discount_ids", []):
         d = discs.get(did)
         if d is None: continue                      # 参照切れは check_refs で報告済み
-        if d.get("duration_months") and inp.get("month") and inp["month"] > d["duration_months"] + 1: continue
+        start = d.get("starts_after_months") or 0          # 「◯か月が過ぎてから」付く割引
+        month = inp.get("month")
+        if start and (month is None or month <= start + 1): continue
+        if d.get("duration_months") and month and month > start + d["duration_months"] + 1: continue
         if not all(cond_ok(c, inp, hi) for c in d.get("conditions", [])): continue
         amt = disc_amount(d, plan["id"], lines)
         if amt: applied[did] = amt

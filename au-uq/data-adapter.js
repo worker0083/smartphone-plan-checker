@@ -69,6 +69,9 @@
     const pay = byKind("payment")[0];
     out.card = pay ? amountFor(pay, p.id, 1) : false;
     if (pay) out.cardName = pay.name;
+    // 契約の種類による割引（2年契約N など）：旧プランの人は契約していることが多いので、今の月額の計算では付けて表示する
+    const contract = byKind("contract")[0];
+    if (contract) { out.contract = amountFor(contract, p.id, 1) || 0; out.contractName = contract.name; }
     return out;
   }
 
