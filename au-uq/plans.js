@@ -60,7 +60,7 @@ window.DATA = {
       { id: "datamaxpro", name: "auデータMAXプランPro", ended: "2020年6月", tiers: [[Infinity, 8745]], fam2: 550, fam3: 1100, set: 1100, card: 187, callShort: 880, callLong: 1980 }, // ✅
       { id: "flat20n",   name: "auフラットプラン20N", ended: "2020年6月", tiers: [[20, 7007]], set: 1100, card: 187, callShort: 880, callLong: 1980 },                                     // ✅（家族割なし）
       { id: "flat7n",    name: "auフラットプラン7プラスN", ended: "2020年6月", tiers: [[7, 6435]], fam2: 550, fam3: 1100, set: 1100, card: 187, callShort: 880, callLong: 1980 },        // 料金✅ / 家族割2回線⚠
-      { id: "pitatto",   name: "ピタットプラン 5G / 4G LTE", ended: "2023年1月", tiers: [[1, 3685], [4, 5335], [7, 6985]], fam2: 550, fam3: 1100, set: 550, card: 187, callShort: 880, callLong: 1980 }, // ✅
+      { id: "pitatto",   name: "ピタットプラン 5G / 4G LTE", ended: "2023年1月", tiers: [[1, 3685], [4, 5335], [7, 6985]], fam2: 550, fam3: 1100, set: 550, setMinGb: 1, card: 187, callShort: 880, callLong: 1980 }, // ✅ スマートバリューは1GB以下の月は付かない
       { id: "mini",      name: "スマホミニプラン 5G/4G", ended: "2024年12月", tiers: [[1, 3685], [2, 4785], [3, 5885], [4, 6435]], fam2: 220, fam3: 550, set: 550, card: 187, callShort: 880, callLong: 1980 }, // ✅
     ],
     uq: [

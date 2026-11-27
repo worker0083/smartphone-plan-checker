@@ -1,0 +1,18 @@
+# data/carriers.json を更新したら自動でチェック（形式・参照切れ・公式の支払い例との一致）
+name: 料金データのチェック
+on:
+  push:
+    paths: ["data/**", "tools/validate_data.py", ".github/workflows/validate-data.yml"]
+  pull_request:
+    paths: ["data/**", "tools/validate_data.py", ".github/workflows/validate-data.yml"]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install jsonschema
+      - name: チェック
+        run: python3 tools/validate_data.py --stale

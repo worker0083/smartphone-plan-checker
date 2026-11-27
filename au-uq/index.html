@@ -388,10 +388,10 @@
   </div>
 </main>
 
-<script src="plans.js?v=2.8.0"></script>
+<script src="plans.js?v=2.8.1"></script>
 <script>
-const APP_VERSION = "2.8.0";
-const APP_DATE = "2026-11-21";
+const APP_VERSION = "2.8.1";
+const APP_DATE = "2026-11-27";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金は${DATA.updated}時点）`;
 
 // ───── 更新チェック：公開中の version.json と比べて、古ければ「最新版に更新」ボタンを出す ─────
@@ -621,7 +621,7 @@ function nowPlanCost(cid, p, person, ctx, famCount) {
   const tier = p.tiers.find(([cap]) => person.gb <= cap) || p.tiers[p.tiers.length - 1];
   const lines = [];
   if (p.low && person.gb <= p.low[0]) lines.push([`${p.low[0]}GB以下の割引`, p.low[1]]);
-  const setOk = p.set && (ctx.net || (cid === "uq" && ctx.denki));
+  const setOk = p.set && (ctx.net || (cid === "uq" && ctx.denki)) && !(p.setMinGb && person.gb <= p.setMinGb);   // auピタットプランは1GB以下の月はスマートバリューなし
   const set = setOk ? p.set : 0;
   const fam = p.fam2 ? (famCount >= 4 && p.fam4 ? p.fam4 : famCount >= 3 ? p.fam3 : famCount >= 2 ? p.fam2 : 0) : 0;
   const setLabel = cid === "au" ? "auスマートバリュー" : (ctx.net ? "自宅セット割（インターネットコース）" : "自宅セット割（でんきコース）");

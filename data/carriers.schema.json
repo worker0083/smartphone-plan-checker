@@ -4,240 +4,882 @@
   "title": "料金データ（data/carriers.json）",
   "description": "クロ（調査チーム）が更新し、提案ツールが読むだけのデータ。金額はすべて税込・円・整数。",
   "type": "object",
-  "required": ["schema_version", "updated_at", "tax", "stale_days", "carriers"],
+  "required": [
+    "schema_version",
+    "updated_at",
+    "tax",
+    "stale_days",
+    "carriers"
+  ],
   "additionalProperties": false,
   "properties": {
-    "schema_version": { "const": "1.0" },
-    "updated_at": { "$ref": "#/$defs/date", "description": "このファイルを最後に更新した日" },
-    "tax": { "const": "included", "description": "税込のみ。税抜の金額は入れない" },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "updated_at": {
+      "$ref": "#/$defs/date",
+      "description": "このファイルを最後に更新した日"
+    },
+    "tax": {
+      "const": "included",
+      "description": "税込のみ。税抜の金額は入れない"
+    },
     "stale_days": {
       "type": "object",
       "description": "checked_at からの日数で画面に印を付ける",
-      "required": ["warn", "alert"],
+      "required": [
+        "warn",
+        "alert"
+      ],
       "properties": {
-        "warn": { "type": "integer", "minimum": 1, "description": "この日数を過ぎたら黄色「確認から◯日」" },
-        "alert": { "type": "integer", "minimum": 1, "description": "この日数を過ぎたら赤「要再確認」" }
+        "warn": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "この日数を過ぎたら黄色「確認から◯日」"
+        },
+        "alert": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "この日数を過ぎたら赤「要再確認」"
+        }
       }
     },
-    "carriers": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/carrier" } },
-    "home_internet": { "type": "array", "items": { "$ref": "#/$defs/homeInternet" }, "description": "自宅の光回線（セット割の判定用）" }
+    "carriers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/carrier"
+      }
+    },
+    "home_internet": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/homeInternet"
+      },
+      "description": "自宅の光回線（セット割の判定用）"
+    }
   },
-
   "$defs": {
-    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
-    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
-    "yen": { "type": "integer", "minimum": 0 },
-    "url": { "type": "string", "pattern": "^https://" },
-
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "yen": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "url": {
+      "type": "string",
+      "pattern": "^https://"
+    },
     "sourced": {
       "description": "出典が必須の項目に共通",
       "type": "object",
-      "required": ["source_url", "checked_at"],
+      "required": [
+        "source_url",
+        "checked_at"
+      ],
       "properties": {
-        "source_url": { "$ref": "#/$defs/url" },
-        "checked_at": { "$ref": "#/$defs/date" },
-        "confidence": { "enum": ["confirmed", "estimate"], "default": "confirmed", "description": "公式で確認できなかった値は estimate（画面に「目安」と出す）" },
-        "note_for_dev": { "type": "string", "description": "実装チームへの申し送り（画面には出さない）" }
+        "source_url": {
+          "$ref": "#/$defs/url"
+        },
+        "checked_at": {
+          "$ref": "#/$defs/date"
+        },
+        "confidence": {
+          "enum": [
+            "confirmed",
+            "estimate"
+          ],
+          "default": "confirmed",
+          "description": "公式で確認できなかった値は estimate（画面に「目安」と出す）"
+        },
+        "note_for_dev": {
+          "type": "string",
+          "description": "実装チームへの申し送り（画面には出さない）"
+        }
       }
     },
-
     "carrier": {
-      "allOf": [{ "$ref": "#/$defs/sourced" }],
+      "allOf": [
+        {
+          "$ref": "#/$defs/sourced"
+        }
+      ],
       "type": "object",
-      "required": ["id", "name", "kind", "plans"],
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "plans"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/id", "examples": ["docomo", "ahamo", "au", "uq", "povo"] },
-        "name": { "type": "string" },
-        "group": { "enum": ["docomo", "kddi", "softbank", "rakuten", "mvno"] },
-        "kind": { "enum": ["mno", "subbrand", "online", "mvno"] },
-        "is_proposal_target": { "type": "boolean", "default": false, "description": "au / UQ は true（提案の主役）" },
-        "fees": { "$ref": "#/$defs/fees" },
-        "plans": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/plan" } },
-        "discounts": { "type": "array", "items": { "$ref": "#/$defs/discount" } },
-        "call_options": { "type": "array", "items": { "$ref": "#/$defs/callOption" } },
-        "campaigns": { "type": "array", "items": { "$ref": "#/$defs/campaign" } },
-        "examples": { "type": "array", "items": { "$ref": "#/$defs/example" }, "description": "公式ページに載っている支払い例。計算の自動テストに使う" }
+        "id": {
+          "$ref": "#/$defs/id",
+          "examples": [
+            "docomo",
+            "ahamo",
+            "au",
+            "uq",
+            "povo"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "group": {
+          "enum": [
+            "docomo",
+            "kddi",
+            "softbank",
+            "rakuten",
+            "mvno"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "mno",
+            "subbrand",
+            "online",
+            "mvno"
+          ]
+        },
+        "is_proposal_target": {
+          "type": "boolean",
+          "default": false,
+          "description": "au / UQ は true（提案の主役）"
+        },
+        "fees": {
+          "$ref": "#/$defs/fees"
+        },
+        "plans": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/plan"
+          }
+        },
+        "discounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/discount"
+          }
+        },
+        "call_options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/callOption"
+          }
+        },
+        "campaigns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/campaign"
+          }
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/example"
+          },
+          "description": "公式ページに載っている支払い例。計算の自動テストに使う"
+        }
       }
     },
-
     "fees": {
-      "allOf": [{ "$ref": "#/$defs/sourced" }],
+      "allOf": [
+        {
+          "$ref": "#/$defs/sourced"
+        }
+      ],
       "type": "object",
       "description": "初期費用（最終提案シートに出す）",
       "properties": {
-        "contract_yen": { "$ref": "#/$defs/yen", "description": "契約事務手数料（新規・MNP）" },
-        "contract_online_yen": { "$ref": "#/$defs/yen", "description": "オンライン申込の場合" },
-        "number_migration_yen": { "$ref": "#/$defs/yen", "description": "au⇔UQ など番号移行の手数料" },
-        "plan_change_yen": { "$ref": "#/$defs/yen" },
-        "sim_yen": { "$ref": "#/$defs/yen" },
-        "esim_yen": { "$ref": "#/$defs/yen" },
-        "notes": { "type": "array", "items": { "type": "string" } }
+        "contract_yen": {
+          "$ref": "#/$defs/yen",
+          "description": "契約事務手数料（新規・MNP）"
+        },
+        "contract_online_yen": {
+          "$ref": "#/$defs/yen",
+          "description": "オンライン申込の場合"
+        },
+        "number_migration_yen": {
+          "$ref": "#/$defs/yen",
+          "description": "au⇔UQ など番号移行の手数料"
+        },
+        "plan_change_yen": {
+          "$ref": "#/$defs/yen"
+        },
+        "sim_yen": {
+          "$ref": "#/$defs/yen"
+        },
+        "esim_yen": {
+          "$ref": "#/$defs/yen"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
-
     "plan": {
-      "allOf": [{ "$ref": "#/$defs/sourced" }],
+      "allOf": [
+        {
+          "$ref": "#/$defs/sourced"
+        }
+      ],
       "type": "object",
-      "required": ["id", "name", "status", "price", "data"],
+      "required": [
+        "id",
+        "name",
+        "status",
+        "price",
+        "data"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "name": { "type": "string" },
-        "status": { "enum": ["active", "ended"], "description": "ended＝新規受付終了（今のプランとして選べるが、提案先にはしない）" },
-        "ended_on": { "type": "string", "pattern": "^\\d{4}(-\\d{2})?(-\\d{2})?$" },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "ended"
+          ],
+          "description": "ended＝新規受付終了（今のプランとして選べるが、提案先にはしない）"
+        },
+        "ended_on": {
+          "type": "string",
+          "pattern": "^\\d{4}(-\\d{2})?(-\\d{2})?$"
+        },
         "price": {
           "description": "割引前の月額（税込）。使う量で変わるプランは tiered",
           "oneOf": [
-            { "type": "object", "required": ["type", "yen"], "properties": { "type": { "const": "flat" }, "yen": { "$ref": "#/$defs/yen" } }, "additionalProperties": false },
-            { "type": "object", "required": ["type", "tiers"], "additionalProperties": false, "properties": {
-                "type": { "const": "tiered" },
-                "tiers": { "type": "array", "minItems": 2, "items": { "type": "object", "required": ["up_to_gb", "yen"], "properties": {
-                  "up_to_gb": { "type": ["number", "null"], "description": "null＝上限なし（最後の段）" }, "yen": { "$ref": "#/$defs/yen" } } } } } }
+            {
+              "type": "object",
+              "required": [
+                "type",
+                "yen"
+              ],
+              "properties": {
+                "type": {
+                  "const": "flat"
+                },
+                "yen": {
+                  "$ref": "#/$defs/yen"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "type",
+                "tiers"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "const": "tiered"
+                },
+                "tiers": {
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "up_to_gb",
+                      "yen"
+                    ],
+                    "properties": {
+                      "up_to_gb": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "null＝上限なし（最後の段）"
+                      },
+                      "yen": {
+                        "$ref": "#/$defs/yen"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           ]
         },
         "data": {
           "type": "object",
-          "required": ["cap_gb"],
+          "required": [
+            "cap_gb"
+          ],
           "properties": {
-            "cap_gb": { "type": ["number", "null"], "description": "null＝無制限" },
-            "after_cap_mbps": { "type": ["number", "null"], "description": "超過時の速度" },
-            "tethering_cap_gb": { "type": ["number", "null"] },
-            "rollover": { "type": "boolean", "description": "くりこし" },
-            "fair_use_note": { "type": "string", "description": "混雑時の制御など" }
+            "cap_gb": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "null＝無制限"
+            },
+            "after_cap_mbps": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "超過時の速度"
+            },
+            "tethering_cap_gb": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "rollover": {
+              "type": "boolean",
+              "description": "くりこし"
+            },
+            "fair_use_note": {
+              "type": "string",
+              "description": "混雑時の制御など"
+            }
           }
         },
         "calls": {
           "type": "object",
           "properties": {
-            "included": { "enum": ["none", "5min", "10min", "unlimited", "app_unlimited"], "default": "none" },
-            "per_30s_yen": { "$ref": "#/$defs/yen", "default": 22 },
-            "option_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "description": "このプランで付けられる通話オプション" }
+            "included": {
+              "enum": [
+                "none",
+                "5min",
+                "10min",
+                "unlimited",
+                "app_unlimited"
+              ],
+              "default": "none"
+            },
+            "per_30s_yen": {
+              "$ref": "#/$defs/yen",
+              "default": 22
+            },
+            "option_ids": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/id"
+              },
+              "description": "このプランで付けられる通話オプション"
+            }
           }
         },
-        "discount_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "description": "このプランに付く割引（carrier.discounts の id）" },
-        "notes": { "type": "array", "items": { "type": "string" }, "description": "画面に出す備考" }
+        "discount_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "description": "このプランに付く割引（carrier.discounts の id）"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "画面に出す備考"
+        }
       }
     },
-
     "callOption": {
-      "allOf": [{ "$ref": "#/$defs/sourced" }],
+      "allOf": [
+        {
+          "$ref": "#/$defs/sourced"
+        }
+      ],
       "type": "object",
-      "required": ["id", "name", "yen", "covers"],
+      "required": [
+        "id",
+        "name",
+        "yen",
+        "covers"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "name": { "type": "string" },
-        "yen": { "$ref": "#/$defs/yen" },
-        "covers": { "enum": ["5min", "10min", "60min_month", "unlimited"] },
-        "notes": { "type": "array", "items": { "type": "string" } }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "yen": {
+          "$ref": "#/$defs/yen"
+        },
+        "covers": {
+          "enum": [
+            "5min",
+            "10min",
+            "60min_month",
+            "unlimited"
+          ]
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
-
     "amount": {
       "description": "割引額。回線数やプランで変わる場合は表で持つ",
       "oneOf": [
-        { "type": "object", "required": ["type", "yen"], "additionalProperties": false, "properties": { "type": { "const": "fixed" }, "yen": { "$ref": "#/$defs/yen" } } },
-        { "type": "object", "required": ["type", "table"], "additionalProperties": false, "properties": { "type": { "const": "by_lines" },
-            "table": { "type": "array", "items": { "type": "object", "required": ["min_lines", "yen"], "properties": { "min_lines": { "type": "integer", "minimum": 1 }, "yen": { "$ref": "#/$defs/yen" } } } } } },
-        { "type": "object", "required": ["type", "table"], "additionalProperties": false, "properties": { "type": { "const": "by_plan" },
-            "table": { "type": "object", "additionalProperties": { "$ref": "#/$defs/yen" }, "description": "plan id → 割引額" } } }
-      ]
-    },
-
-    "condition": {
-      "description": "機械判定できる条件。判定できないものは type: other（画面では『要確認』扱い）",
-      "type": "object",
-      "required": ["type"],
-      "properties": {
-        "type": { "enum": ["home_internet", "electricity", "family_lines", "age", "payment", "data_usage_max", "new_subscription", "mnp_in", "other"] },
-        "values": { "type": "array", "items": { "type": "string" }, "description": "home_internet / electricity / payment の対象（id）" },
-        "with_phone": { "type": "boolean", "description": "home_internet で「ネット＋電話」が条件か" },
-        "min": { "type": "number" },
-        "max": { "type": "number" },
-        "scope": { "enum": ["self", "any_family_member"], "description": "age などを誰が満たせばよいか" },
-        "text": { "type": "string" }
-      }
-    },
-
-    "discount": {
-      "allOf": [{ "$ref": "#/$defs/sourced" }],
-      "type": "object",
-      "required": ["id", "name", "kind", "amount", "unit", "conditions", "condition_text"],
-      "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "name": { "type": "string" },
-        "kind": { "enum": ["set_home", "set_electricity", "family", "payment", "usage", "age", "campaign_like", "other"] },
-        "amount": { "$ref": "#/$defs/amount" },
-        "unit": { "enum": ["per_line", "per_account"] },
-        "duration_months": { "type": ["integer", "null"], "description": "null＝ずっと。12＝翌月から1年間 など" },
-        "conditions": { "type": "array", "items": { "$ref": "#/$defs/condition" } },
-        "condition_text": { "type": "string", "description": "必須。画面で割引額と必ずセットで出す条件の文章" },
-        "exclusive_group": { "type": "string", "description": "同じグループの割引は1つだけ（大きい方を適用）。例：UQの自宅セット割と家族セット割" },
-        "not_combinable_with": { "type": "array", "items": { "$ref": "#/$defs/id" }, "description": "重ねられない割引" },
-        "overrides": { "type": "array", "items": { "$ref": "#/$defs/id" }, "description": "これが付くと外れる割引（例：親子応援割が付くと5GB以下割は外れる）" }
-      }
-    },
-
-    "campaign": {
-      "allOf": [{ "$ref": "#/$defs/sourced" }],
-      "type": "object",
-      "required": ["id", "name", "benefit", "conditions", "condition_text"],
-      "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "name": { "type": "string" },
-        "benefit": {
+        {
           "type": "object",
-          "required": ["type"],
+          "required": [
+            "type",
+            "yen"
+          ],
+          "additionalProperties": false,
           "properties": {
-            "type": { "enum": ["monthly_discount", "points", "cashback", "device_discount", "data"] },
-            "yen": { "$ref": "#/$defs/yen" },
-            "months": { "type": "integer" },
-            "text": { "type": "string" }
+            "type": {
+              "const": "fixed"
+            },
+            "yen": {
+              "$ref": "#/$defs/yen"
+            }
           }
         },
-        "plan_ids": { "type": "array", "items": { "$ref": "#/$defs/id" } },
-        "conditions": { "type": "array", "items": { "$ref": "#/$defs/condition" } },
-        "condition_text": { "type": "string" },
-        "starts_on": { "$ref": "#/$defs/date" },
-        "apply_by": { "type": ["string", "null"], "description": "申込期限（未定は null）" },
-        "counts_in_monthly": { "type": "boolean", "default": false, "description": "true の月額割引だけ月額の計算に入れる。ポイント・キャッシュバックは別枠で表示" }
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "table"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "by_lines"
+            },
+            "table": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "min_lines",
+                  "yen"
+                ],
+                "properties": {
+                  "min_lines": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "yen": {
+                    "$ref": "#/$defs/yen"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "table"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "by_plan"
+            },
+            "table": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/yen"
+              },
+              "description": "plan id → 割引額"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "table"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "by_plan_lines"
+            },
+            "table": {
+              "type": "object",
+              "description": "plan id → 回線数ごとの割引額",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "min_lines",
+                    "yen"
+                  ],
+                  "properties": {
+                    "min_lines": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "yen": {
+                      "$ref": "#/$defs/yen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "condition": {
+      "description": "機械判定できる条件。conditions の配列はすべて満たす（AND）。どれか1つでよいときは any_of。判定できないものは type: other（画面では『要確認』扱い）",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "home_internet",
+            "electricity",
+            "family_lines",
+            "age",
+            "payment",
+            "data_usage_max",
+            "data_usage_min",
+            "new_subscription",
+            "mnp_in",
+            "any_of",
+            "other"
+          ]
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "home_internet / electricity / payment の対象（id）"
+        },
+        "with_phone": {
+          "type": "boolean",
+          "description": "home_internet で「ネット＋電話」が条件か"
+        },
+        "min": {
+          "type": "number",
+          "description": "family_lines・age は以上。data_usage_min は「この値を超える月」"
+        },
+        "max": {
+          "type": "number"
+        },
+        "scope": {
+          "enum": [
+            "self",
+            "any_family_member"
+          ],
+          "description": "age などを誰が満たせばよいか"
+        },
+        "text": {
+          "type": "string"
+        },
+        "of": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/condition"
+          },
+          "description": "type: any_of のとき、どれか1つを満たせばよい条件"
+        }
       }
     },
-
+    "discount": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/sourced"
+        }
+      ],
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "amount",
+        "unit",
+        "conditions",
+        "condition_text"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "set_home",
+            "set_electricity",
+            "family",
+            "payment",
+            "usage",
+            "age",
+            "campaign_like",
+            "other"
+          ]
+        },
+        "amount": {
+          "$ref": "#/$defs/amount"
+        },
+        "unit": {
+          "enum": [
+            "per_line",
+            "per_account"
+          ]
+        },
+        "duration_months": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "null＝ずっと。12＝翌月から1年間 など"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/condition"
+          }
+        },
+        "condition_text": {
+          "type": "string",
+          "description": "必須。画面で割引額と必ずセットで出す条件の文章"
+        },
+        "exclusive_group": {
+          "type": "string",
+          "description": "同じグループの割引は1つだけ（大きい方を適用）。例：UQの自宅セット割と家族セット割"
+        },
+        "not_combinable_with": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "description": "重ねられない割引"
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "description": "これが付くと外れる割引（例：親子応援割が付くと5GB以下割は外れる）"
+        }
+      }
+    },
+    "campaign": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/sourced"
+        }
+      ],
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "benefit",
+        "conditions",
+        "condition_text"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "benefit": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "monthly_discount",
+                "points",
+                "cashback",
+                "device_discount",
+                "data"
+              ]
+            },
+            "yen": {
+              "$ref": "#/$defs/yen"
+            },
+            "months": {
+              "type": "integer"
+            },
+            "text": {
+              "type": "string"
+            }
+          }
+        },
+        "plan_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/condition"
+          }
+        },
+        "condition_text": {
+          "type": "string"
+        },
+        "starts_on": {
+          "$ref": "#/$defs/date"
+        },
+        "apply_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "申込期限（未定は null）"
+        },
+        "counts_in_monthly": {
+          "type": "boolean",
+          "default": false,
+          "description": "true の月額割引だけ月額の計算に入れる。ポイント・キャッシュバックは別枠で表示"
+        }
+      }
+    },
     "example": {
       "type": "object",
       "description": "公式ページの支払い例。データを更新したらこの金額と計算が一致するか自動で確かめる",
-      "required": ["label", "plan_id", "inputs", "expected_yen", "source_url"],
+      "required": [
+        "label",
+        "plan_id",
+        "inputs",
+        "expected_yen",
+        "source_url"
+      ],
       "properties": {
-        "label": { "type": "string" },
-        "plan_id": { "$ref": "#/$defs/id" },
+        "label": {
+          "type": "string"
+        },
+        "plan_id": {
+          "$ref": "#/$defs/id"
+        },
         "inputs": {
           "type": "object",
           "properties": {
-            "data_gb": { "type": "number" },
-            "family_lines": { "type": "integer" },
-            "home_internet": { "type": ["string", "null"] },
-            "with_phone": { "type": "boolean" },
-            "electricity": { "type": ["string", "null"] },
-            "payment": { "type": ["string", "null"] },
-            "age": { "type": "integer" },
-            "new_subscription": { "type": "boolean" },
-            "month": { "type": "integer", "description": "加入から何か月目か（期間限定の割引の確認用）" }
+            "data_gb": {
+              "type": "number"
+            },
+            "family_lines": {
+              "type": "integer"
+            },
+            "home_internet": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "with_phone": {
+              "type": "boolean"
+            },
+            "electricity": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "payment": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "age": {
+              "type": "integer"
+            },
+            "new_subscription": {
+              "type": "boolean"
+            },
+            "month": {
+              "type": "integer",
+              "description": "加入から何か月目か（期間限定の割引の確認用）"
+            }
           }
         },
-        "expected_yen": { "$ref": "#/$defs/yen" },
-        "source_url": { "$ref": "#/$defs/url" }
+        "expected_yen": {
+          "$ref": "#/$defs/yen"
+        },
+        "source_url": {
+          "$ref": "#/$defs/url"
+        },
+        "checked_at": {
+          "$ref": "#/$defs/date",
+          "description": "この支払い例を公式ページで確認した日（任意）。料金改定で古い例が残っていないかの確認用"
+        }
       }
     },
-
     "homeInternet": {
-      "allOf": [{ "$ref": "#/$defs/sourced" }],
+      "allOf": [
+        {
+          "$ref": "#/$defs/sourced"
+        }
+      ],
       "type": "object",
-      "required": ["id", "name"],
+      "required": [
+        "id",
+        "name"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "name": { "type": "string" },
-        "set_discount_carriers": { "type": "array", "items": { "$ref": "#/$defs/id" }, "description": "セット割の対象になるキャリア" },
-        "requires_phone": { "type": "boolean" },
-        "monthly_yen": { "type": "object", "properties": { "home": { "$ref": "#/$defs/yen" }, "mansion": { "$ref": "#/$defs/yen" } } }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "set_discount_carriers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "description": "セット割の対象になるキャリア"
+        },
+        "requires_phone": {
+          "type": "boolean",
+          "description": "true なら「ネット＋電話」のときだけセット割の対象"
+        },
+        "monthly_yen": {
+          "type": "object",
+          "properties": {
+            "home": {
+              "$ref": "#/$defs/yen"
+            },
+            "mansion": {
+              "$ref": "#/$defs/yen"
+            }
+          }
+        },
+        "kind": {
+          "enum": [
+            "fiber",
+            "catv",
+            "home_router"
+          ]
+        }
       }
     }
   }
