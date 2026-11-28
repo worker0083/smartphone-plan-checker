@@ -172,7 +172,7 @@ window.DATA = {
       { id: "kepcoNattoku", name: "関西電力 なっトクでんき", min: 618.63, rates: [20.99, 24.78, 28.48], point: 0, note: "✅ 関電ガスとセットの方のみ", needsGas: true },
       { id: "audenki", name: "auでんき（でんきM 関西）", min: 763.80, rates: [20.88, 26.29, 29.26], point: [[5000, 0.01], [8000, 0.03], [Infinity, 0.05]], note: "単価✅ / Ponta還元率⚠" },
       { id: "ouchidenki", name: "おうちでんき（ソフトバンク）", min: 763.81, rates: [20.89, 26.29, 29.27], point: 0, note: "✅ 関西電力 従量電灯Aと同額" },
-      { id: "docomodenki", name: "ドコモでんき Basic", min: 763.81, rates: [20.89, 26.29, 29.27], point: 0.01, note: "⚠ 単価・dポイント還元率は未確認（従量電灯A相当で仮置き）" },
+      { id: "docomodenki", name: "ドコモでんき Basic", min: 522.58, rates: [20.21, 25.61, 28.59], point: 0.01, note: "✅ 単価は重要事項説明書で確認。dポイント還元は条件別（ドコモ回線＋dカード 2%／回線あり 1%／回線なし 0.5〜1%）、計算は1%" },
       { id: "rakutendenki", name: "楽天でんき プランS", min: 0, flat: 35.28, point: 0.005, note: "✅ 単価。燃料費調整額の代わりに市場価格調整額がかかります" },
     ],
   },
