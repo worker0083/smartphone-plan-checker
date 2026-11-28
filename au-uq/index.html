@@ -42,12 +42,12 @@
   .q { margin-bottom: 18px; }
   .q > label, .q > .label { display: block; font-weight: 600; margin-bottom: 8px; }
   .hint { color: var(--muted); font-size: .82rem; font-weight: 400; }
-  input[type=number], select { width: 100%; padding: 12px; font-size: 1rem; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+  input[type=number], input.money, input[inputmode=numeric], select { width: 100%; padding: 12px; font-size: 1rem; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chips label { border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; user-select: none; font-size: .95rem; background: var(--bg); display: inline-flex; align-items: center; -webkit-tap-highlight-color: transparent; }
   .chips input { display: none; }
   .chips label:has(input:checked) { background: var(--accent-weak); border-color: var(--accent); color: var(--accent); font-weight: 600; }
-  .chips label, input[type=number], select, button { min-height: 44px; }
+  .chips label, input[type=number], input[inputmode=numeric], select, button { min-height: 44px; }
   button { width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border: 0; border-radius: 12px; background: var(--accent); color: #fff; cursor: pointer; }
   .person { border: 1px solid var(--line); border-left: 5px solid var(--muted); border-radius: 14px; padding: 12px 14px 14px; margin-bottom: 12px; background: var(--card); }
   .person.from-au { border-left-color: var(--au); } .person.from-uq { border-left-color: var(--uq); }
@@ -75,28 +75,6 @@
   .cmp .who { font-weight: 800; white-space: nowrap; }
   .save-cell { white-space: nowrap; font-weight: 800; }
   .h3 { font-size: .98rem; margin: 14px 0 4px; }
-  /* テンキー（タッチの端末） */
-  #keypad { position: fixed; left: 0; right: 0; bottom: 0; z-index: 80; background: var(--card); border-top: 1px solid var(--line);
-    box-shadow: 0 -8px 24px rgba(0,0,0,.15); padding: 10px 16px calc(12px + env(safe-area-inset-bottom)); border-radius: 18px 18px 0 0; }
-  #keypad[hidden] { display: none; }
-  .kp-head { display: flex; justify-content: space-between; align-items: center; }
-  .kp-label { font-weight: 800; font-size: .95rem; }
-  .kp-close { width: 44px; min-height: 44px; padding: 0; font-size: 1.4rem; background: none; color: var(--muted); }
-  .kp-display { text-align: right; font-size: 2.2rem; font-weight: 800; padding: 2px 6px 8px; border-bottom: 2px solid var(--accent); margin-bottom: 10px; }
-  .kp-display .kp-value.empty { color: var(--muted); }
-  .kp-unit { font-size: 1rem; margin-left: 4px; color: var(--muted); }
-  .kp-keys { display: grid; grid-template-columns: repeat(3, 1fr) 1.1fr; grid-template-rows: repeat(4, 58px); gap: 8px; }
-  .kp-keys button { min-height: 0; padding: 0; font-size: 1.6rem; font-weight: 700; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 12px; }
-  .kp-keys button:active { background: var(--accent-weak); }
-  .kp-keys button[data-k="7"] { grid-column: 1; grid-row: 1; }
-  .kp-keys .kp-sub { grid-column: 4; font-size: .95rem; }
-  .kp-keys [data-k="C"] { grid-row: 1; } .kp-keys [data-k="prev"] { grid-row: 2; } .kp-keys [data-k="next"] { grid-row: 3; }
-  .kp-keys .kp-ok { grid-column: 4; grid-row: 4; background: var(--accent); color: #fff; border-color: var(--accent); font-size: 1.1rem; }
-  .kp-keys button:disabled { opacity: .35; }
-  input.kp-active { outline: 3px solid var(--accent); outline-offset: 1px; }
-  body.kp-open main { padding-bottom: 380px; }
-  @media (min-width: 700px) { #keypad { left: auto; right: 16px; bottom: 16px; width: 400px; border-radius: 18px; border: 1px solid var(--line); } }
-  @media (min-width: 1000px) { body.kp-open main { padding-bottom: 0; } #keypad { left: 24px; right: auto; } }
   .fresh { display: inline-block; font-size: .72rem; font-weight: 800; padding: 0 7px; border-radius: 6px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; }
   .fresh.warn { background: #fef3c7; color: #92400e; }
   .fresh.alert { background: #fee2e2; color: #b91c1c; }
@@ -415,14 +393,14 @@
   </div>
 </main>
 
-<script src="plans.js?v=2.10.0"></script>
-<script src="data-adapter.js?v=2.10.0"></script>
+<script src="plans.js?v=2.10.1"></script>
+<script src="data-adapter.js?v=2.10.1"></script>
 <script>
 // 料金データ（data/carriers.json）を読み込んでから画面を動かす
 loadCarrierData().then(json => {
   applyCarrierData(json);
   const s = document.createElement("script");
-  s.src = "app.js?v=2.10.0";
+  s.src = "app.js?v=2.10.1";
   document.body.appendChild(s);
 }).catch(err => {
   const el = document.getElementById("loadError");

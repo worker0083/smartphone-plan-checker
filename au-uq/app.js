@@ -1,5 +1,5 @@
 // 料金診断の画面と計算（料金データは data/carriers.json から data-adapter.js が読み込む）
-const APP_VERSION = "2.10.0";
+const APP_VERSION = "2.10.1";
 const APP_DATE = "2026-11-28";
 document.getElementById("version").textContent = `v${APP_VERSION}（${APP_DATE.replace(/-/g, "/")} 更新・料金データ ${DATA.updated}）`;
 
@@ -896,99 +896,36 @@ document.querySelectorAll("input[name=netPlan]").forEach(r => r.addEventListener
 }));
 
 
-// ───── テンキー：iPad などタッチの端末では、金額欄をタップすると数字だけのテンキーを出す ─────
-// （iPad の Safari には数字だけのキーボードがないため、画面の中に用意する）
-const Keypad = (() => {
-  const touch = () => window.matchMedia("(hover: none) and (pointer: coarse)").matches || localStorage.getItem("keypad") === "on";
-  const MAX = 6;
-  let target = null, list = [];
-  const pad = document.createElement("div");
-  pad.id = "keypad";
-  pad.hidden = true;
-  pad.innerHTML = `
-    <div class="kp-head"><span class="kp-label"></span><button type="button" class="kp-close" aria-label="閉じる">×</button></div>
-    <div class="kp-display"><span class="kp-value"></span><span class="kp-unit">円</span></div>
-    <div class="kp-keys">
-      ${["7", "8", "9", "4", "5", "6", "1", "2", "3", "00", "0", "⌫"].map(k => `<button type="button" data-k="${k}">${k}</button>`).join("")}
-      <button type="button" data-k="C" class="kp-sub">クリア</button>
-      <button type="button" data-k="prev" class="kp-sub">← 前の欄</button>
-      <button type="button" data-k="next" class="kp-sub">次の欄 →</button>
-      <button type="button" data-k="ok" class="kp-ok">決定</button>
-    </div>`;
-  document.body.appendChild(pad);
+// ───── 金額の入力：端末の純正キーボードを数字の面で出す ─────
+// iPhone は数字だけのテンキー、iPad はキーボードが数字・記号の面で開く（iPad の純正には数字だけのキーボードがない）
+const MONEY_SEL = "#form input.money";
+function markMoney() {
+  document.querySelectorAll("#form input[type=number]").forEach(el => {
+    el.type = "text";                       // type=number だと iPhone で数字だけのテンキーにならない
+    el.classList.add("money");
+  });
+  document.querySelectorAll(MONEY_SEL).forEach(el => {
+    el.setAttribute("inputmode", "numeric");
+    el.setAttribute("pattern", "[0-9]*");
+    el.setAttribute("enterkeyhint", "next");
+    el.setAttribute("autocomplete", "off");
+  });
+}
+// 全角の数字を半角に、数字以外は消す（日本語入力のまま押しても大丈夫）
+document.addEventListener("input", e => {
+  const el = e.target;
+  if (!el.matches || !el.matches(MONEY_SEL)) return;
+  const v = el.value.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/[^0-9]/g, "").slice(0, 7);
+  if (v !== el.value) el.value = v;
+}, true);
+// キーボードの「次へ」で次の金額欄へ（閉じている欄は飛ばす）
+document.addEventListener("keydown", e => {
+  if (e.key !== "Enter" || !e.target.matches || !e.target.matches(MONEY_SEL)) return;
+  e.preventDefault();
+  const list = [...document.querySelectorAll(MONEY_SEL)].filter(x => x.offsetParent !== null && !x.closest("details:not([open])"));
+  const next = list[list.indexOf(e.target) + 1];
+  if (next) next.focus(); else e.target.blur();
+});
+new MutationObserver(markMoney).observe($("#persons"), { childList: true });   // 人の欄を作り直したとき
+markMoney();
 
-  // 金額欄の名前（テンキーの上に出す）
-  const NAMES = { current: "家族の合計のスマホ代", othersCost: "乗り換えない家族のスマホ代", netCost: "今のネット代", elec: "電気代（1年の平均）" };
-  function labelOf(el) {
-    if (NAMES[el.id]) return NAMES[el.id];
-    const person = el.closest(".person");
-    if (person) return `${+person.dataset.i + 1}人目の今の月額`;
-    const lab = document.querySelector(`label[for="${el.id}"]`) || el.parentElement.querySelector(".label");
-    return lab ? lab.textContent.replace(/\s+/g, " ").replace(/（.*$/, "").trim() : "金額";
-  }
-  // 金額欄をテンキー用にする（OS のキーボードを出さない）
-  function mark() {
-    if (!touch()) return;
-    document.querySelectorAll('#form input[type=number]').forEach(el => {
-      el.setAttribute("readonly", "");
-      el.setAttribute("inputmode", "none");
-      el.dataset.keypad = "1";
-    });
-  }
-  function show() {
-    const v = target.value;
-    pad.querySelector(".kp-label").textContent = labelOf(target);
-    pad.querySelector(".kp-value").textContent = v ? Number(v).toLocaleString("ja-JP") : "0";
-    pad.querySelector(".kp-value").classList.toggle("empty", !v);
-    const i = list.indexOf(target);
-    pad.querySelector('[data-k="prev"]').disabled = i <= 0;
-    pad.querySelector('[data-k="next"]').disabled = i >= list.length - 1;
-  }
-  function open(el) {
-    document.querySelectorAll(".kp-active").forEach(x => x.classList.remove("kp-active"));
-    // 「次の欄」の順番：画面に見えている金額欄だけ（閉じている「家族の合計」などは飛ばす）
-    list = [...document.querySelectorAll("#form input[data-keypad]")].filter(x => x.offsetParent !== null && !x.closest("details:not([open])"));
-    target = el;
-    el.classList.add("kp-active");
-    pad.hidden = false;
-    document.body.classList.add("kp-open");
-    show();
-    el.scrollIntoView({ block: "center", behavior: "smooth" });
-  }
-  function close() {
-    if (target) { target.classList.remove("kp-active"); target.dispatchEvent(new Event("change", { bubbles: true })); }
-    target = null;
-    pad.hidden = true;
-    document.body.classList.remove("kp-open");
-  }
-  function set(v) {
-    target.value = v;
-    target.dispatchEvent(new Event("input", { bubbles: true }));   // 結果が出ていればすぐ再計算
-    show();
-  }
-  pad.addEventListener("click", e => {
-    const b = e.target.closest("button");
-    if (!b || !target) { if (b && b.classList.contains("kp-close")) close(); return; }
-    if (b.classList.contains("kp-close")) return close();
-    const k = b.dataset.k, v = target.value;
-    if (k === "ok") return close();
-    if (k === "C") return set("");
-    if (k === "⌫") return set(v.slice(0, -1));
-    if (k === "prev" || k === "next") {
-      const i = list.indexOf(target) + (k === "next" ? 1 : -1);
-      if (list[i]) { target.dispatchEvent(new Event("change", { bubbles: true })); open(list[i]); }
-      return;
-    }
-    const nv = (v === "0" ? "" : v) + k;
-    if (nv.replace(/^0+/, "").length > MAX) return;
-    set(nv.replace(/^0+(?=\d)/, ""));
-  });
-  document.addEventListener("click", e => {
-    const el = e.target.closest("input[data-keypad]");
-    if (el) { e.preventDefault(); open(el); return; }
-    if (!pad.hidden && !e.target.closest("#keypad")) close();     // テンキーの外をタップしたら閉じる
-  });
-  new MutationObserver(mark).observe($("#persons"), { childList: true });   // 人の欄を作り直したとき
-  mark();
-  return { mark, close };
-})();
