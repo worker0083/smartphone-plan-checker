@@ -1954,28 +1954,52 @@
       "discounts": [],
       "examples": [
         {
-          "expected_yen": 2970,
+          "expected_yen": 3135,
           "inputs": {
             "data_gb": 30,
             "family_lines": 1,
             "home_internet": null,
             "payment": null
           },
-          "label": "ahamo 基本プラン（30GB・割引なし）",
+          "label": "ahamo（40GB以下・割引なし）",
           "plan_id": "ahamo",
-          "source_url": "https://ahamo.com/plan/index.html"
+          "source_url": "https://www.docomo.ne.jp/info/news_release/2026/09/25_00.html"
         },
         {
-          "expected_yen": 4950,
+          "expected_yen": 4125,
           "inputs": {
-            "data_gb": 110,
+            "data_gb": 50,
             "family_lines": 1,
             "home_internet": null,
             "payment": null
           },
-          "label": "ahamo 大盛り（110GB＝基本＋大盛りオプション）",
-          "plan_id": "ahamo_oomori",
-          "source_url": "https://ahamo.com/plan/index.html"
+          "label": "ahamo（60GB以下・割引なし）",
+          "plan_id": "ahamo",
+          "source_url": "https://www.docomo.ne.jp/info/news_release/2026/09/25_00.html"
+        },
+        {
+          "expected_yen": 5115,
+          "inputs": {
+            "data_gb": 100,
+            "family_lines": 1,
+            "home_internet": null,
+            "payment": null
+          },
+          "label": "ahamo（120GB以下・割引なし）",
+          "plan_id": "ahamo",
+          "source_url": "https://www.docomo.ne.jp/info/news_release/2026/09/25_00.html"
+        },
+        {
+          "expected_yen": 7315,
+          "inputs": {
+            "data_gb": 120,
+            "family_lines": 1,
+            "home_internet": null,
+            "payment": null
+          },
+          "label": "ahamo ポイ活（120GB＋ポイ活オプション）",
+          "plan_id": "ahamo_poi",
+          "source_url": "https://www.docomo.ne.jp/info/news_release/2026/09/25_00.html"
         }
       ],
       "fees": {
@@ -1991,7 +2015,7 @@
       "id": "ahamo",
       "kind": "online",
       "name": "ahamo",
-      "note_for_dev": "公式現行ページでは基本容量は30GB（調査依頼の前提だった20GBではない）。2026年12月1日から40GB 3,135円～120GB 5,115円の段階制へ改定予定（公式告知）。本データは改定前の現行料金",
+      "note_for_dev": "2026年12月1日リニューアル：40GB 3,135円／60GB 4,125円／120GB 5,115円の3段階制。大盛りオプションは2026年11月30日で提供終了（ドコモ公式発表 2026-09-25）",
       "plans": [
         {
           "calls": {
@@ -2004,25 +2028,39 @@
           "checked_at": "2026-11-28",
           "data": {
             "after_cap_mbps": 1,
-            "cap_gb": 30,
+            "cap_gb": 120,
             "rollover": false
           },
           "discount_ids": [],
           "id": "ahamo",
           "name": "ahamo",
           "notes": [
-            "基本容量は30GB（旧仕様の20GBではない）",
+            "2026年12月1日リニューアル：40GB以下 3,135円／40GB超60GB以下 4,125円／60GB超120GB以下 5,115円の3段階制（税込）",
             "国内通話5分無料込み、超過後は22円/30秒",
-            "容量超過後は最大1Mbps（提供条件書で確認）",
-            "海外91の国・地域で30GBまで追加料金なし",
-            "2026年12月1日から40GB 3,135円～120GB 5,115円の段階制へ改定予定（公式告知）",
+            "容量超過後は最大1Mbps",
+            "海外91の国・地域で40GBまで追加料金なし（2026年12月1日から40GBへ増量）",
+            "上限設定オプション（40GB／60GBで上限設定）無料",
+            "1GB追加オプション 550円/1GB",
             "dカード支払いでボーナスパケット（dカード+1GB、GOLD系/PLATINUM+5GB）が付くが金額割引ではないため discounts には入れていない"
           ],
           "price": {
-            "type": "flat",
-            "yen": 2970
+            "type": "tiered",
+            "tiers": [
+              {
+                "up_to_gb": 40,
+                "yen": 3135
+              },
+              {
+                "up_to_gb": 60,
+                "yen": 4125
+              },
+              {
+                "up_to_gb": 120,
+                "yen": 5115
+              }
+            ]
           },
-          "source_url": "https://ahamo.com/plan/index.html",
+          "source_url": "https://www.docomo.ne.jp/info/news_release/2026/09/25_00.html",
           "status": "active"
         },
         {
@@ -2044,13 +2082,43 @@
           "name": "ahamo 大盛り",
           "notes": [
             "基本プラン2,970円＋大盛りオプション（+80GB、1,980円/月）の合計110GB・4,950円を1プランとして表現した",
-            "大盛りオプションは2026年11月30日をもって提供終了（公式明記）"
+            "大盛りオプションは2026年11月30日をもって提供終了（公式発表）。2026年12月1日以降は契約できない"
           ],
           "price": {
             "type": "flat",
             "yen": 4950
           },
-          "source_url": "https://ahamo.com/plan/index.html",
+          "source_url": "https://www.docomo.ne.jp/info/news_release/2026/09/25_00.html",
+          "status": "ended",
+          "ended_on": "2026-11-30"
+        },
+        {
+          "calls": {
+            "included": "5min",
+            "option_ids": [
+              "kakehoudai"
+            ],
+            "per_30s_yen": 22
+          },
+          "checked_at": "2026-11-28",
+          "data": {
+            "after_cap_mbps": 1,
+            "cap_gb": 120,
+            "rollover": false
+          },
+          "discount_ids": [],
+          "id": "ahamo_poi",
+          "name": "ahamo ポイ活",
+          "notes": [
+            "120GB 5,115円＋ポイ活オプション 2,200円の合計7,315円を1プランとして表現した（大盛りと同様の扱い）",
+            "dポイント最大4,000pt/月還元で実質2,915円。ポイント還元は月額割引ではないため discounts には入れていない",
+            "ポイ活オプションは2026年12月1日以降、大盛りオプションの契約なしで申込み可能"
+          ],
+          "price": {
+            "type": "flat",
+            "yen": 7315
+          },
+          "source_url": "https://www.docomo.ne.jp/info/news_release/2026/09/25_00.html",
           "status": "active"
         }
       ],
@@ -3247,12 +3315,11 @@
       "call_options": [
         {
           "checked_at": "2026-11-28",
-          "covers": "unlimited",
+          "covers": "15min",
           "id": "call_15min_unlimited",
           "name": "15分（標準）通話かけ放題",
           "notes": [
-            "OS標準の電話アプリ・メッセージアプリを利用した、日本から日本の電話番号への1回15分以内の国内通話が何度でも無料、国内SMS送信し放題。15分超過分は30秒22円。一部対象外番号あり。初回申し込み時は1カ月無料（条件あり）",
-            "covers の列挙（5min/10min/60min_month/unlimited）に「1回15分」が無いため、便宜的に unlimited とした。実際は時間無制限ではない（gaps.md参照）"
+            "OS標準の電話アプリ・メッセージアプリを利用した、日本から日本の電話番号への1回15分以内の国内通話が何度でも無料、国内SMS送信し放題。15分超過分は30秒22円。一部対象外番号あり。初回申し込み時は1カ月無料（条件あり）"
           ],
           "source_url": "https://network.mobile.rakuten.co.jp/service/",
           "yen": 1100
