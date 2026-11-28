@@ -1,44 +1,408 @@
 {
+  "schema_version": "1.0",
+  "updated_at": "2026-11-28",
+  "tax": "included",
+  "stale_days": {
+    "warn": 30,
+    "alert": 60
+  },
   "carriers": [
     {
-      "call_options": [
+      "id": "au",
+      "name": "au",
+      "group": "kddi",
+      "kind": "mno",
+      "is_proposal_target": true,
+      "fees": {
+        "contract_yen": 4950,
+        "contract_online_yen": 3850,
+        "source_url": "https://www.au.com/mobile/information/contract/",
+        "checked_at": "2026-11-28",
+        "note_for_dev": "契約事務手数料は手続き方法で異なる：店頭等は原則4,950円、オンライン（My au／au Online Shop等）は3,850円（2026-11-28 au公式で確認）"
+      },
+      "plans": [
         {
+          "id": "max_plus",
+          "name": "使い放題MAX＋ 5G/4G",
+          "status": "active",
+          "price": {
+            "type": "flat",
+            "yen": 7788
+          },
+          "data": {
+            "cap_gb": null
+          },
+          "source_url": "https://www.au.com/mobile/charge/smartphone/plan/",
           "checked_at": "2026-11-28",
-          "covers": "5min",
-          "id": "au_call5",
-          "name": "通話定額ライト2",
-          "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/",
-          "yen": 880
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "au_call5",
+              "au_call_unlimited"
+            ]
+          },
+          "discount_ids": [
+            "au_smartvalue",
+            "au_family_plus",
+            "au_pay_card"
+          ]
         },
         {
+          "id": "mini_plus",
+          "name": "スマホミニプラン＋ 5G/4G",
+          "status": "active",
+          "price": {
+            "type": "tiered",
+            "tiers": [
+              {
+                "up_to_gb": 1,
+                "yen": 4928
+              },
+              {
+                "up_to_gb": 3,
+                "yen": 6578
+              },
+              {
+                "up_to_gb": 5,
+                "yen": 8228
+              }
+            ]
+          },
+          "data": {
+            "cap_gb": 5
+          },
+          "source_url": "https://www.au.com/mobile/charge/smartphone/plan/",
           "checked_at": "2026-11-28",
-          "covers": "unlimited",
-          "id": "au_call_unlimited",
-          "name": "通話定額2",
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "au_call5",
+              "au_call_unlimited"
+            ]
+          },
+          "discount_ids": [
+            "au_smartvalue",
+            "au_family_plus",
+            "au_pay_card"
+          ]
+        },
+        {
+          "id": "valuelink",
+          "name": "auバリューリンクプラン",
+          "status": "active",
+          "price": {
+            "type": "flat",
+            "yen": 8008
+          },
+          "data": {
+            "cap_gb": null,
+            "tethering_cap_gb": 60
+          },
+          "notes": [
+            "200GB超の月は最大5Mbps"
+          ],
+          "source_url": "https://www.au.com/mobile/charge/smartphone/plan/auvaluelink/",
+          "checked_at": "2026-11-28",
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "au_call5",
+              "au_call_unlimited"
+            ]
+          },
+          "discount_ids": [
+            "au_smartvalue",
+            "au_family_plus",
+            "au_pay_card"
+          ]
+        },
+        {
+          "id": "max",
+          "name": "使い放題MAX 5G/4G",
+          "status": "ended",
+          "ended_on": "2024-12",
+          "price": {
+            "type": "flat",
+            "yen": 7568
+          },
+          "data": {
+            "cap_gb": null,
+            "tethering_cap_gb": 30
+          },
           "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/",
-          "yen": 1980
+          "checked_at": "2026-11-28",
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "au_call5",
+              "au_call_unlimited"
+            ]
+          },
+          "discount_ids": [
+            "au_smartvalue",
+            "au_family_plus",
+            "au_pay_card",
+            "au_max_low3"
+          ]
+        },
+        {
+          "id": "manekatsu",
+          "name": "auマネ活プラン 5G/4G",
+          "status": "ended",
+          "ended_on": "2024-12",
+          "price": {
+            "type": "flat",
+            "yen": 7568
+          },
+          "data": {
+            "cap_gb": null,
+            "tethering_cap_gb": 30
+          },
+          "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited-moneyact/",
+          "checked_at": "2026-11-28",
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "au_call5",
+              "au_call_unlimited"
+            ]
+          },
+          "discount_ids": [
+            "au_smartvalue",
+            "au_family_plus",
+            "au_manekatsu_low3"
+          ]
+        },
+        {
+          "id": "datamax5g",
+          "name": "データMAX 5G/4G LTE",
+          "status": "ended",
+          "ended_on": "2021-02",
+          "price": {
+            "type": "flat",
+            "yen": 8745
+          },
+          "data": {
+            "cap_gb": null,
+            "tethering_cap_gb": 30
+          },
+          "source_url": "https://www.au.com/mobile/charge/application-ended/5g-data-max/",
+          "checked_at": "2026-11-28",
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "au_call5",
+              "au_call_unlimited"
+            ]
+          },
+          "discount_ids": [
+            "au_smartvalue",
+            "au_family_plus",
+            "au_2year_n",
+            "au_datamax_low2"
+          ]
+        },
+        {
+          "id": "datamaxpro",
+          "name": "auデータMAXプランPro",
+          "status": "ended",
+          "ended_on": "2020-06",
+          "price": {
+            "type": "flat",
+            "yen": 8745
+          },
+          "data": {
+            "cap_gb": null
+          },
+          "source_url": "https://www.au.com/mobile/charge/application-ended/data-max-pro/",
+          "checked_at": "2026-11-28",
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "au_call5",
+              "au_call_unlimited"
+            ]
+          },
+          "discount_ids": [
+            "au_smartvalue",
+            "au_family_plus",
+            "au_2year_n"
+          ]
+        },
+        {
+          "id": "flat20n",
+          "name": "auフラットプラン20N",
+          "status": "ended",
+          "ended_on": "2020-06",
+          "price": {
+            "type": "flat",
+            "yen": 7007
+          },
+          "data": {
+            "cap_gb": 20
+          },
+          "source_url": "https://www.au.com/mobile/charge/application-ended/flat20-n/",
+          "checked_at": "2026-11-28",
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "au_call5",
+              "au_call_unlimited"
+            ]
+          },
+          "discount_ids": [
+            "au_smartvalue",
+            "au_2year_n"
+          ]
+        },
+        {
+          "id": "flat7n",
+          "name": "auフラットプラン7プラスN",
+          "status": "ended",
+          "ended_on": "2020-06",
+          "price": {
+            "type": "flat",
+            "yen": 6435
+          },
+          "data": {
+            "cap_gb": 7
+          },
+          "source_url": "https://www.au.com/mobile/charge/application-ended/flat7-plus-n/",
+          "checked_at": "2026-11-28",
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "au_call5",
+              "au_call_unlimited"
+            ]
+          },
+          "discount_ids": [
+            "au_smartvalue",
+            "au_family_plus",
+            "au_2year_n"
+          ]
+        },
+        {
+          "id": "pitatto",
+          "name": "ピタットプラン 5G / 4G LTE",
+          "status": "ended",
+          "ended_on": "2023-01",
+          "price": {
+            "type": "tiered",
+            "tiers": [
+              {
+                "up_to_gb": 1,
+                "yen": 3685
+              },
+              {
+                "up_to_gb": 4,
+                "yen": 5335
+              },
+              {
+                "up_to_gb": 7,
+                "yen": 6985
+              }
+            ]
+          },
+          "data": {
+            "cap_gb": 7
+          },
+          "source_url": "https://www.au.com/mobile/charge/application-ended/5g-pitatto/",
+          "checked_at": "2026-11-28",
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "au_call5",
+              "au_call_unlimited"
+            ]
+          },
+          "discount_ids": [
+            "au_smartvalue_pitatto",
+            "au_family_plus",
+            "au_pay_card",
+            "au_2year_n"
+          ]
+        },
+        {
+          "id": "mini",
+          "name": "スマホミニプラン 5G/4G",
+          "status": "ended",
+          "ended_on": "2024-12",
+          "price": {
+            "type": "tiered",
+            "tiers": [
+              {
+                "up_to_gb": 1,
+                "yen": 3685
+              },
+              {
+                "up_to_gb": 2,
+                "yen": 4785
+              },
+              {
+                "up_to_gb": 3,
+                "yen": 5885
+              },
+              {
+                "up_to_gb": 4,
+                "yen": 6435
+              }
+            ]
+          },
+          "data": {
+            "cap_gb": 4
+          },
+          "source_url": "https://www.au.com/mobile/charge/application-ended/sp-mini/",
+          "checked_at": "2026-11-28",
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "au_call5",
+              "au_call_unlimited"
+            ]
+          },
+          "discount_ids": [
+            "au_smartvalue",
+            "au_family_plus",
+            "au_pay_card",
+            "au_2year_n"
+          ],
+          "note_for_dev": "段階の金額（3,685／4,785／5,885／6,435円・上限4GB）は公式と一致。各段階のGB境界（〜1／〜2／〜3／〜4GB）は公式ページ本文のテキストでは未確認（2026-11-28照合）"
         }
       ],
-      "checked_at": "2026-11-28",
       "discounts": [
         {
+          "id": "au_smartvalue",
+          "name": "auスマートバリュー",
+          "kind": "set_home",
           "amount": {
+            "type": "by_plan",
             "table": {
+              "max_plus": 1100,
+              "mini_plus": 1100,
+              "valuelink": 1100,
+              "max": 1100,
+              "manekatsu": 1100,
               "datamax5g": 1100,
               "datamaxpro": 1100,
               "flat20n": 1100,
               "flat7n": 1100,
-              "manekatsu": 1100,
-              "max": 1100,
-              "max_plus": 1100,
-              "mini": 550,
-              "mini_plus": 1100,
-              "valuelink": 1100
-            },
-            "type": "by_plan"
+              "mini": 550
+            }
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "対象の光回線・ケーブルテレビを「ネット＋電話」で契約（auホームルーター等は対象の料金プランで電話不要）。auでんきだけでは対象外",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
               "type": "home_internet",
@@ -54,20 +418,20 @@
               ]
             }
           ],
-          "duration_months": null,
-          "id": "au_smartvalue",
-          "kind": "set_home",
-          "name": "auスマートバリュー",
+          "condition_text": "対象の光回線・ケーブルテレビを「ネット＋電話」で契約（auホームルーター等は対象の料金プランで電話不要）。auでんきだけでは対象外",
           "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28"
         },
         {
+          "id": "au_smartvalue_pitatto",
+          "name": "auスマートバリュー",
+          "kind": "set_home",
           "amount": {
             "type": "fixed",
             "yen": 550
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "対象の光回線を「ネット＋電話」で契約。データ利用が1GB以下の月は割引なし",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
               "type": "home_internet",
@@ -83,20 +447,61 @@
               ]
             },
             {
-              "min": 1,
-              "type": "data_usage_min"
+              "type": "data_usage_min",
+              "min": 1
             }
           ],
-          "duration_months": null,
-          "id": "au_smartvalue_pitatto",
-          "kind": "set_home",
-          "name": "auスマートバリュー",
+          "condition_text": "対象の光回線を「ネット＋電話」で契約。データ利用が1GB以下の月は割引なし",
           "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28"
         },
         {
+          "id": "au_family_plus",
+          "name": "家族割プラス",
+          "kind": "family",
           "amount": {
+            "type": "by_plan_lines",
             "table": {
+              "max_plus": [
+                {
+                  "min_lines": 2,
+                  "yen": 660
+                },
+                {
+                  "min_lines": 3,
+                  "yen": 1210
+                }
+              ],
+              "mini_plus": [
+                {
+                  "min_lines": 2,
+                  "yen": 660
+                },
+                {
+                  "min_lines": 3,
+                  "yen": 1210
+                }
+              ],
+              "valuelink": [
+                {
+                  "min_lines": 2,
+                  "yen": 660
+                },
+                {
+                  "min_lines": 3,
+                  "yen": 1210
+                }
+              ],
+              "max": [
+                {
+                  "min_lines": 2,
+                  "yen": 550
+                },
+                {
+                  "min_lines": 3,
+                  "yen": 1100
+                }
+              ],
               "datamax5g": [
                 {
                   "min_lines": 2,
@@ -131,7 +536,7 @@
                   "yen": 1100
                 }
               ],
-              "max": [
+              "pitatto": [
                 {
                   "min_lines": 2,
                   "yen": 550
@@ -139,16 +544,6 @@
                 {
                   "min_lines": 3,
                   "yen": 1100
-                }
-              ],
-              "max_plus": [
-                {
-                  "min_lines": 2,
-                  "yen": 660
-                },
-                {
-                  "min_lines": 3,
-                  "yen": 1210
                 }
               ],
               "mini": [
@@ -160,70 +555,39 @@
                   "min_lines": 3,
                   "yen": 550
                 }
-              ],
-              "mini_plus": [
-                {
-                  "min_lines": 2,
-                  "yen": 660
-                },
-                {
-                  "min_lines": 3,
-                  "yen": 1210
-                }
-              ],
-              "pitatto": [
-                {
-                  "min_lines": 2,
-                  "yen": 550
-                },
-                {
-                  "min_lines": 3,
-                  "yen": 1100
-                }
-              ],
-              "valuelink": [
-                {
-                  "min_lines": 2,
-                  "yen": 660
-                },
-                {
-                  "min_lines": 3,
-                  "yen": 1210
-                }
               ]
-            },
-            "type": "by_plan_lines"
+            }
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "家族で au の対象プランを2回線以上（回線数で割引額が変わる）",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
-              "min": 2,
-              "type": "family_lines"
+              "type": "family_lines",
+              "min": 2
             }
           ],
-          "duration_months": null,
-          "id": "au_family_plus",
-          "kind": "family",
-          "name": "家族割プラス",
-          "note_for_dev": "auマネ活プランは家族割プラスの割引対象外（人数カウントのみ対象）のため表に含めない（2026-11-28 au公式FAQで確認）。スマホミニプラン＋ 2回線660円、フラットプラン7プラスN 2回線550円、データMAX 5G 4回線以上2,222円は公式で確定",
+          "condition_text": "家族で au の対象プランを2回線以上（回線数で割引額が変わる）",
           "source_url": "https://www.au.com/mobile/charge/charge-discount/kazoku-wari-plus/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28",
+          "note_for_dev": "auマネ活プランは家族割プラスの割引対象外（人数カウントのみ対象）のため表に含めない（2026-11-28 au公式FAQで確認）。スマホミニプラン＋ 2回線660円、フラットプラン7プラスN 2回線550円、データMAX 5G 4回線以上2,222円は公式で確定"
         },
         {
+          "id": "au_pay_card",
+          "name": "au PAYカードお支払い割",
+          "kind": "payment",
           "amount": {
+            "type": "by_plan",
             "table": {
-              "max": 110,
               "max_plus": 220,
-              "mini": 187,
               "mini_plus": 220,
+              "valuelink": 220,
+              "max": 110,
               "pitatto": 187,
-              "valuelink": 220
-            },
-            "type": "by_plan"
+              "mini": 187
+            }
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "毎月の料金を au PAYカードで支払い",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
               "type": "payment",
@@ -232,72 +596,72 @@
               ]
             }
           ],
-          "duration_months": null,
-          "exclusive_group": "au_card_or_2year",
-          "id": "au_pay_card",
-          "kind": "payment",
-          "name": "au PAYカードお支払い割",
+          "condition_text": "毎月の料金を au PAYカードで支払い",
+          "source_url": "https://www.au.com/mobile/charge/discount-option/aupay-card-wari/",
+          "checked_at": "2026-11-28",
           "not_combinable_with": [
             "au_2year_n"
           ],
           "note_for_dev": "ピタットプラン／スマホミニプラン（旧）の187円はPAYカード割として実在（2年契約Nでも同額187円だが重畳不可・最大187円）。データMAX 5G／データMAXプランPro／フラット20N／フラット7プラスN はPAYカード割の対象外のため、187円は au_2year_n 側へ分離した（2026-11-28照合）",
-          "source_url": "https://www.au.com/mobile/charge/discount-option/aupay-card-wari/",
-          "unit": "per_line"
+          "exclusive_group": "au_card_or_2year"
         },
         {
+          "id": "au_max_low3",
+          "name": "3GB以下の月の割引",
+          "kind": "usage",
           "amount": {
             "type": "fixed",
             "yen": 1650
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "その月のデータ利用（テザリング等を含む）が3GB以下のとき自動で適用",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
-              "max": 3,
-              "type": "data_usage_max"
+              "type": "data_usage_max",
+              "max": 3
             }
           ],
-          "duration_months": null,
-          "id": "au_max_low3",
-          "kind": "usage",
-          "name": "3GB以下の月の割引",
+          "condition_text": "その月のデータ利用（テザリング等を含む）が3GB以下のとき自動で適用",
           "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28"
         },
         {
+          "id": "au_datamax_low2",
+          "name": "2GB以下の月の割引",
+          "kind": "usage",
           "amount": {
             "type": "fixed",
             "yen": 1628
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "その月のデータ利用が2GB以下のとき自動で適用",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
-              "max": 2,
-              "type": "data_usage_max"
+              "type": "data_usage_max",
+              "max": 2
             }
           ],
-          "duration_months": null,
-          "id": "au_datamax_low2",
-          "kind": "usage",
-          "name": "2GB以下の月の割引",
+          "condition_text": "その月のデータ利用が2GB以下のとき自動で適用",
           "source_url": "https://www.au.com/mobile/charge/application-ended/5g-data-max/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28"
         },
         {
+          "id": "au_2year_n",
+          "name": "2年契約N",
+          "kind": "contract",
           "amount": {
+            "type": "by_plan",
             "table": {
               "datamax5g": 187,
               "datamaxpro": 187,
               "flat20n": 187,
               "flat7n": 187,
-              "mini": 187,
-              "pitatto": 187
-            },
-            "type": "by_plan"
+              "pitatto": 187,
+              "mini": 187
+            }
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "「2年契約N」（2年単位・自動更新の契約）に加入していること",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
               "type": "contract",
@@ -306,554 +670,505 @@
               ]
             }
           ],
-          "duration_months": null,
-          "exclusive_group": "au_card_or_2year",
-          "id": "au_2year_n",
-          "kind": "contract",
-          "name": "2年契約N",
+          "condition_text": "「2年契約N」（2年単位・自動更新の契約）に加入していること",
           "not_combinable_with": [
             "au_pay_card"
           ],
-          "note_for_dev": "旧データでは au PAYカードお支払い割に混在していた187円を分離（監査・第6節）。ピタットプラン／スマホミニプラン（旧）の2年契約N 187円も表に追加し、au_pay_card と同じ exclusive_group（au_card_or_2year）を付けて二重適用を防ぐ（2026-11-28）",
           "source_url": "https://www.au.com/mobile/charge/charge-discount/2yr-contract-auto-renewal-n/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28",
+          "note_for_dev": "旧データでは au PAYカードお支払い割に混在していた187円を分離（監査・第6節）。ピタットプラン／スマホミニプラン（旧）の2年契約N 187円も表に追加し、au_pay_card と同じ exclusive_group（au_card_or_2year）を付けて二重適用を防ぐ（2026-11-28）",
+          "exclusive_group": "au_card_or_2year"
         },
         {
+          "id": "au_manekatsu_low3",
+          "name": "auマネ活プラン 3GB以下の月の割引",
+          "kind": "usage",
           "amount": {
             "type": "fixed",
             "yen": 1650
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "その月のデータ利用量が3GB以下のとき、月額料金から1,650円を割引（auマネ活プランの料金設計）",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
-              "max": 3,
-              "type": "data_usage_max"
+              "type": "data_usage_max",
+              "max": 3
             }
           ],
-          "duration_months": null,
-          "id": "au_manekatsu_low3",
-          "kind": "usage",
-          "name": "auマネ活プラン 3GB以下の月の割引",
+          "condition_text": "その月のデータ利用量が3GB以下のとき、月額料金から1,650円を割引（auマネ活プランの料金設計）",
           "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited-moneyact/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28"
+        }
+      ],
+      "call_options": [
+        {
+          "id": "au_call5",
+          "name": "通話定額ライト2",
+          "yen": 880,
+          "covers": "5min",
+          "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "au_call_unlimited",
+          "name": "通話定額2",
+          "yen": 1980,
+          "covers": "unlimited",
+          "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/",
+          "checked_at": "2026-11-28"
         }
       ],
       "examples": [
         {
-          "checked_at": "2026-11-28",
-          "expected_yen": 5258,
+          "label": "使い放題MAX 5G/4G：家族割プラス3人以上＋スマートバリュー＋au PAYカード",
+          "plan_id": "max",
           "inputs": {
             "data_gb": 10,
             "family_lines": 3,
             "home_internet": "au_hikari_plus",
-            "payment": "au_pay_card",
-            "with_phone": true
+            "with_phone": true,
+            "payment": "au_pay_card"
           },
-          "label": "使い放題MAX 5G/4G：家族割プラス3人以上＋スマートバリュー＋au PAYカード",
-          "plan_id": "max",
-          "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/"
+          "expected_yen": 5258,
+          "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/",
+          "checked_at": "2026-11-28"
         },
         {
-          "checked_at": "2026-11-28",
-          "expected_yen": 5478,
+          "label": "auバリューリンクプラン：家族割プラス3人以上＋スマートバリュー＋au PAYカード",
+          "plan_id": "valuelink",
           "inputs": {
             "data_gb": 30,
             "family_lines": 3,
             "home_internet": "au_hikari_plus",
-            "payment": "au_pay_card",
-            "with_phone": true
+            "with_phone": true,
+            "payment": "au_pay_card"
           },
-          "label": "auバリューリンクプラン：家族割プラス3人以上＋スマートバリュー＋au PAYカード",
-          "plan_id": "valuelink",
-          "source_url": "https://www.au.com/mobile/charge/smartphone/plan/auvaluelink/"
+          "expected_yen": 5478,
+          "source_url": "https://www.au.com/mobile/charge/smartphone/plan/auvaluelink/",
+          "checked_at": "2026-11-28"
         },
         {
-          "checked_at": "2026-11-28",
-          "expected_yen": 2398,
+          "label": "ピタットプラン：家族3人・1GB以下（スマートバリューは付かない）＋au PAYカード",
+          "plan_id": "pitatto",
           "inputs": {
             "data_gb": 1,
             "family_lines": 3,
             "home_internet": "au_hikari_plus",
-            "payment": "au_pay_card",
-            "with_phone": true
+            "with_phone": true,
+            "payment": "au_pay_card"
           },
-          "label": "ピタットプラン：家族3人・1GB以下（スマートバリューは付かない）＋au PAYカード",
-          "plan_id": "pitatto",
-          "source_url": "https://www.au.com/mobile/charge/application-ended/5g-pitatto/"
+          "expected_yen": 2398,
+          "source_url": "https://www.au.com/mobile/charge/application-ended/5g-pitatto/",
+          "checked_at": "2026-11-28"
         },
         {
-          "checked_at": "2026-11-28",
-          "expected_yen": 3498,
+          "label": "ピタットプラン：家族3人・1GB超〜4GB＋スマートバリュー＋au PAYカード",
+          "plan_id": "pitatto",
           "inputs": {
             "data_gb": 4,
             "family_lines": 3,
             "home_internet": "au_hikari_plus",
-            "payment": "au_pay_card",
-            "with_phone": true
+            "with_phone": true,
+            "payment": "au_pay_card"
           },
-          "label": "ピタットプラン：家族3人・1GB超〜4GB＋スマートバリュー＋au PAYカード",
-          "plan_id": "pitatto",
-          "source_url": "https://www.au.com/mobile/charge/application-ended/5g-pitatto/"
+          "expected_yen": 3498,
+          "source_url": "https://www.au.com/mobile/charge/application-ended/5g-pitatto/",
+          "checked_at": "2026-11-28"
         },
         {
-          "checked_at": "2026-11-28",
-          "expected_yen": 2398,
+          "label": "スマホミニプラン 5G/4G：1GB以下・家族3人＋スマートバリュー＋au PAYカード",
+          "plan_id": "mini",
           "inputs": {
             "data_gb": 1,
             "family_lines": 3,
             "home_internet": "au_hikari_plus",
-            "payment": "au_pay_card",
-            "with_phone": true
+            "with_phone": true,
+            "payment": "au_pay_card"
           },
-          "label": "スマホミニプラン 5G/4G：1GB以下・家族3人＋スマートバリュー＋au PAYカード",
-          "plan_id": "mini",
-          "source_url": "https://www.au.com/mobile/charge/application-ended/sp-mini/"
+          "expected_yen": 2398,
+          "source_url": "https://www.au.com/mobile/charge/application-ended/sp-mini/",
+          "checked_at": "2026-11-28"
         },
         {
-          "checked_at": "2026-11-28",
-          "expected_yen": 5236,
+          "label": "データMAX 5G：家族4人＋スマートバリュー＋2年契約N",
+          "plan_id": "datamax5g",
           "inputs": {
-            "contract": "2year_n",
             "data_gb": 30,
             "family_lines": 4,
             "home_internet": "au_hikari_plus",
+            "with_phone": true,
             "payment": "au_pay_card",
-            "with_phone": true
+            "contract": "2year_n"
           },
-          "label": "データMAX 5G：家族4人＋スマートバリュー＋2年契約N",
-          "plan_id": "datamax5g",
-          "source_url": "https://www.au.com/mobile/charge/application-ended/5g-data-max/"
+          "expected_yen": 5236,
+          "source_url": "https://www.au.com/mobile/charge/application-ended/5g-data-max/",
+          "checked_at": "2026-11-28"
         }
       ],
-      "fees": {
-        "checked_at": "2026-11-28",
-        "contract_online_yen": 3850,
-        "contract_yen": 4950,
-        "note_for_dev": "契約事務手数料は手続き方法で異なる：店頭等は原則4,950円、オンライン（My au／au Online Shop等）は3,850円（2026-11-28 au公式で確認）",
-        "source_url": "https://www.au.com/mobile/information/contract/"
-      },
+      "source_url": "https://www.au.com/mobile/charge/smartphone/plan/",
+      "checked_at": "2026-11-28"
+    },
+    {
+      "id": "uq",
+      "name": "UQ mobile",
       "group": "kddi",
-      "id": "au",
+      "kind": "subbrand",
       "is_proposal_target": true,
-      "kind": "mno",
-      "name": "au",
+      "fees": {
+        "contract_yen": 4950,
+        "contract_online_yen": 3850,
+        "source_url": "https://www.uqwimax.jp/mobile/support/faq/pages/pg00000343.html",
+        "checked_at": "2026-11-28",
+        "note_for_dev": "契約事務手数料は店舗 4,950円／オンラインショップ 3,850円（2026-11-28 UQ公式FAQで確認）"
+      },
       "plans": [
         {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "au_call5",
-              "au_call_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": null
-          },
-          "discount_ids": [
-            "au_smartvalue",
-            "au_family_plus",
-            "au_pay_card"
-          ],
-          "id": "max_plus",
-          "name": "使い放題MAX＋ 5G/4G",
+          "id": "tokutoku2",
+          "name": "トクトクプラン2",
+          "status": "active",
           "price": {
             "type": "flat",
-            "yen": 7788
+            "yen": 4048
           },
-          "source_url": "https://www.au.com/mobile/charge/smartphone/plan/",
-          "status": "active"
-        },
-        {
+          "data": {
+            "cap_gb": 30,
+            "rollover": true
+          },
           "calls": {
             "included": "none",
+            "per_30s_yen": 22,
             "option_ids": [
-              "au_call5",
-              "au_call_unlimited"
-            ],
-            "per_30s_yen": 22
+              "uq_call10",
+              "uq_call_unlimited",
+              "uq_call60"
+            ]
           },
-          "checked_at": "2026-11-28",
+          "discount_ids": [
+            "uq_home_set",
+            "uq_family_set",
+            "uq_pay_card",
+            "uq_low5",
+            "uq_oyako"
+          ],
+          "notes": [
+            "5GB以下の月は自動で1,100円引き（UQ親子応援割とは重ねられない）"
+          ],
+          "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku2/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "komivalue",
+          "name": "コミコミプランバリュー",
+          "status": "active",
+          "price": {
+            "type": "flat",
+            "yen": 3828
+          },
+          "data": {
+            "cap_gb": 35
+          },
+          "calls": {
+            "included": "10min",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "uq_komi_unlimited"
+            ]
+          },
+          "discount_ids": [
+            "uq_oyako",
+            "uq_komikomi_otoku",
+            "uq_komikomi_otoku_14"
+          ],
+          "notes": [
+            "1回10分以内の国内通話込み",
+            "家族セット割・自宅セット割・au PAYカード払い割の対象外"
+          ],
+          "source_url": "https://www.uqwimax.jp/mobile/plan/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "tokutoku",
+          "name": "トクトクプラン",
+          "status": "ended",
+          "price": {
+            "type": "flat",
+            "yen": 3685
+          },
+          "data": {
+            "cap_gb": 17
+          },
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "uq_call10",
+              "uq_call_unlimited",
+              "uq_call60"
+            ]
+          },
+          "discount_ids": [
+            "uq_home_set",
+            "uq_family_set",
+            "uq_pay_card",
+            "uq_tokutoku_low1"
+          ],
+          "ended_on": "2025",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "komikomi_plus",
+          "name": "コミコミプラン＋",
+          "status": "ended",
+          "price": {
+            "type": "flat",
+            "yen": 3498
+          },
+          "data": {
+            "cap_gb": 35
+          },
+          "calls": {
+            "included": "10min",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "uq_komi_unlimited"
+            ]
+          },
+          "discount_ids": [],
+          "ended_on": "2025",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/komikomi-plus/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "komikomi",
+          "name": "コミコミプラン",
+          "status": "ended",
+          "price": {
+            "type": "flat",
+            "yen": 3498
+          },
+          "data": {
+            "cap_gb": 22
+          },
+          "calls": {
+            "included": "10min",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "uq_komi_unlimited"
+            ]
+          },
+          "discount_ids": [],
+          "ended_on": "2024",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/komikomi/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "minimini",
+          "name": "ミニミニプラン",
+          "status": "ended",
+          "price": {
+            "type": "flat",
+            "yen": 2475
+          },
           "data": {
             "cap_gb": 5
           },
-          "discount_ids": [
-            "au_smartvalue",
-            "au_family_plus",
-            "au_pay_card"
-          ],
-          "id": "mini_plus",
-          "name": "スマホミニプラン＋ 5G/4G",
-          "price": {
-            "tiers": [
-              {
-                "up_to_gb": 1,
-                "yen": 4928
-              },
-              {
-                "up_to_gb": 3,
-                "yen": 6578
-              },
-              {
-                "up_to_gb": 5,
-                "yen": 8228
-              }
-            ],
-            "type": "tiered"
-          },
-          "source_url": "https://www.au.com/mobile/charge/smartphone/plan/",
-          "status": "active"
-        },
-        {
           "calls": {
             "included": "none",
+            "per_30s_yen": 22,
             "option_ids": [
-              "au_call5",
-              "au_call_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": null,
-            "tethering_cap_gb": 60
+              "uq_call10",
+              "uq_call_unlimited",
+              "uq_call60"
+            ]
           },
           "discount_ids": [
-            "au_smartvalue",
-            "au_family_plus",
-            "au_pay_card"
+            "uq_home_set",
+            "uq_family_set",
+            "uq_pay_card"
           ],
-          "id": "valuelink",
-          "name": "auバリューリンクプラン",
-          "notes": [
-            "200GB超の月は最大5Mbps"
-          ],
+          "ended_on": "2025",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/minimini/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "kurikoshi5g_s",
+          "name": "くりこしプランS +5G",
+          "status": "ended",
           "price": {
             "type": "flat",
-            "yen": 8008
+            "yen": 1738
           },
-          "source_url": "https://www.au.com/mobile/charge/smartphone/plan/auvaluelink/",
-          "status": "active"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "au_call5",
-              "au_call_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": null,
-            "tethering_cap_gb": 30
-          },
-          "discount_ids": [
-            "au_smartvalue",
-            "au_family_plus",
-            "au_pay_card",
-            "au_max_low3"
-          ],
-          "ended_on": "2024-12",
-          "id": "max",
-          "name": "使い放題MAX 5G/4G",
-          "price": {
-            "type": "flat",
-            "yen": 7568
-          },
-          "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "au_call5",
-              "au_call_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": null,
-            "tethering_cap_gb": 30
-          },
-          "discount_ids": [
-            "au_smartvalue",
-            "au_family_plus",
-            "au_manekatsu_low3"
-          ],
-          "ended_on": "2024-12",
-          "id": "manekatsu",
-          "name": "auマネ活プラン 5G/4G",
-          "price": {
-            "type": "flat",
-            "yen": 7568
-          },
-          "source_url": "https://www.au.com/mobile/charge/application-ended/data-unlimited-moneyact/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "au_call5",
-              "au_call_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": null,
-            "tethering_cap_gb": 30
-          },
-          "discount_ids": [
-            "au_smartvalue",
-            "au_family_plus",
-            "au_2year_n",
-            "au_datamax_low2"
-          ],
-          "ended_on": "2021-02",
-          "id": "datamax5g",
-          "name": "データMAX 5G/4G LTE",
-          "price": {
-            "type": "flat",
-            "yen": 8745
-          },
-          "source_url": "https://www.au.com/mobile/charge/application-ended/5g-data-max/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "au_call5",
-              "au_call_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": null
-          },
-          "discount_ids": [
-            "au_smartvalue",
-            "au_family_plus",
-            "au_2year_n"
-          ],
-          "ended_on": "2020-06",
-          "id": "datamaxpro",
-          "name": "auデータMAXプランPro",
-          "price": {
-            "type": "flat",
-            "yen": 8745
-          },
-          "source_url": "https://www.au.com/mobile/charge/application-ended/data-max-pro/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "au_call5",
-              "au_call_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 20
-          },
-          "discount_ids": [
-            "au_smartvalue",
-            "au_2year_n"
-          ],
-          "ended_on": "2020-06",
-          "id": "flat20n",
-          "name": "auフラットプラン20N",
-          "price": {
-            "type": "flat",
-            "yen": 7007
-          },
-          "source_url": "https://www.au.com/mobile/charge/application-ended/flat20-n/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "au_call5",
-              "au_call_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 7
-          },
-          "discount_ids": [
-            "au_smartvalue",
-            "au_family_plus",
-            "au_2year_n"
-          ],
-          "ended_on": "2020-06",
-          "id": "flat7n",
-          "name": "auフラットプラン7プラスN",
-          "price": {
-            "type": "flat",
-            "yen": 6435
-          },
-          "source_url": "https://www.au.com/mobile/charge/application-ended/flat7-plus-n/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "au_call5",
-              "au_call_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 7
-          },
-          "discount_ids": [
-            "au_smartvalue_pitatto",
-            "au_family_plus",
-            "au_pay_card",
-            "au_2year_n"
-          ],
-          "ended_on": "2023-01",
-          "id": "pitatto",
-          "name": "ピタットプラン 5G / 4G LTE",
-          "price": {
-            "tiers": [
-              {
-                "up_to_gb": 1,
-                "yen": 3685
-              },
-              {
-                "up_to_gb": 4,
-                "yen": 5335
-              },
-              {
-                "up_to_gb": 7,
-                "yen": 6985
-              }
-            ],
-            "type": "tiered"
-          },
-          "source_url": "https://www.au.com/mobile/charge/application-ended/5g-pitatto/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "au_call5",
-              "au_call_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
           "data": {
             "cap_gb": 4
           },
-          "discount_ids": [
-            "au_smartvalue",
-            "au_family_plus",
-            "au_pay_card",
-            "au_2year_n"
-          ],
-          "ended_on": "2024-12",
-          "id": "mini",
-          "name": "スマホミニプラン 5G/4G",
-          "note_for_dev": "段階の金額（3,685／4,785／5,885／6,435円・上限4GB）は公式と一致。各段階のGB境界（〜1／〜2／〜3／〜4GB）は公式ページ本文のテキストでは未確認（2026-11-28照合）",
-          "price": {
-            "tiers": [
-              {
-                "up_to_gb": 1,
-                "yen": 3685
-              },
-              {
-                "up_to_gb": 2,
-                "yen": 4785
-              },
-              {
-                "up_to_gb": 3,
-                "yen": 5885
-              },
-              {
-                "up_to_gb": 4,
-                "yen": 6435
-              }
-            ],
-            "type": "tiered"
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "uq_call10",
+              "uq_call_unlimited",
+              "uq_call60"
+            ]
           },
-          "source_url": "https://www.au.com/mobile/charge/application-ended/sp-mini/",
-          "status": "ended"
+          "discount_ids": [
+            "uq_home_set"
+          ],
+          "ended_on": "2023-05",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "kurikoshi5g_m",
+          "name": "くりこしプランM +5G",
+          "status": "ended",
+          "price": {
+            "type": "flat",
+            "yen": 2948
+          },
+          "data": {
+            "cap_gb": 17
+          },
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "uq_call10",
+              "uq_call_unlimited",
+              "uq_call60"
+            ]
+          },
+          "discount_ids": [
+            "uq_home_set"
+          ],
+          "ended_on": "2023-05",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "kurikoshi5g_l",
+          "name": "くりこしプランL +5G",
+          "status": "ended",
+          "price": {
+            "type": "flat",
+            "yen": 4048
+          },
+          "data": {
+            "cap_gb": 27
+          },
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "uq_call10",
+              "uq_call_unlimited",
+              "uq_call60"
+            ]
+          },
+          "discount_ids": [
+            "uq_home_set"
+          ],
+          "ended_on": "2023-05",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "kurikoshi_s",
+          "name": "くりこしプランS（4G）",
+          "status": "ended",
+          "price": {
+            "type": "flat",
+            "yen": 1738
+          },
+          "data": {
+            "cap_gb": 4
+          },
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "uq_call10",
+              "uq_call_unlimited",
+              "uq_call60"
+            ]
+          },
+          "discount_ids": [],
+          "ended_on": "2021",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "kurikoshi_m",
+          "name": "くりこしプランM（4G）",
+          "status": "ended",
+          "price": {
+            "type": "flat",
+            "yen": 2948
+          },
+          "data": {
+            "cap_gb": 17
+          },
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "uq_call10",
+              "uq_call_unlimited",
+              "uq_call60"
+            ]
+          },
+          "discount_ids": [],
+          "ended_on": "2021",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "kurikoshi_l",
+          "name": "くりこしプランL（4G）",
+          "status": "ended",
+          "price": {
+            "type": "flat",
+            "yen": 4048
+          },
+          "data": {
+            "cap_gb": 27
+          },
+          "calls": {
+            "included": "none",
+            "per_30s_yen": 22,
+            "option_ids": [
+              "uq_call10",
+              "uq_call_unlimited",
+              "uq_call60"
+            ]
+          },
+          "discount_ids": [],
+          "ended_on": "2021",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi/",
+          "checked_at": "2026-11-28"
         }
       ],
-      "source_url": "https://www.au.com/mobile/charge/smartphone/plan/"
-    },
-    {
-      "call_options": [
-        {
-          "checked_at": "2026-11-28",
-          "covers": "10min",
-          "id": "uq_call10",
-          "name": "通話放題ライト",
-          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
-          "yen": 880
-        },
-        {
-          "checked_at": "2026-11-28",
-          "covers": "unlimited",
-          "id": "uq_call_unlimited",
-          "name": "通話放題",
-          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
-          "yen": 1980
-        },
-        {
-          "checked_at": "2026-11-28",
-          "covers": "60min_month",
-          "id": "uq_call60",
-          "name": "通話パック60",
-          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
-          "yen": 660
-        },
-        {
-          "checked_at": "2026-11-28",
-          "covers": "unlimited",
-          "id": "uq_komi_unlimited",
-          "name": "通話放題（コミコミ系プラン向け）",
-          "source_url": "https://www.uqwimax.jp/mobile/plan/",
-          "yen": 1100
-        }
-      ],
-      "checked_at": "2026-11-28",
       "discounts": [
         {
+          "id": "uq_home_set",
+          "name": "自宅セット割",
+          "kind": "set_home",
           "amount": {
+            "type": "by_plan",
             "table": {
-              "kurikoshi5g_l": 858,
-              "kurikoshi5g_m": 638,
-              "kurikoshi5g_s": 638,
-              "minimini": 1100,
+              "tokutoku2": 1100,
               "tokutoku": 1100,
-              "tokutoku2": 1100
-            },
-            "type": "by_plan"
+              "minimini": 1100,
+              "kurikoshi5g_s": 638,
+              "kurikoshi5g_m": 638,
+              "kurikoshi5g_l": 858
+            }
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "対象の光回線を「ネット＋電話」で契約（インターネットコース）、または auでんき（でんきコース）。両方あってもどちらか1つ。家族セット割とは併用不可（自宅セット割を優先）",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
+              "type": "any_of",
               "of": [
                 {
                   "type": "home_internet",
@@ -874,56 +1189,55 @@
                     "audenki"
                   ]
                 }
-              ],
-              "type": "any_of"
+              ]
             }
           ],
-          "duration_months": null,
+          "condition_text": "対象の光回線を「ネット＋電話」で契約（インターネットコース）、または auでんき（でんきコース）。両方あってもどちらか1つ。家族セット割とは併用不可（自宅セット割を優先）",
           "exclusive_group": "uq_set_or_family",
-          "id": "uq_home_set",
-          "kind": "set_home",
-          "name": "自宅セット割",
           "source_url": "https://www.uqwimax.jp/mobile/newplan/setwari/jitaku/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28"
         },
         {
+          "id": "uq_family_set",
+          "name": "家族セット割",
+          "kind": "family",
           "amount": {
+            "type": "by_lines",
             "table": [
               {
                 "min_lines": 2,
                 "yen": 550
               }
-            ],
-            "type": "by_lines"
+            ]
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "家族で UQ mobile を2回線以上（コミコミプランバリューも回線数に数える）。自宅セット割とは併用不可",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
-              "min": 2,
-              "type": "family_lines"
+              "type": "family_lines",
+              "min": 2
             }
           ],
-          "duration_months": null,
+          "condition_text": "家族で UQ mobile を2回線以上（コミコミプランバリューも回線数に数える）。自宅セット割とは併用不可",
           "exclusive_group": "uq_set_or_family",
-          "id": "uq_family_set",
-          "kind": "family",
-          "name": "家族セット割",
-          "note_for_dev": "金額（550円／回線）は公式と一致。条件の「2回線以上」という文言自体は公式ページで明記を確認できなかった（2026-11-28照合）",
           "source_url": "https://www.uqwimax.jp/mobile/newplan/kazoku/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28",
+          "note_for_dev": "金額（550円／回線）は公式と一致。条件の「2回線以上」という文言自体は公式ページで明記を確認できなかった（2026-11-28照合）"
         },
         {
+          "id": "uq_pay_card",
+          "name": "au PAYカードお支払い割",
+          "kind": "payment",
           "amount": {
+            "type": "by_plan",
             "table": {
-              "minimini": 187,
+              "tokutoku2": 220,
               "tokutoku": 187,
-              "tokutoku2": 220
-            },
-            "type": "by_plan"
+              "minimini": 187
+            }
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "毎月の料金を au PAYカードで支払い",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
               "type": "payment",
@@ -932,585 +1246,278 @@
               ]
             }
           ],
-          "duration_months": null,
-          "id": "uq_pay_card",
-          "kind": "payment",
-          "name": "au PAYカードお支払い割",
+          "condition_text": "毎月の料金を au PAYカードで支払い",
           "source_url": "https://www.uqwimax.jp/mobile/newplan/aupaycard/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28"
         },
         {
+          "id": "uq_low5",
+          "name": "5GB以下の月の割引",
+          "kind": "usage",
           "amount": {
             "type": "fixed",
             "yen": 1100
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "その月のデータ利用（くりこし分・テザリング等を含む）が5GB以下のとき自動で適用。UQ親子応援割とは重ねられない",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
-              "max": 5,
-              "type": "data_usage_max"
+              "type": "data_usage_max",
+              "max": 5
             }
           ],
-          "duration_months": null,
-          "id": "uq_low5",
-          "kind": "usage",
-          "name": "5GB以下の月の割引",
+          "condition_text": "その月のデータ利用（くりこし分・テザリング等を含む）が5GB以下のとき自動で適用。UQ親子応援割とは重ねられない",
           "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku2/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28"
         },
         {
+          "id": "uq_tokutoku_low1",
+          "name": "1GB以下の月の割引",
+          "kind": "usage",
           "amount": {
             "type": "fixed",
             "yen": 1298
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "その月のデータ利用が1GB以下のとき自動で適用",
+          "unit": "per_line",
+          "duration_months": null,
           "conditions": [
             {
-              "max": 1,
-              "type": "data_usage_max"
+              "type": "data_usage_max",
+              "max": 1
             }
           ],
-          "duration_months": null,
-          "id": "uq_tokutoku_low1",
-          "kind": "usage",
-          "name": "1GB以下の月の割引",
+          "condition_text": "その月のデータ利用が1GB以下のとき自動で適用",
           "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28"
         },
         {
+          "id": "uq_oyako",
+          "name": "UQ親子応援割",
+          "kind": "age",
           "amount": {
             "type": "fixed",
             "yen": 1100
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "受付 2026年11月19日〜。5〜18歳の人がトクトクプラン2またはコミコミプランバリューに新しく加入すると、同じ家族セット割グループで新しく加入した家族も含めて翌月から1年間。家族セット割・自宅セット割と併用可、5GB以下の月の割引とは重ねられない（親子応援割を優先）",
+          "unit": "per_line",
+          "duration_months": 12,
           "conditions": [
             {
-              "max": 18,
+              "type": "age",
               "min": 5,
-              "scope": "any_family_member",
-              "type": "age"
+              "max": 18,
+              "scope": "any_family_member"
             },
             {
               "type": "new_subscription"
             }
           ],
-          "duration_months": 12,
-          "id": "uq_oyako",
-          "kind": "age",
-          "name": "UQ親子応援割",
-          "note_for_dev": "他のUQプランからのプラン変更による加入も「新たに加入」の対象になる（KDDI公式ニュースリリース 2026-11-18 の注2で確認）",
+          "condition_text": "受付 2026年11月19日〜。5〜18歳の人がトクトクプラン2またはコミコミプランバリューに新しく加入すると、同じ家族セット割グループで新しく加入した家族も含めて翌月から1年間。家族セット割・自宅セット割と併用可、5GB以下の月の割引とは重ねられない（親子応援割を優先）",
           "overrides": [
             "uq_low5"
           ],
           "source_url": "https://www.uqwimax.jp/mobile/ouenwari/",
-          "unit": "per_line"
+          "checked_at": "2026-11-28",
+          "note_for_dev": "他のUQプランからのプラン変更による加入も「新たに加入」の対象になる（KDDI公式ニュースリリース 2026-11-18 の注2で確認）"
         },
         {
-          "amount": {
-            "type": "fixed",
-            "yen": 660
-          },
-          "checked_at": "2026-11-28",
-          "condition_text": "受付期間（2026年6月25日〜・終了日未定）中にコミコミプランバリューに新たに加入すると、加入当月から最大13か月間、月660円引き",
-          "conditions": [],
-          "duration_months": 13,
           "id": "uq_komikomi_otoku",
-          "kind": "campaign_like",
           "name": "UQコミコミおトク割",
-          "source_url": "https://www.uqwimax.jp/mobile/otokuwari/",
-          "unit": "per_line"
-        },
-        {
+          "kind": "campaign_like",
           "amount": {
             "type": "fixed",
             "yen": 660
           },
-          "checked_at": "2026-11-28",
-          "condition_text": "14か月目以降は、au PAY ゴールドカード会員であること、または同カードで利用料金の支払い設定をしていることが条件（2026年11月19日から対象拡大）。判定は毎月月末時点、ゴールドカードのau IDと対象回線のau IDが同一であること。条件を満たさなくなると終了し、再適用はない",
+          "unit": "per_line",
+          "duration_months": 13,
+          "conditions": [],
+          "condition_text": "受付期間（2026年6月25日〜・終了日未定）中にコミコミプランバリューに新たに加入すると、加入当月から最大13か月間、月660円引き",
+          "source_url": "https://www.uqwimax.jp/mobile/otokuwari/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "uq_komikomi_otoku_14",
+          "name": "UQコミコミおトク割（14か月目以降）",
+          "kind": "campaign_like",
+          "amount": {
+            "type": "fixed",
+            "yen": 660
+          },
+          "unit": "per_line",
+          "duration_months": null,
+          "starts_after_months": 13,
           "conditions": [
             {
+              "type": "any_of",
               "of": [
                 {
-                  "text": "au PAY ゴールドカード会員であること",
                   "type": "payment",
                   "values": [
                     "au_pay_gold_card"
-                  ]
+                  ],
+                  "text": "au PAY ゴールドカード会員であること"
                 },
                 {
-                  "text": "au PAY ゴールドカードで利用料金の支払い設定をしていること",
                   "type": "payment",
                   "values": [
                     "au_pay_gold_card_payment"
-                  ]
+                  ],
+                  "text": "au PAY ゴールドカードで利用料金の支払い設定をしていること"
                 }
-              ],
-              "type": "any_of"
+              ]
             }
           ],
-          "duration_months": null,
-          "id": "uq_komikomi_otoku_14",
-          "kind": "campaign_like",
-          "name": "UQコミコミおトク割（14か月目以降）",
-          "note_for_dev": "画面への反映は計算の汎用化（ステップ2）で行う前提。それまでは月額に入らない",
+          "condition_text": "14か月目以降は、au PAY ゴールドカード会員であること、または同カードで利用料金の支払い設定をしていることが条件（2026年11月19日から対象拡大）。判定は毎月月末時点、ゴールドカードのau IDと対象回線のau IDが同一であること。条件を満たさなくなると終了し、再適用はない",
           "source_url": "https://www.uqwimax.jp/mobile/otokuwari/",
-          "starts_after_months": 13,
-          "unit": "per_line"
+          "checked_at": "2026-11-28",
+          "note_for_dev": "画面への反映は計算の汎用化（ステップ2）で行う前提。それまでは月額に入らない"
+        }
+      ],
+      "call_options": [
+        {
+          "id": "uq_call10",
+          "name": "通話放題ライト",
+          "yen": 880,
+          "covers": "10min",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "uq_call_unlimited",
+          "name": "通話放題",
+          "yen": 1980,
+          "covers": "unlimited",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "uq_call60",
+          "name": "通話パック60",
+          "yen": 660,
+          "covers": "60min_month",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "id": "uq_komi_unlimited",
+          "name": "通話放題（コミコミ系プラン向け）",
+          "yen": 1100,
+          "covers": "unlimited",
+          "source_url": "https://www.uqwimax.jp/mobile/plan/",
+          "checked_at": "2026-11-28"
         }
       ],
       "examples": [
         {
-          "checked_at": "2026-11-28",
-          "expected_yen": 1628,
-          "inputs": {
-            "data_gb": 3,
-            "home_internet": "eo",
-            "payment": "au_pay_card",
-            "with_phone": true
-          },
           "label": "トクトクプラン2：自宅セット割＋au PAYカード・5GB以下",
           "plan_id": "tokutoku2",
-          "source_url": "https://www.uqwimax.jp/mobile/ouenwari/"
-        },
-        {
-          "checked_at": "2026-11-28",
-          "expected_yen": 2728,
           "inputs": {
-            "data_gb": 20,
-            "home_internet": "eo",
-            "payment": "au_pay_card",
-            "with_phone": true
-          },
-          "label": "トクトクプラン2：自宅セット割＋au PAYカード・5GB超",
-          "plan_id": "tokutoku2",
-          "source_url": "https://www.uqwimax.jp/mobile/ouenwari/"
-        },
-        {
-          "checked_at": "2026-11-28",
-          "expected_yen": 3278,
-          "inputs": {
-            "data_gb": 20,
-            "family_lines": 2,
-            "payment": "au_pay_card"
-          },
-          "label": "トクトクプラン2：家族セット割＋au PAYカード・5GB超",
-          "plan_id": "tokutoku2",
-          "source_url": "https://www.uqwimax.jp/mobile/ouenwari/"
-        },
-        {
-          "checked_at": "2026-11-28",
-          "expected_yen": 1628,
-          "inputs": {
-            "age": 12,
             "data_gb": 3,
             "home_internet": "eo",
-            "month": 2,
-            "new_subscription": true,
-            "payment": "au_pay_card",
-            "with_phone": true
-          },
-          "label": "トクトクプラン2：UQ親子応援割＋自宅セット割＋au PAYカード（1年目・5GB以下でも同じ）",
-          "plan_id": "tokutoku2",
-          "source_url": "https://www.uqwimax.jp/mobile/ouenwari/"
-        },
-        {
-          "checked_at": "2026-11-28",
-          "expected_yen": 2178,
-          "inputs": {
-            "age": 12,
-            "data_gb": 20,
-            "family_lines": 2,
-            "month": 2,
-            "new_subscription": true,
+            "with_phone": true,
             "payment": "au_pay_card"
           },
-          "label": "トクトクプラン2：UQ親子応援割＋家族セット割＋au PAYカード（1年目）",
-          "plan_id": "tokutoku2",
-          "source_url": "https://www.uqwimax.jp/mobile/ouenwari/"
+          "expected_yen": 1628,
+          "source_url": "https://www.uqwimax.jp/mobile/ouenwari/",
+          "checked_at": "2026-11-28"
         },
         {
-          "checked_at": "2026-11-28",
-          "expected_yen": 1188,
+          "label": "トクトクプラン2：自宅セット割＋au PAYカード・5GB超",
+          "plan_id": "tokutoku2",
+          "inputs": {
+            "data_gb": 20,
+            "home_internet": "eo",
+            "with_phone": true,
+            "payment": "au_pay_card"
+          },
+          "expected_yen": 2728,
+          "source_url": "https://www.uqwimax.jp/mobile/ouenwari/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "label": "トクトクプラン2：家族セット割＋au PAYカード・5GB超",
+          "plan_id": "tokutoku2",
+          "inputs": {
+            "data_gb": 20,
+            "family_lines": 2,
+            "payment": "au_pay_card"
+          },
+          "expected_yen": 3278,
+          "source_url": "https://www.uqwimax.jp/mobile/ouenwari/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "label": "トクトクプラン2：UQ親子応援割＋自宅セット割＋au PAYカード（1年目・5GB以下でも同じ）",
+          "plan_id": "tokutoku2",
+          "inputs": {
+            "data_gb": 3,
+            "home_internet": "eo",
+            "with_phone": true,
+            "payment": "au_pay_card",
+            "age": 12,
+            "new_subscription": true,
+            "month": 2
+          },
+          "expected_yen": 1628,
+          "source_url": "https://www.uqwimax.jp/mobile/ouenwari/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "label": "トクトクプラン2：UQ親子応援割＋家族セット割＋au PAYカード（1年目）",
+          "plan_id": "tokutoku2",
+          "inputs": {
+            "data_gb": 20,
+            "family_lines": 2,
+            "payment": "au_pay_card",
+            "age": 12,
+            "new_subscription": true,
+            "month": 2
+          },
+          "expected_yen": 2178,
+          "source_url": "https://www.uqwimax.jp/mobile/ouenwari/",
+          "checked_at": "2026-11-28"
+        },
+        {
+          "label": "ミニミニプラン：自宅セット割＋au PAYカード",
+          "plan_id": "minimini",
           "inputs": {
             "data_gb": 5,
             "home_internet": "eo",
-            "payment": "au_pay_card",
-            "with_phone": true
+            "with_phone": true,
+            "payment": "au_pay_card"
           },
-          "label": "ミニミニプラン：自宅セット割＋au PAYカード",
-          "plan_id": "minimini",
-          "source_url": "https://www.uqwimax.jp/mobile/plan/minimini/"
+          "expected_yen": 1188,
+          "source_url": "https://www.uqwimax.jp/mobile/plan/minimini/",
+          "checked_at": "2026-11-28"
         },
         {
-          "checked_at": "2026-11-28",
-          "expected_yen": 2398,
+          "label": "トクトクプラン：自宅セット割＋au PAYカード・17GB",
+          "plan_id": "tokutoku",
           "inputs": {
             "data_gb": 10,
             "home_internet": "eo",
-            "payment": "au_pay_card",
-            "with_phone": true
+            "with_phone": true,
+            "payment": "au_pay_card"
           },
-          "label": "トクトクプラン：自宅セット割＋au PAYカード・17GB",
-          "plan_id": "tokutoku",
-          "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku/"
+          "expected_yen": 2398,
+          "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku/",
+          "checked_at": "2026-11-28"
         },
         {
-          "checked_at": "2026-11-28",
-          "expected_yen": 1100,
+          "label": "トクトクプラン：自宅セット割＋au PAYカード・1GB以下",
+          "plan_id": "tokutoku",
           "inputs": {
             "data_gb": 1,
             "home_internet": "eo",
-            "payment": "au_pay_card",
-            "with_phone": true
+            "with_phone": true,
+            "payment": "au_pay_card"
           },
-          "label": "トクトクプラン：自宅セット割＋au PAYカード・1GB以下",
-          "plan_id": "tokutoku",
-          "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku/"
-        }
-      ],
-      "fees": {
-        "checked_at": "2026-11-28",
-        "contract_online_yen": 3850,
-        "contract_yen": 4950,
-        "note_for_dev": "契約事務手数料は店舗 4,950円／オンラインショップ 3,850円（2026-11-28 UQ公式FAQで確認）",
-        "source_url": "https://www.uqwimax.jp/mobile/support/faq/pages/pg00000343.html"
-      },
-      "group": "kddi",
-      "id": "uq",
-      "is_proposal_target": true,
-      "kind": "subbrand",
-      "name": "UQ mobile",
-      "plans": [
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "uq_call10",
-              "uq_call_unlimited",
-              "uq_call60"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 30,
-            "rollover": true
-          },
-          "discount_ids": [
-            "uq_home_set",
-            "uq_family_set",
-            "uq_pay_card",
-            "uq_low5",
-            "uq_oyako"
-          ],
-          "id": "tokutoku2",
-          "name": "トクトクプラン2",
-          "notes": [
-            "5GB以下の月は自動で1,100円引き（UQ親子応援割とは重ねられない）"
-          ],
-          "price": {
-            "type": "flat",
-            "yen": 4048
-          },
-          "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku2/",
-          "status": "active"
-        },
-        {
-          "calls": {
-            "included": "10min",
-            "option_ids": [
-              "uq_komi_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 35
-          },
-          "discount_ids": [
-            "uq_oyako",
-            "uq_komikomi_otoku",
-            "uq_komikomi_otoku_14"
-          ],
-          "id": "komivalue",
-          "name": "コミコミプランバリュー",
-          "notes": [
-            "1回10分以内の国内通話込み",
-            "家族セット割・自宅セット割・au PAYカード払い割の対象外"
-          ],
-          "price": {
-            "type": "flat",
-            "yen": 3828
-          },
-          "source_url": "https://www.uqwimax.jp/mobile/plan/",
-          "status": "active"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "uq_call10",
-              "uq_call_unlimited",
-              "uq_call60"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 17
-          },
-          "discount_ids": [
-            "uq_home_set",
-            "uq_family_set",
-            "uq_pay_card",
-            "uq_tokutoku_low1"
-          ],
-          "ended_on": "2025",
-          "id": "tokutoku",
-          "name": "トクトクプラン",
-          "price": {
-            "type": "flat",
-            "yen": 3685
-          },
+          "expected_yen": 1100,
           "source_url": "https://www.uqwimax.jp/mobile/plan/tokutoku/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "10min",
-            "option_ids": [
-              "uq_komi_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 35
-          },
-          "discount_ids": [],
-          "ended_on": "2025",
-          "id": "komikomi_plus",
-          "name": "コミコミプラン＋",
-          "price": {
-            "type": "flat",
-            "yen": 3498
-          },
-          "source_url": "https://www.uqwimax.jp/mobile/plan/komikomi-plus/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "10min",
-            "option_ids": [
-              "uq_komi_unlimited"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 22
-          },
-          "discount_ids": [],
-          "ended_on": "2024",
-          "id": "komikomi",
-          "name": "コミコミプラン",
-          "price": {
-            "type": "flat",
-            "yen": 3498
-          },
-          "source_url": "https://www.uqwimax.jp/mobile/plan/komikomi/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "uq_call10",
-              "uq_call_unlimited",
-              "uq_call60"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 5
-          },
-          "discount_ids": [
-            "uq_home_set",
-            "uq_family_set",
-            "uq_pay_card"
-          ],
-          "ended_on": "2025",
-          "id": "minimini",
-          "name": "ミニミニプラン",
-          "price": {
-            "type": "flat",
-            "yen": 2475
-          },
-          "source_url": "https://www.uqwimax.jp/mobile/plan/minimini/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "uq_call10",
-              "uq_call_unlimited",
-              "uq_call60"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 4
-          },
-          "discount_ids": [
-            "uq_home_set"
-          ],
-          "ended_on": "2023-05",
-          "id": "kurikoshi5g_s",
-          "name": "くりこしプランS +5G",
-          "price": {
-            "type": "flat",
-            "yen": 1738
-          },
-          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "uq_call10",
-              "uq_call_unlimited",
-              "uq_call60"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 17
-          },
-          "discount_ids": [
-            "uq_home_set"
-          ],
-          "ended_on": "2023-05",
-          "id": "kurikoshi5g_m",
-          "name": "くりこしプランM +5G",
-          "price": {
-            "type": "flat",
-            "yen": 2948
-          },
-          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "uq_call10",
-              "uq_call_unlimited",
-              "uq_call60"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 27
-          },
-          "discount_ids": [
-            "uq_home_set"
-          ],
-          "ended_on": "2023-05",
-          "id": "kurikoshi5g_l",
-          "name": "くりこしプランL +5G",
-          "price": {
-            "type": "flat",
-            "yen": 4048
-          },
-          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi-5g/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "uq_call10",
-              "uq_call_unlimited",
-              "uq_call60"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 4
-          },
-          "discount_ids": [],
-          "ended_on": "2021",
-          "id": "kurikoshi_s",
-          "name": "くりこしプランS（4G）",
-          "price": {
-            "type": "flat",
-            "yen": 1738
-          },
-          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "uq_call10",
-              "uq_call_unlimited",
-              "uq_call60"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 17
-          },
-          "discount_ids": [],
-          "ended_on": "2021",
-          "id": "kurikoshi_m",
-          "name": "くりこしプランM（4G）",
-          "price": {
-            "type": "flat",
-            "yen": 2948
-          },
-          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi/",
-          "status": "ended"
-        },
-        {
-          "calls": {
-            "included": "none",
-            "option_ids": [
-              "uq_call10",
-              "uq_call_unlimited",
-              "uq_call60"
-            ],
-            "per_30s_yen": 22
-          },
-          "checked_at": "2026-11-28",
-          "data": {
-            "cap_gb": 27
-          },
-          "discount_ids": [],
-          "ended_on": "2021",
-          "id": "kurikoshi_l",
-          "name": "くりこしプランL（4G）",
-          "price": {
-            "type": "flat",
-            "yen": 4048
-          },
-          "source_url": "https://www.uqwimax.jp/mobile/plan/kurikoshi/",
-          "status": "ended"
+          "checked_at": "2026-11-28"
         }
       ],
-      "source_url": "https://www.uqwimax.jp/mobile/plan/"
+      "source_url": "https://www.uqwimax.jp/mobile/plan/",
+      "checked_at": "2026-11-28"
     },
     {
       "call_options": [
@@ -2037,6 +2044,7 @@
             "dカード支払いでボーナスパケット（dカード+1GB、GOLD系/PLATINUM+5GB）が付くが金額割引ではないため discounts には入れていない"
           ],
           "price": {
+            "type": "tiered",
             "tiers": [
               {
                 "up_to_gb": 40,
@@ -2050,8 +2058,7 @@
                 "up_to_gb": 120,
                 "yen": 5115
               }
-            ],
-            "type": "tiered"
+            ]
           },
           "source_url": "https://www.docomo.ne.jp/info/news_release/2026/09/25_00.html",
           "status": "active"
@@ -2071,7 +2078,6 @@
             "rollover": false
           },
           "discount_ids": [],
-          "ended_on": "2026-11-30",
           "id": "ahamo_oomori",
           "name": "ahamo 大盛り",
           "notes": [
@@ -2083,7 +2089,8 @@
             "yen": 4950
           },
           "source_url": "https://www.docomo.ne.jp/info/news_release/2026/09/25_00.html",
-          "status": "ended"
+          "status": "ended",
+          "ended_on": "2026-11-30"
         },
         {
           "calls": {
@@ -2573,8 +2580,8 @@
           "condition_text": "シンプル3 M/Lが対象で自動適用、12ヵ月間。シンプル3 Sは対象外",
           "conditions": [
             {
-              "text": "シンプル3 M/Lが対象で自動適用、12ヵ月間。シンプル3 Sは対象外",
-              "type": "other"
+              "type": "other",
+              "text": "シンプル3 M/Lが対象で自動適用、12ヵ月間。シンプル3 Sは対象外"
             }
           ],
           "duration_months": 12,
@@ -2984,10 +2991,9 @@
           "toppings": [
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": null,
+              "checked_at": "2026-11-28",
               "id": "ul_6h",
-              "kind": "data",
               "name": "データ使い放題（6時間）",
               "notes": [
                 "混雑時・動画/クラウドゲーム利用時に速度制限の場合あり"
@@ -2995,14 +3001,14 @@
               "source_url": "https://povo.jp/topping-list/detail/6h/",
               "validity_days": null,
               "validity_hours": 6,
-              "yen": 250
+              "yen": 250,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": null,
+              "checked_at": "2026-11-28",
               "id": "ul_24h",
-              "kind": "data",
               "name": "データ使い放題（24時間）",
               "notes": [
                 "混雑時・動画/クラウドゲーム利用時に速度制限の場合あり"
@@ -3010,108 +3016,108 @@
               "source_url": "https://povo.jp/topping-list/detail/24/",
               "validity_days": 1,
               "validity_hours": 24,
-              "yen": 330
+              "yen": 330,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 1,
+              "checked_at": "2026-11-28",
               "id": "data_1gb_7d",
-              "kind": "data",
               "name": "データ追加1GB（7日間）",
               "source_url": "https://povo.jp/topping-list/detail/1G_7d/",
               "validity_days": 7,
-              "yen": 390
+              "yen": 390,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 3,
+              "checked_at": "2026-11-28",
               "id": "data_3gb_30d",
-              "kind": "data",
               "name": "データ追加3GB（30日間）",
               "source_url": "https://povo.jp/topping-list/detail/3G_30d/",
               "validity_days": 30,
-              "yen": 990
+              "yen": 990,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 5,
+              "checked_at": "2026-11-28",
               "id": "data_5gb_30d",
-              "kind": "data",
               "name": "データ追加5GB（30日間）",
               "source_url": "https://povo.jp/topping-list/detail/5G_30d/",
               "validity_days": 30,
-              "yen": 1380
+              "yen": 1380,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 1,
+              "checked_at": "2026-11-28",
               "id": "data_1gb_180d",
-              "kind": "data",
               "name": "データ追加1GB（180日間）",
               "source_url": "https://povo.jp/topping-list/detail/1G_180d/",
               "validity_days": 180,
-              "yen": 1260
+              "yen": 1260,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 30,
+              "checked_at": "2026-11-28",
               "id": "data_30gb_30d",
-              "kind": "data",
               "name": "データ追加30GB（30日間）",
               "source_url": "https://povo.jp/topping-list/detail/30G_30d/",
               "validity_days": 30,
-              "yen": 2780
+              "yen": 2780,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 60,
+              "checked_at": "2026-11-28",
               "id": "data_60gb_90d",
-              "kind": "data",
               "name": "データ追加60GB（90日間）",
               "notes": [
                 "LP『いつものトッピング』表で確認。シミュレーターのデータトッピング一覧には単独項目として現れなかったため詳細ページURLは未確認"
               ],
               "source_url": "https://povo.jp/lp/0yen_202507/",
               "validity_days": 90,
-              "yen": 6490
+              "yen": 6490,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 90,
+              "checked_at": "2026-11-28",
               "id": "data_90gb_90d",
-              "kind": "data",
               "name": "データ追加90GB（90日間）",
               "source_url": "https://povo.jp/topping-list/detail/90G_90d/",
               "validity_days": 90,
-              "yen": 7980
+              "yen": 7980,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 300,
+              "checked_at": "2026-11-28",
               "id": "data_300gb_90d",
-              "kind": "data",
               "name": "データ追加300GB（90日間）",
               "notes": [
                 "LP『いつものトッピング』表で確認"
               ],
               "source_url": "https://povo.jp/lp/0yen_202507/",
               "validity_days": 90,
-              "yen": 9834
+              "yen": 9834,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": null,
+              "checked_at": "2026-11-28",
               "id": "ul_7d_12tickets",
-              "kind": "data",
               "name": "データ使い放題（7日間）12回分",
               "notes": [
                 "購入後1回目が即時適用、残り11回分はプリペイドコードとしてメール送付（LP表記。シミュレーターでは購入後7日以内に送付と表記揺れあり）"
@@ -3119,158 +3125,159 @@
               "quantity": 12,
               "source_url": "https://povo.jp/topping-list/detail/ul_7d_12tickets/",
               "validity_days": 7,
-              "yen": 9834
+              "yen": 9834,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 150,
+              "checked_at": "2026-11-28",
               "id": "data_150gb_180d",
-              "kind": "data",
               "name": "データ追加150GB（180日間）",
               "notes": [
                 "LP『いつものトッピング』表で確認"
               ],
               "source_url": "https://povo.jp/lp/0yen_202507/",
               "validity_days": 180,
-              "yen": 12980
+              "yen": 12980,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 60,
+              "checked_at": "2026-11-28",
               "id": "data_60gb_365d",
-              "kind": "data",
               "name": "データ追加60GB（365日間）",
               "notes": [
                 "LP表記は60GB（365日間）13,200円。シミュレーターでは増量中として63GB（365日間）13,200円で掲載されており、名称・容量に表記差がある（増量キャンペーン中の可能性）。Amazonプライム付版16,700円もシミュレーターに掲載"
               ],
               "source_url": "https://povo.jp/lp/0yen_202507/",
               "validity_days": 365,
-              "yen": 13200
+              "yen": 13200,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 180,
+              "checked_at": "2026-11-28",
               "id": "data_180gb_180d",
-              "kind": "data",
               "name": "データ追加180GB（180日間）",
               "source_url": "https://povo.jp/topping-list/detail/180G_180d/",
               "validity_days": 180,
-              "yen": 14880
+              "yen": 14880,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 120,
+              "checked_at": "2026-11-28",
               "id": "data_120gb_365d",
-              "kind": "data",
               "name": "データ追加120GB（365日間）",
               "notes": [
                 "LP表記は120GB 21,600円。シミュレーターでは増量中として125GB（365日間）21,600円で掲載。Amazonプライム付版25,100円も掲載"
               ],
               "source_url": "https://povo.jp/lp/0yen_202507/",
               "validity_days": 365,
-              "yen": 21600
+              "yen": 21600,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 360,
+              "checked_at": "2026-11-28",
               "id": "data_360gb_365d",
-              "kind": "data",
               "name": "データ追加360GB（365日間）",
               "notes": [
                 "LP表記は360GB 26,400円。シミュレーターでは増量中として375GB（365日間）26,400円で掲載。Amazonプライム付版29,900円も掲載"
               ],
               "source_url": "https://povo.jp/lp/0yen_202507/",
               "validity_days": 365,
-              "yen": 26400
+              "yen": 26400,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": 1351.68,
+              "checked_at": "2026-11-28",
               "id": "data_1320gb_365d",
-              "kind": "data",
               "name": "データ追加1.32TB（365日間）",
               "notes": [
                 "シミュレーター『まとめておトク1年間トッピング』で確認。容量はシミュレーターのData_Volume値1351.68GB（1.32TB換算）。Amazonプライム付版42,740円も掲載"
               ],
               "source_url": "https://povo.jp/topping-list/detail/1320G_365d/",
               "validity_days": 365,
-              "yen": 39240
+              "yen": 39240,
+              "kind": "data"
             },
             {
               "billing": "subscription",
-              "checked_at": "2026-11-28",
               "data_gb": 0.5,
+              "checked_at": "2026-11-28",
               "id": "sub_0_5gb",
-              "kind": "data",
               "name": "データ追加0.5GB",
               "notes": [
                 "サブスクトッピング（継続購入）。毎月自動チャージ型と案内されているが、更新・解約条件の詳細は未確認"
               ],
               "source_url": "https://povo.jp/topping-list/detail/500M_subscription/",
               "validity_days": 30,
-              "yen": 600
+              "yen": 600,
+              "kind": "data"
             },
             {
               "billing": "subscription",
-              "checked_at": "2026-11-28",
               "data_gb": 5,
+              "checked_at": "2026-11-28",
               "id": "sub_5gb",
-              "kind": "data",
               "name": "データ追加5GB",
               "notes": [
                 "サブスクトッピング（継続購入）"
               ],
               "source_url": "https://povo.jp/topping-list/detail/5G_subscription/",
               "validity_days": 30,
-              "yen": 1380
+              "yen": 1380,
+              "kind": "data"
             },
             {
               "billing": "subscription",
-              "checked_at": "2026-11-28",
               "data_gb": 30,
+              "checked_at": "2026-11-28",
               "id": "sub_30gb",
-              "kind": "data",
               "name": "データ追加30GB",
               "notes": [
                 "サブスクトッピング（継続購入）。都度購入の30GB（30日間）と同額2,780円だが別商品"
               ],
               "source_url": "https://povo.jp/topping-list/detail/30G_subscription/",
               "validity_days": 30,
-              "yen": 2780
+              "yen": 2780,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": null,
+              "checked_at": "2026-11-28",
               "id": "ul_weekend_3d",
-              "kind": "data",
               "name": "週末データ使い放題（3日間）",
               "notes": [
                 "シミュレーター『使い放題トッピング』で確認。利用可能な曜日等の条件詳細は未確認"
               ],
               "source_url": "https://povo.jp/topping-list/detail/24h_3d_limit/",
               "validity_days": 3,
-              "yen": 790
+              "yen": 790,
+              "kind": "data"
             },
             {
               "billing": "per_purchase",
-              "checked_at": "2026-11-28",
               "data_gb": null,
+              "checked_at": "2026-11-28",
               "id": "ul_2h_limited",
-              "kind": "data",
               "name": "データ使い放題（2時間）",
               "notes": [
                 "シミュレーターでは販売終了 2026年12月31日23:59までと表示"
               ],
               "source_url": "https://povo.jp/topping-list/detail/2h_limit/",
               "validity_hours": 2,
-              "yen": 180
+              "yen": 180,
+              "kind": "data"
             }
           ]
         },
@@ -3329,8 +3336,8 @@
           "condition_text": "代表者がRakuten Linkアプリで家族グループを作成し、各回線が招待によりグループに参加すると、参加した全員のプラン料金が毎月110円（税込）引き。離れて住む家族・親戚も対象、1グループ最大20回線。旧名称は最強家族プログラム（現行公式ページの名称は最強家族割）。割引後の料金は3GBまで968円、20GBまで2,068円、無制限3,168円",
           "conditions": [
             {
-              "min": 2,
-              "type": "family_lines"
+              "type": "family_lines",
+              "min": 2
             }
           ],
           "duration_months": null,
@@ -3434,9 +3441,9 @@
         {
           "expected_yen": 528,
           "inputs": {
-            "age": 10,
             "data_gb": 3,
-            "family_lines": 2
+            "family_lines": 2,
+            "age": 10
           },
           "label": "最強家族割＋最強こども割適用時・3GBまで",
           "plan_id": "saikyo_plan",
@@ -3650,8 +3657,8 @@
           "別途SIMカード発行手数料あり：タイプD 433.4円/枚（fees.sim_yen に収録）、タイプA 446.6円/枚（いずれも税込）",
           "契約解除料・MNP転出料は0円と公式ページに記載"
         ],
-        "sim_yen": 433.4,
-        "source_url": "https://www.iijmio.jp/gigaplan/"
+        "source_url": "https://www.iijmio.jp/gigaplan/",
+        "sim_yen": 433.4
       },
       "group": "mvno",
       "id": "iijmio",
@@ -3998,8 +4005,8 @@
           },
           "label": "キャンペーン適用時（2026年11月30日まで、最大6カ月間）：マイピタ音声通話付き3GB通常1,298円が880円/月。パケット放題3Mbpsセット訴求も同額880円で公式プロモーションページに表示",
           "plan_id": "mypita-dual-3gb",
-          "skip_reason": "月額割引のキャンペーンは計算の汎用化後に対応",
-          "source_url": "https://mineo.jp/promotion/base/"
+          "source_url": "https://mineo.jp/promotion/base/",
+          "skip_reason": "月額割引のキャンペーンは計算の汎用化後に対応"
         }
       ],
       "fees": {
@@ -4253,10 +4260,10 @@
         {
           "expected_yen": 1890,
           "inputs": {
+            "data_gb": 1,
             "call_option_ids": [
               "call-kakehoudai-simple"
-            ],
-            "data_gb": 1
+            ]
           },
           "label": "公式利用例：データはあまり使わないが通話をたくさんする（かけ放題組み合わせ想定）",
           "plan_id": "simple290",
@@ -4303,10 +4310,10 @@
             "支払例：2〜3GB利用で510円は公式プランページの利用例（examples参照）"
           ],
           "price": {
+            "type": "metered",
             "base_yen": 290,
             "included_gb": 1,
-            "per_gb_yen": 220,
-            "type": "metered"
+            "per_gb_yen": 220
           },
           "source_url": "https://www.nihontsushin.com/plan/plansimple_detail.html",
           "status": "active"
@@ -4373,222 +4380,215 @@
   ],
   "home_internet": [
     {
-      "checked_at": "2026-11-28",
-      "confidence": "estimate",
       "id": "eo",
+      "name": "eo光",
       "kind": "fiber",
+      "set_discount_carriers": [
+        "au",
+        "uq"
+      ],
+      "requires_phone": true,
       "monthly_yen": {
         "home": 5715,
         "mansion": 4400
       },
-      "name": "eo光",
-      "note_for_dev": "ホーム（1ギガ・即割なし）は年次で変動：1年目 5,715円／2年目 5,660円／3年目以降 5,605円。monthly_yen.home は1年目の額。マンションは建物・配線方式で変動し標準額なし（4,400円は移行時の目安）",
-      "requires_phone": true,
+      "source_url": "https://eonet.jp/column/optical-line/eo-light-price-review.html",
+      "checked_at": "2026-11-28",
+      "confidence": "estimate",
+      "note_for_dev": "ホーム（1ギガ・即割なし）は年次で変動：1年目 5,715円／2年目 5,660円／3年目以降 5,605円。monthly_yen.home は1年目の額。マンションは建物・配線方式で変動し標準額なし（4,400円は移行時の目安）"
+    },
+    {
+      "id": "au_hikari",
+      "name": "auひかり",
+      "kind": "fiber",
       "set_discount_carriers": [
         "au",
         "uq"
       ],
-      "source_url": "https://eonet.jp/column/optical-line/eo-light-price-review.html"
-    },
-    {
-      "checked_at": "2026-11-28",
-      "confidence": "estimate",
-      "id": "au_hikari",
-      "kind": "fiber",
+      "requires_phone": true,
       "monthly_yen": {
         "home": 6380,
         "mansion": 5000
       },
-      "name": "auひかり",
-      "note_for_dev": "ホーム 6,380円は「ずっとギガ得プラン（3年）・1年目・ネット＋電話」の場合（ネット単体 5,610円＋電話 770円。2年目 6,270円〜。2027年1月より 6,710円〜への改定予告あり）。マンションはタイプ別料金で代表額なし（ギガ＝ネットのみ 4,455円、ミニギガ＝同 5,500円など）。monthly_yen.mansion の 5,000円は目安",
-      "requires_phone": true,
+      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
+      "checked_at": "2026-11-28",
+      "confidence": "estimate",
+      "note_for_dev": "ホーム 6,380円は「ずっとギガ得プラン（3年）・1年目・ネット＋電話」の場合（ネット単体 5,610円＋電話 770円。2年目 6,270円〜。2027年1月より 6,710円〜への改定予告あり）。マンションはタイプ別料金で代表額なし（ギガ＝ネットのみ 4,455円、ミニギガ＝同 5,500円など）。monthly_yen.mansion の 5,000円は目安"
+    },
+    {
+      "id": "au_hikari_plus",
+      "name": "auひかりプラス",
+      "kind": "fiber",
       "set_discount_carriers": [
         "au",
         "uq"
       ],
-      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/"
-    },
-    {
-      "checked_at": "2026-11-28",
-      "id": "au_hikari_plus",
-      "kind": "fiber",
+      "requires_phone": true,
       "monthly_yen": {
         "home": 6578,
         "mansion": 5500
       },
-      "name": "auひかりプラス",
-      "note_for_dev": "月額は開通後〜12か月目の「お支払い合計」（13か月目〜 ホーム 7,018円／マンション 5,940円に上昇）",
-      "requires_phone": true,
-      "set_discount_carriers": [
-        "au",
-        "uq"
-      ],
-      "source_url": "https://www.au.com/pr/auhikari_plus/"
+      "source_url": "https://www.au.com/pr/auhikari_plus/",
+      "checked_at": "2026-11-28",
+      "note_for_dev": "月額は開通後〜12か月目の「お支払い合計」（13か月目〜 ホーム 7,018円／マンション 5,940円に上昇）"
     },
     {
-      "checked_at": "2026-11-28",
       "id": "biglobe_hikari",
-      "kind": "fiber",
       "name": "ビッグローブ光",
-      "requires_phone": true,
+      "kind": "fiber",
       "set_discount_carriers": [
         "au",
         "uq"
       ],
-      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/"
+      "requires_phone": true,
+      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
+      "checked_at": "2026-11-28"
     },
     {
-      "checked_at": "2026-11-28",
       "id": "sonet_hikari",
-      "kind": "fiber",
       "name": "So-net光",
-      "requires_phone": true,
+      "kind": "fiber",
       "set_discount_carriers": [
         "au",
         "uq"
       ],
-      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/"
+      "requires_phone": true,
+      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
+      "checked_at": "2026-11-28"
     },
     {
-      "checked_at": "2026-11-28",
       "id": "nifty_hikari",
-      "kind": "fiber",
       "name": "@nifty光",
-      "requires_phone": true,
-      "set_discount_carriers": [
-        "au",
-        "uq"
-      ],
-      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/"
-    },
-    {
-      "checked_at": "2026-11-28",
-      "id": "jcom",
-      "kind": "catv",
-      "name": "J:COM",
-      "requires_phone": true,
-      "set_discount_carriers": [
-        "au",
-        "uq"
-      ],
-      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/"
-    },
-    {
-      "checked_at": "2026-11-28",
-      "id": "au_home_router",
-      "kind": "home_router",
-      "name": "au ホームルーター 5G・WiMAX",
-      "requires_phone": false,
-      "set_discount_carriers": [
-        "au",
-        "uq"
-      ],
-      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/"
-    },
-    {
-      "checked_at": "2026-11-28",
-      "id": "docomo_hikari",
       "kind": "fiber",
+      "set_discount_carriers": [
+        "au",
+        "uq"
+      ],
+      "requires_phone": true,
+      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
+      "checked_at": "2026-11-28"
+    },
+    {
+      "id": "jcom",
+      "name": "J:COM",
+      "kind": "catv",
+      "set_discount_carriers": [
+        "au",
+        "uq"
+      ],
+      "requires_phone": true,
+      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
+      "checked_at": "2026-11-28"
+    },
+    {
+      "id": "au_home_router",
+      "name": "au ホームルーター 5G・WiMAX",
+      "kind": "home_router",
+      "set_discount_carriers": [
+        "au",
+        "uq"
+      ],
+      "requires_phone": false,
+      "source_url": "https://www.au.com/mobile/charge/charge-discount/smartvalue/",
+      "checked_at": "2026-11-28"
+    },
+    {
+      "id": "docomo_hikari",
+      "name": "ドコモ光",
+      "kind": "fiber",
+      "set_discount_carriers": [
+        "docomo"
+      ],
+      "requires_phone": false,
       "monthly_yen": {
         "home": 5720,
         "mansion": 4400
       },
-      "name": "ドコモ光",
-      "requires_phone": false,
-      "set_discount_carriers": [
-        "docomo"
-      ],
-      "source_url": "https://www.docomo.ne.jp/biz/charge/hikari/plan/tandoku/"
+      "source_url": "https://www.docomo.ne.jp/biz/charge/hikari/plan/tandoku/",
+      "checked_at": "2026-11-28"
     },
     {
-      "checked_at": "2026-11-28",
       "id": "softbank_hikari",
+      "name": "ソフトバンク光",
       "kind": "fiber",
+      "set_discount_carriers": [
+        "softbank",
+        "ymobile"
+      ],
+      "requires_phone": false,
       "monthly_yen": {
         "home": 5720,
         "mansion": 4180
       },
-      "name": "ソフトバンク光",
-      "note_for_dev": "現行標準（1ギガ・2年自動更新プラン）。2026年12月以降に +330円の改定予定（改定後 ホーム 6,050円／マンション 4,510円）",
-      "requires_phone": false,
-      "set_discount_carriers": [
-        "softbank",
-        "ymobile"
-      ],
-      "source_url": "https://www.softbank.jp/internet/sbhikari/price/"
+      "source_url": "https://www.softbank.jp/internet/sbhikari/price/",
+      "checked_at": "2026-11-28",
+      "note_for_dev": "現行標準（1ギガ・2年自動更新プラン）。2026年12月以降に +330円の改定予定（改定後 ホーム 6,050円／マンション 4,510円）"
     },
     {
-      "checked_at": "2026-11-28",
       "id": "nuro",
+      "name": "NURO光",
       "kind": "fiber",
+      "set_discount_carriers": [],
+      "requires_phone": false,
       "monthly_yen": {
         "home": 5170,
         "mansion": 4180
       },
-      "name": "NURO光",
-      "note_for_dev": "標準の基本料金（NURO 光(H) 5,170円／NURO 光(M) 4,180円）。ホームゲートウェイ込みの通常料金は ホーム 5,720円／マンション 4,730円",
-      "requires_phone": false,
-      "set_discount_carriers": [],
-      "source_url": "https://www.nuro.jp/hikari/house/price/"
+      "source_url": "https://www.nuro.jp/hikari/house/price/",
+      "checked_at": "2026-11-28",
+      "note_for_dev": "標準の基本料金（NURO 光(H) 5,170円／NURO 光(M) 4,180円）。ホームゲートウェイ込みの通常料金は ホーム 5,720円／マンション 4,730円"
     },
     {
-      "checked_at": "2026-11-28",
       "id": "rakuten_hikari",
+      "name": "楽天ひかり",
       "kind": "fiber",
+      "set_discount_carriers": [
+        "rakuten_mobile"
+      ],
+      "requires_phone": false,
       "monthly_yen": {
         "home": 5280,
         "mansion": 4180
       },
-      "name": "楽天ひかり",
-      "requires_phone": false,
-      "set_discount_carriers": [
-        "rakuten_mobile"
-      ],
-      "source_url": "https://network.mobile.rakuten.co.jp/hikari/fee/pricelist/"
+      "source_url": "https://network.mobile.rakuten.co.jp/hikari/fee/pricelist/",
+      "checked_at": "2026-11-28"
     },
     {
-      "checked_at": "2026-11-28",
       "id": "home_5g",
-      "kind": "home_router",
       "name": "ドコモ home 5G",
-      "note_for_dev": "他キャリア調査ドラフトの割引条件（home 5G セット割）が参照していたため登録のみ追加。月額は未調査",
-      "requires_phone": false,
+      "kind": "home_router",
       "set_discount_carriers": [
         "docomo"
       ],
-      "source_url": "https://www.docomo.ne.jp/charge/eximo/"
+      "requires_phone": false,
+      "source_url": "https://www.docomo.ne.jp/charge/eximo/",
+      "checked_at": "2026-11-28",
+      "note_for_dev": "他キャリア調査ドラフトの割引条件（home 5G セット割）が参照していたため登録のみ追加。月額は未調査"
     },
     {
-      "checked_at": "2026-11-28",
       "id": "softbank_air",
-      "kind": "home_router",
       "name": "SoftBank Air",
-      "note_for_dev": "他キャリア調査ドラフトの割引条件（おうち割 光セット）が参照していたため登録のみ追加。月額は未調査",
-      "requires_phone": false,
+      "kind": "home_router",
       "set_discount_carriers": [
         "softbank",
         "ymobile"
       ],
-      "source_url": "https://www.ymobile.jp/plan/"
+      "requires_phone": false,
+      "source_url": "https://www.ymobile.jp/plan/",
+      "checked_at": "2026-11-28",
+      "note_for_dev": "他キャリア調査ドラフトの割引条件（おうち割 光セット）が参照していたため登録のみ追加。月額は未調査"
     },
     {
-      "checked_at": "2026-11-28",
       "id": "iijmio_hikari",
-      "kind": "fiber",
       "name": "IIJmioひかり",
-      "note_for_dev": "他キャリア調査ドラフトの割引条件（mio割）が参照していたため登録のみ追加。月額は未調査",
-      "requires_phone": false,
+      "kind": "fiber",
       "set_discount_carriers": [
         "iijmio"
       ],
-      "source_url": "https://www.iijmio.jp/gigaplan/"
+      "requires_phone": false,
+      "source_url": "https://www.iijmio.jp/gigaplan/",
+      "checked_at": "2026-11-28",
+      "note_for_dev": "他キャリア調査ドラフトの割引条件（mio割）が参照していたため登録のみ追加。月額は未調査"
     }
-  ],
-  "schema_version": "1.0",
-  "stale_days": {
-    "alert": 60,
-    "warn": 30
-  },
-  "tax": "included",
-  "updated_at": "2026-11-28"
+  ]
 }
