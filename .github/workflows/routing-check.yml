@@ -1,0 +1,14 @@
+# ルーティング表・実績ログ・エージェント定義の整合チェック（review を haiku に下げていないか等）
+name: ルーティング表のチェック
+on:
+  push:
+    paths: [".claude/**", "docs/effort-log.md", "tools/routing.py", ".github/workflows/routing-check.yml"]
+  pull_request:
+    paths: [".claude/**", "docs/effort-log.md", "tools/routing.py", ".github/workflows/routing-check.yml"]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: チェック
+        run: python3 tools/routing.py check
