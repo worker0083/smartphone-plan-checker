@@ -25,7 +25,8 @@
     font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
     line-height: 1.6;
   }
-  main { max-width: 640px; margin: 0 auto; padding: 24px 16px 64px; }
+  :root { --bar-h: 76px; }
+  main { max-width: 640px; margin: 0 auto; padding: 24px 16px calc(var(--bar-h) + 32px + env(safe-area-inset-bottom)); }
   h1 { font-size: 1.5rem; margin: 0 0 4px; }
   h2 { font-size: 1.1rem; margin: 0 0 12px; }
   .lead { color: var(--muted); margin: 0 0 24px; font-size: .95rem; }
@@ -41,7 +42,7 @@
   }
   .q { margin-bottom: 18px; }
   .q > label, .q > .label { display: block; font-weight: 600; margin-bottom: 8px; }
-  .hint { color: var(--muted); font-size: .82rem; font-weight: 400; }
+  .hint { color: var(--muted); font-size: .88rem; font-weight: 400; }
   input[type=number], select {
     width: 100%; padding: 12px; font-size: 1rem; border-radius: 10px;
     border: 1px solid var(--line); background: var(--bg); color: var(--text);
@@ -59,10 +60,36 @@
     width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border: 0;
     border-radius: 12px; background: var(--accent); color: #fff; cursor: pointer;
   }
+  /* 画面下に固定する「診断する」バー */
+  .actionbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 100;
+    background: var(--card); border-top: 1px solid var(--line); box-shadow: 0 -4px 14px rgba(0,0,0,.08);
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  }
+  .actionbar-in { max-width: 760px; margin: 0 auto; display: flex; align-items: center; gap: 14px; }
+  .actionbar .remain { flex: 1; font-size: .95rem; font-weight: 700; line-height: 1.3; }
+  .actionbar .remain small { display: block; font-size: .9rem; font-weight: 400; color: var(--muted); }
+  .actionbar .remain.ok { color: var(--good); }
+  .actionbar .remain.todo { color: var(--warn); }
+  .actionbar button { width: auto; flex: none; min-width: 160px; }
+  /* 目次 */
+  .toc { display: flex; gap: 8px; margin: 0 0 20px; }
+  .toc button { flex: 1; width: auto; padding: 8px 6px; font-size: .95rem; font-weight: 700; background: var(--accent-weak); color: var(--accent); border: 1px solid var(--accent); }
+  .toc button.off { opacity: .45; background: var(--bg); border-color: var(--line); color: var(--muted); }
+  .badge { display: inline-block; flex: none; min-width: 3.6em; text-align: center; font-size: .88rem; font-weight: 700; padding: 1px 8px; margin-right: 8px; border-radius: 6px; background: var(--accent-weak); color: var(--accent); }
+  .rec .badge, .hero .badge { background: var(--card); color: var(--brand); border: 1px solid var(--brand); }
+  .pay { margin: 8px 0 4px; }
+  .pay-label { font-size: .88rem; font-weight: 700; color: var(--muted); }
+  .pay-body { font-size: 1.1rem; font-weight: 800; line-height: 1.5; }
+  .hero .pay-body { font-size: 1.2rem; }
+  .pay-body .seg { display: inline-block; white-space: nowrap; }
+  .pay-body .seg small { font-size: .9rem; font-weight: 600; color: var(--muted); margin-right: 4px; }
+  .price small { display: block; font-size: .88rem; font-weight: 600; color: var(--muted); text-align: right; }
+  .formula { font-size: .92rem; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
 
   /* 結果 */
   .hero { border: 2px solid var(--brand); background: var(--brand-weak); }
-  .hero .tagline { font-size: .85rem; font-weight: 700; color: var(--brand); }
+  .hero .tagline { font-size: .9rem; font-weight: 700; color: var(--brand); }
   .hero .title { font-size: 1.25rem; font-weight: 800; margin: 4px 0 2px; }
   .hero .items { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 14px; }
   .hero .items span { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; font-size: .9rem; font-weight: 600; }
@@ -71,7 +98,7 @@
   table { width: 100%; border-collapse: collapse; font-size: .92rem; margin-top: 12px; }
   th, td { padding: 8px 6px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
   th:first-child, td:first-child { text-align: left; white-space: normal; }
-  thead th { color: var(--muted); font-weight: 600; font-size: .82rem; }
+  thead th { color: var(--muted); font-weight: 600; font-size: .88rem; }
   tfoot td { font-weight: 800; border-bottom: 0; }
   .plus { color: var(--good); font-weight: 700; }
   .minus { color: var(--warn); font-weight: 700; }
@@ -80,18 +107,18 @@
   .plan-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
   .plan-name { font-weight: 700; }
   .price { font-weight: 800; white-space: nowrap; }
-  .ex { color: var(--muted); font-size: .85rem; }
+  .ex { color: var(--muted); font-size: .9rem; }
   .bar { height: 8px; background: var(--line); border-radius: 4px; margin: 8px 0 4px; overflow: hidden; }
   .bar > span { display: block; height: 100%; background: var(--muted); }
   .rec .bar > span { background: var(--brand); }
   .tag { display: inline-block; font-size: .75rem; padding: 1px 8px; border-radius: 6px; background: var(--brand); color: #fff; margin-left: 6px; vertical-align: 2px; }
-  .breakdown { font-size: .82rem; color: var(--muted); margin-top: 2px; }
-  .notice { font-size: .85rem; background: var(--warn-weak); color: var(--text); border-radius: 10px; padding: 10px 12px; margin-top: 12px; }
+  .breakdown { font-size: .88rem; color: var(--muted); margin-top: 2px; }
+  .notice { font-size: .9rem; background: var(--warn-weak); color: var(--text); border-radius: 10px; padding: 10px 12px; margin-top: 12px; }
   .elec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
   .elec-box { border: 1px solid var(--line); border-radius: 12px; padding: 12px; text-align: center; }
   .elec-box.rec { border-color: var(--brand); background: var(--brand-weak); }
   .elec-box .v { font-size: 1.3rem; font-weight: 800; }
-  .disclaimer { color: var(--muted); font-size: .8rem; margin-top: 16px; }
+  .disclaimer { color: var(--muted); font-size: .88rem; margin-top: 16px; }
   #result { display: none; }
   .placeholder { display: none; }
 
@@ -116,7 +143,8 @@
   @media (min-width: 1000px) {
     main { max-width: 1120px; }
     .layout { display: grid; grid-template-columns: 440px 1fr; gap: 24px; align-items: start; }
-    .layout > form { position: sticky; top: 16px; margin-bottom: 0; max-height: calc(100vh - 32px); overflow-y: auto; }
+    .layout > form { position: sticky; top: 16px; margin-bottom: 0; max-height: calc(100vh - 32px - var(--bar-h) - env(safe-area-inset-bottom)); overflow-y: auto; }
+    .actionbar-in { max-width: 1120px; }
     .grid { grid-template-columns: 1fr; }
     #result { display: block; }
     #result.empty > :not(.placeholder) { display: none; }
@@ -129,27 +157,23 @@
   .rank { display: inline-flex; width: 28px; height: 28px; border-radius: 50%; align-items: center; justify-content: center;
     background: var(--line); color: var(--text); font-weight: 800; font-size: .9rem; margin-right: 8px; flex: none; }
   .plan.rec .rank { background: var(--brand); color: #fff; }
-  .combo { list-style: none; padding: 0; margin: 8px 0 0; font-size: .9rem; }
+  .combo { list-style: none; padding: 0; margin: 8px 0 0; font-size: .95rem; }
   .combo li { padding: 2px 0; }
   .combo .ex { margin-left: 4px; }
   details { margin-top: 6px; }
-  summary { cursor: pointer; color: var(--accent); font-size: .85rem; }
+  summary { cursor: pointer; color: var(--accent); font-size: .92rem; min-height: 44px; display: list-item; padding: 10px 0; }
   .carrier-head { display: flex; align-items: center; }
   .ranking { display: grid; gap: 10px; }
   @media (min-width: 700px) { .ranking { grid-template-columns: 1fr 1fr; } .ranking .plan { margin-top: 0; } }
-  .ic { width: 1.15em; height: 1.15em; vertical-align: -0.2em; margin-right: 6px; color: var(--accent); flex: none; }
-  h2 .ic { width: 1.25em; height: 1.25em; }
-  .combo li { display: flex; align-items: baseline; flex-wrap: wrap; }
-  .combo li .ic { align-self: center; color: var(--muted); }
-  .rec .combo li .ic, .hero .combo li .ic { color: var(--brand); }
+  .combo li { display: flex; align-items: baseline; flex-wrap: wrap; padding: 3px 0; }
   .tag.now { background: var(--accent); }
   .plan.is-now { border-color: var(--accent); }
   .member { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 10px; background: var(--bg); }
   .member-head { display: flex; justify-content: space-between; align-items: center; font-weight: 700; margin-bottom: 8px; }
   .member-fields { display: grid; grid-template-columns: 1fr; gap: 8px; }
-  .member-fields label { font-size: .82rem; color: var(--muted); display: block; margin-bottom: 2px; }
+  .member-fields label { font-size: .88rem; color: var(--muted); display: block; margin-bottom: 2px; }
   .member input, .member select { background: var(--card); }
-  .remove { background: none; border: 0; color: var(--muted); font-size: .85rem; width: auto; min-height: 32px; padding: 4px 8px; cursor: pointer; }
+  .remove { background: none; border: 0; color: var(--muted); font-size: .9rem; width: auto; min-height: 44px; padding: 4px 12px; cursor: pointer; }
   .sub-btn { background: var(--card); color: var(--accent); border: 1px dashed var(--accent); font-size: .95rem; }
   .sub-btn:disabled { opacity: .4; cursor: default; }
   @media (min-width: 700px) { .member-fields { grid-template-columns: 1fr 1fr; } }
@@ -158,31 +182,29 @@
   fieldset.off { display: none; }
   .who { font-weight: 700; margin-right: 4px; }
   .topbar { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-  .version { font-size: .8rem; color: var(--muted); white-space: nowrap; }
+  .version { font-size: .88rem; color: var(--muted); white-space: nowrap; }
   .update-bar {
     display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
     background: var(--accent-weak); border: 1px solid var(--accent); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: .92rem;
   }
   .update-bar.show { display: flex; }
   .ver { display: inline-flex; align-items: baseline; gap: 8px; }
-  .linkbtn { background: none; border: 0; color: var(--accent); font-size: .8rem; font-weight: 600; width: auto; min-height: 32px; padding: 4px 2px; cursor: pointer; text-decoration: underline; }
-  .promo { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; background: var(--good-weak); font-size: .85rem; }
+  .linkbtn { background: none; border: 0; color: var(--accent); font-size: .88rem; font-weight: 600; width: auto; min-height: 44px; padding: 4px 6px; cursor: pointer; text-decoration: underline; }
+  .promo { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; background: var(--good-weak); font-size: .9rem; }
   .promo-title { font-weight: 700; color: var(--good); display: flex; align-items: center; }
   details.promo { margin-top: 8px; }
-  details.promo summary.promo-title { cursor: pointer; display: list-item; }
-  .promo-title .ic { color: var(--good); }
+  details.promo summary.promo-title { cursor: pointer; display: list-item; color: var(--good); font-size: .9rem; }
   .promo ul { list-style: none; padding: 0; margin: 4px 0 0; }
   .promo li { padding: 2px 0; }
-  .promo .when, .gaku-item .when { color: var(--muted); font-size: .8rem; }
+  .promo .when, .gaku-item .when { color: var(--muted); font-size: .88rem; }
   .ref { display: inline-block; font-size: .7rem; padding: 0 6px; border-radius: 5px; border: 1px solid var(--warn); color: var(--warn); margin-left: 4px; vertical-align: 1px; }
-  .timeline { font-size: .82rem; margin-top: 4px; }
   .tag.gaku { background: var(--good); margin-left: 0; }
   .gaku-list { display: grid; gap: 10px; margin-top: 10px; }
   @media (min-width: 700px) { .gaku-list { grid-template-columns: 1fr 1fr; } .gaku-list .plan { margin-top: 0; } }
-  .gaku-item { margin-top: 6px; font-size: .88rem; }
+  .gaku-item { margin-top: 6px; font-size: .92rem; }
   .gaku-item b { margin-right: 4px; }
   .none { color: var(--muted); font-size: .88rem; margin-top: 6px; }
-  .update-bar button { width: auto; padding: 8px 18px; min-height: 40px; font-size: .95rem; }
+  .update-bar button { width: auto; padding: 8px 18px; min-height: 44px; font-size: .95rem; }
 </style>
 </head>
 <body>
@@ -199,6 +221,11 @@
 
   <div class="layout">
   <form id="form" class="card">
+    <nav class="toc" aria-label="入力の目次">
+      <button type="button" data-target="fsMobile">1 スマホ</button>
+      <button type="button" data-target="fsNet">2 ネット</button>
+      <button type="button" data-target="fsElec">3 でんき</button>
+    </nav>
     <div class="q scope">
       <span class="label">比較する項目</span>
       <div class="chips fill">
@@ -212,7 +239,7 @@
         <label><input type="radio" name="promo" value="no">含めない（通常料金）</label>
       </div>
     </div>
-    <fieldset>
+    <fieldset id="fsMobile">
       <legend><span class="num">1</span>スマホ</legend>
       <div class="grid">
         <div class="q wide">
@@ -300,7 +327,12 @@
       </div>
     </fieldset>
 
-    <button type="submit">診断する</button>
+    <div class="actionbar">
+      <div class="actionbar-in">
+        <div class="remain" id="remain" aria-live="polite"></div>
+        <button type="submit">診断する</button>
+      </div>
+    </div>
   </form>
 
   <section id="result" class="empty">
@@ -317,10 +349,10 @@
 
 <script>
 // ───── バージョン（更新するときは version.json と合わせて書き換える）─────
-const APP_VERSION = "1.8.3";
-const APP_DATE = "2026-11-21";
+const APP_VERSION = "1.9.0";
+const APP_DATE = "2026-11-28";
 </script>
-<script src="plans.js?v=1.8.3"></script>
+<script src="plans.js?v=1.9.0"></script>
 <script>
 const D = window.DATA;
 
@@ -359,7 +391,7 @@ function restoreForm() {
   d.members.forEach(m => addMember(m));
   const els = formFields();
   if (els.length === d.vals.length) els.forEach((el, i) => { if (el.type === "radio" || el.type === "checkbox") el.checked = d.vals[i]; else el.value = d.vals[i]; });
-  syncScope();
+  syncScope(); updateRemain();
   if (d.shown && document.getElementById("form").checkValidity()) document.getElementById("form").requestSubmit();
 }
 document.getElementById("updateBtn").addEventListener("click", () => {
@@ -376,14 +408,6 @@ const yen = n => (n < 0 ? "-" : "") + "¥" + Math.round(Math.abs(n)).toLocaleStr
 const signed = n => n > 0 ? `<span class="plus">${yen(n)} おトク</span>` : n < 0 ? `<span class="minus">${yen(-n)} 高い</span>` : "変わらず";
 const val = id => document.getElementById(id).value;
 const radio = name => document.querySelector(`input[name=${name}]:checked`).value;
-const svg = d => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
-const IC = {
-  phone: svg('<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>'),
-  net: svg('<path d="M2.5 9a14 14 0 0 1 19 0"/><path d="M5.5 12.5a9.5 9.5 0 0 1 13 0"/><path d="M8.7 16a5 5 0 0 1 6.6 0"/><circle cx="12" cy="19.5" r="1"/>'),
-  elec: svg('<path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/>'),
-  gift: svg('<rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8.5h14V12M12 8v12.5M12 8S10.5 3.5 8 4.5 9 8 12 8zm0 0s1.5-4.5 4-3.5S15 8 12 8z"/>'),
-  rank: svg('<path d="M4 20.5h16"/><rect x="5" y="12" width="4" height="8.5"/><rect x="10" y="7" width="4" height="13.5"/><rect x="15" y="14.5" width="4" height="6"/>'),
-};
 const gbText = gb => gb === Infinity ? "無制限" : gb + "GB";
 const E = D.electricity;
 const elecById = id => E.plans.find(p => p.id === id);
@@ -558,7 +582,7 @@ function stayFor(ctx) {
   return best;
 }
 // ───── 使う人ごとの入力欄 ─────
-const DATA_OPTS = [["1","1GB未満"],["3","1〜3GB"],["5","3〜5GB"],["10","5〜10GB"],["20","10〜20GB"],["30","20〜30GB"],["50","30〜50GB"],["Infinity","50GB以上・無制限"]];
+const DATA_OPTS = [["1","〜1GB"],["3","1GB超〜3GBまで"],["5","3GB超〜5GBまで"],["10","5GB超〜10GBまで"],["20","10GB超〜20GBまで"],["30","20GB超〜30GBまで"],["50","30GB超〜50GBまで"],["Infinity","50GB超・無制限"]];
 const CALL_OPTS = [["none","ほぼかけない"],["short","短い電話が多い"],["long","長電話をよくする"]];
 const AGE_OPTS = [["adult","23歳以上"],["u22","19〜22歳"],["u18","13〜18歳"],["u12","12歳以下"]];
 const MAX_MEMBERS = 6;
@@ -575,11 +599,11 @@ function addMember(preset = {}) {
     <div class="member-fields">
       <div><label>今のキャリア</label><select class="m-carrier">${opts(CARRIER_OPTS, preset.carrier || prev)}</select></div>
       <div><label>今のスマホ代</label><input class="m-cost" type="number" inputmode="numeric" min="0" step="1" placeholder="例：7500" value="${preset.cost ?? ""}"></div>
-      <div><label>データ量</label><select class="m-data">${opts(DATA_OPTS, preset.data || "5")}</select></div>
+      <div><label>データ量</label><select class="m-data">${opts(DATA_OPTS, preset.data || "5")}</select><div class="hint">ちょうどの量は小さい方の区分です（例：20GBちょうど → 10GB超〜20GBまで）</div></div>
       <div><label>電話</label><select class="m-call">${opts(CALL_OPTS, preset.call || "none")}</select></div>
       <div><label>年齢（学割の判定）</label><select class="m-age">${opts(AGE_OPTS, preset.age || "adult")}</select></div>
     </div>`;
-  div.querySelector(".remove").addEventListener("click", () => { div.remove(); relabel(); });
+  div.querySelector(".remove").addEventListener("click", () => { div.remove(); relabel(); updateRemain(); });
   box.appendChild(div);
   relabel();
 }
@@ -591,6 +615,7 @@ function relabel() {
     r.querySelector(".m-cost").required = i === 0;
   });
   document.getElementById("addMember").disabled = rows.length >= MAX_MEMBERS;
+  updateRemain();
 }
 function readMembers() {
   return [...document.querySelectorAll("#members .member")].map((r, i) => ({
@@ -605,12 +630,42 @@ function readMembers() {
 document.getElementById("addMember").addEventListener("click", () => addMember());
 // 比較する項目のオン・オフで入力欄を出し入れ
 function syncScope() {
-  document.getElementById("fsNet").classList.toggle("off", !document.getElementById("useNet").checked);
-  document.getElementById("fsElec").classList.toggle("off", !document.getElementById("useElec").checked);
+  const net = document.getElementById("useNet").checked, el = document.getElementById("useElec").checked;
+  document.getElementById("fsNet").classList.toggle("off", !net);
+  document.getElementById("fsElec").classList.toggle("off", !el);
+  document.querySelector('.toc [data-target="fsNet"]').classList.toggle("off", !net);
+  document.querySelector('.toc [data-target="fsElec"]').classList.toggle("off", !el);
+  updateRemain();
+}
+// 未入力の数（診断は未入力でもできる。その場合は目安の値で計算する）
+function updateRemain() {
+  const box = document.getElementById("remain");
+  if (!box) return;
+  let n = document.querySelectorAll("#members .m-cost").length ? [...document.querySelectorAll("#members .m-cost")].filter(e => e.value === "").length : 0;
+  if (document.getElementById("useNet").checked && val("netNow") !== "none" && val("netFee") === "") n++;
+  if (document.getElementById("useElec").checked && val("elecBill") === "") n++;
+  box.className = "remain " + (n ? "todo" : "ok");
+  box.innerHTML = n ? `あと ${n} 項目<small>未入力は目安の値で計算します</small>` : "入力OK";
 }
 ["useNet", "useElec"].forEach(id => document.getElementById(id).addEventListener("change", syncScope));
-syncScope();
+document.getElementById("form").addEventListener("input", updateRemain);
+document.getElementById("form").addEventListener("change", updateRemain);
+document.querySelectorAll(".toc button").forEach(b => b.addEventListener("click", () => {
+  const t = document.getElementById(b.dataset.target);
+  if (t && !t.classList.contains("off")) t.scrollIntoView({ behavior: "smooth", block: "start" });
+}));
 addMember();
+syncScope();
+// 幅1000px以上：左の入力欄が下の固定バーに隠れないよう、今の位置に合わせて高さを決める
+const wideMq = window.matchMedia("(min-width: 1000px)");
+function fitForm() {
+  const f = document.getElementById("form"), bar = document.querySelector(".actionbar");
+  if (!wideMq.matches) { f.style.maxHeight = ""; return; }
+  const top = Math.max(f.getBoundingClientRect().top, 16);
+  f.style.maxHeight = Math.max(window.innerHeight - bar.offsetHeight - top - 12, 240) + "px";
+}
+["scroll", "resize"].forEach(ev => window.addEventListener(ev, fitForm, { passive: true }));
+fitForm();
 
 document.getElementById("form").addEventListener("submit", e => {
   e.preventDefault();
@@ -643,9 +698,15 @@ document.getElementById("form").addEventListener("submit", e => {
   const nowPlan = elecById(elecNow === "kepcoNattoku" ? "kepcoNattoku" : elecNow === "other" ? "kepcoA" : elecNow);
   const billIn = Number(val("elecBill")), kwhIn = Number(val("kwh"));
   const kwh = kwhIn || (billIn ? kwhFromBill(nowPlan, billIn) : 260);
-  const elecCurrent = billIn || elecBill(nowPlan, kwh);
+  const calcNow = elecBill(nowPlan, kwh); // 今のプランを単価×使用量で計算した額
+  const elecCurrent = billIn || calcNow;
+  // 入力した今の電気代を基準に、各社との差（単価×使用量の計算額どうしの差）を足し引きする。未入力なら計算額そのまま
+  const adjBill = p => billIn ? Math.max(billIn + (elecBill(p, kwh) - calcNow), 0) : elecBill(p, kwh);
+  const elecBasis = billIn
+    ? "でんきの比較は、入力した今の電気代を基準に、各社との差（単価×使用量で計算）を足し引きしています。燃料費調整額は各社同じとみなしています。"
+    : "電気代は単価×使用量で計算した目安です。";
   const elecRows = E.plans.filter(p => !p.needsGas || elecNow === "kepcoNattoku").map(p => {
-    const bill = elecBill(p, kwh), pt = elecPoints(p, kwh);
+    const bill = adjBill(p), pt = elecPoints(p, kwh);
     return { id: p.id, name: p.name, note: p.note, bill, points: pt.points, rate: pt.rate, real: bill - pt.points, promos: livePromos(p.promos).map(x => ({ ...x, who: p.name.split("（")[0] })) };
   });
   const keepElec = { id: elecNow === "other" ? null : elecNow, name: (elecNow === "other" ? "今の電力会社" : nowPlan.name) + "（そのまま）", real: elecCurrent, bill: elecCurrent, points: 0, keep: true };
@@ -669,14 +730,37 @@ document.getElementById("form").addEventListener("submit", e => {
   const diff = nowTotal - best.score;
   const scopeLabel = ["スマホ", useNet && "ネット", useElec && "でんき"].filter(Boolean).join("・");
 
+  // ネットの月額割引（キャンペーン込みで比べるとき）：割引中の月額と期間
+  const netDiscText = r => {
+    if (!usePromo || !r.net.promos) return "";
+    const m = r.net.promos.filter(p => p.amt && p.months);
+    if (!m.length) return "";
+    const cuts = [...new Set(m.map(p => Math.min(p.months, H)))].sort((a, b) => a - b);
+    let prev = 0;
+    return cuts.map(end => {
+      const disc = m.filter(p => Math.min(p.months, H) >= end).reduce((t, p) => t + p.amt, 0);
+      const t = `${yen(Math.max(r.netCost - disc, 0))}・${prev ? `${prev + 1}〜${end}か月目` : `${end}か月`}`;
+      prev = end; return t;
+    }).join("、");
+  };
+  const mobileSum = r => r.members.reduce((t, m) => t + m.cost, 0);
+  // 通常の月額（キャンペーン後）の合計式
+  const formula = r => {
+    const parts = [`スマホ ${yen(mobileSum(r))}`];
+    if (useNet) parts.push(`ネット ${yen(r.netCost)}`);
+    if (useElec) parts.push(`でんき ${yen(r.el.real)}`);
+    let t = parts.join(" ＋ ");
+    if (r.homeDisc) t += ` − セット割 ${yen(r.homeDisc)}`;
+    return `<div class="formula">キャンペーン後の通常の月額：${t} ＝ <b>${yen(r.total)}</b></div>`;
+  };
   const comboList = r => `
     <ul class="combo">
-      ${r.members.map(x => `<li>${IC.phone}<span class="who">${x.who}</span>${x.carrier} ${x.plan}（${gbText(x.gb)}）<span class="ex">${yen(x.cost)}</span></li>`).join("")}
-      ${useNet ? `<li>${IC.net}${r.net.name}<span class="ex">${r.netCost ? yen(r.netCost) : "—"}${r.extra ? `（オプションパック ${yen(r.extra)} 込み）` : ""}</span></li>` : ""}
-      ${useElec ? `<li>${IC.elec}${r.el.name}<span class="ex">${yen(r.el.real)}${r.el.points ? `（ポイント ${r.el.points}pt 差引）` : ""}</span></li>` : ""}
-      ${r.homeDisc ? `<li>${IC.gift}${r.homeLabel}<span class="ex">-${yen(r.homeDisc)}</span></li>` : ""}
-    </ul>`;
-  const partsDetail = r => `<details><summary>スマホ料金の内訳</summary>${r.members.map(x => `<div class="breakdown"><span class="who">${x.who}</span>${x.parts.join(" / ")}</div>`).join("")}</details>`;
+      ${r.members.map(x => `<li><span class="badge">スマホ</span><span class="who">${x.who}</span>${x.carrier} ${x.plan}（${gbText(x.gb)}）<span class="ex">${yen(x.cost)}</span></li>`).join("")}
+      ${useNet ? `<li><span class="badge">ネット</span>${r.net.name}<span class="ex">${r.netCost ? (netDiscText(r) ? "通常 " : "") + yen(r.netCost) : "—"}${netDiscText(r) ? `（割引期間は ${netDiscText(r)}）` : ""}${r.extra ? `（オプションパック ${yen(r.extra)} 込み）` : ""}</span></li>` : ""}
+      ${useElec ? `<li><span class="badge">でんき</span>${r.el.name}<span class="ex">${yen(r.el.real)}${r.el.points ? `（ポイント ${r.el.points}pt 差引）` : ""}</span></li>` : ""}
+      ${r.homeDisc ? `<li><span class="badge">割引</span>${r.homeLabel}<span class="ex">-${yen(r.homeDisc)}</span></li>` : ""}
+    </ul>${formula(r)}`;
+  const partsDetail = (r, open = false) => `<details${open ? " open" : ""}><summary>スマホ料金の内訳</summary>${r.members.map(x => `<div class="breakdown"><span class="who">${x.who}</span>${x.parts.join(" / ")}</div>`).join("")}</details>`;
   // キャンペーンの一覧（期間・申込期限つき）
   const promoLine = p => {
     const what = `-${yen(p.amt)}/月 × ${p.months}か月`;
@@ -685,28 +769,29 @@ document.getElementById("form").addEventListener("submit", e => {
   };
   const promoBox = (list, fold = false) => {
     if (!list || !list.length) return "";
-    const head = `${IC.gift}${list.some(p => p.student) ? "キャンペーン・学割" : "キャンペーン"}${usePromo ? `（2年間で ${yen(promoValue(list))} おトク）` : "（この比較では計算に入れていません）"}`;
+    const head = `${list.some(p => p.student) ? "キャンペーン・学割" : "キャンペーン"}${usePromo ? `（2年間で ${yen(promoValue(list))} おトク）` : "（この比較では計算に入れていません）"}`;
     const body = `<ul>${list.map(promoLine).join("")}</ul>`;
     return fold
       ? `<details class="promo"><summary class="promo-title">${head}</summary>${body}</details>`
       : `<div class="promo"><div class="promo-title">${head}</div>${body}</div>`;
   };
-  // 月ごとの支払いの変化（例：1〜3か月目 ¥5,000 → 4〜12か月目 ¥6,000 → 13か月目〜 ¥8,000）
-  const timeline = r => {
-    if (!usePromo) return "";
-    const m = (r.promos || []).filter(p => p.amt && p.months);
-    if (!m.length) return "";
+  // 月ごとに実際に払う金額（例：1〜3か月目 ¥5,000 → 4〜12か月目 ¥6,000 → 13か月目〜 ¥8,000）
+  const paySegs = r => {
+    const m = usePromo ? (r.promos || []).filter(p => p.amt && p.months) : [];
+    if (!m.length) return [{ label: "", amt: r.total }];
     const cuts = [...new Set(m.map(p => Math.min(p.months, H)))].sort((a, b) => a - b);
     let start = 1; const out = [];
     for (const end of cuts) {
       const disc = m.filter(p => p.months >= end).reduce((t, p) => t + p.amt, 0);
-      out.push(`${start === end ? start : start + "〜" + end}か月目 ${yen(r.total - disc)}`);
+      out.push({ label: `${start === end ? start : start + "〜" + end}か月目`, amt: r.total - disc });
       start = end + 1;
     }
-    out.push(`${start}か月目〜 ${yen(r.total)}`);
-    return `<div class="timeline">毎月の支払い：${out.join(" → ")}</div>`;
+    out.push({ label: `${start}か月目〜`, amt: r.total });
+    return out;
   };
-  const priceNote = r => usePromo && r.promos.length ? `<div class="breakdown">2年間の実質月額（キャンペーン後の通常は 月 ${yen(r.total)}）</div>` : "";
+  const firstPay = r => paySegs(r)[0].amt;
+  const payBlock = r => `<div class="pay"><div class="pay-label">毎月の支払い${paySegs(r).length > 1 ? "（実際に払う額）" : ""}</div><div class="pay-body">${paySegs(r).map(x => `<span class="seg">${x.label ? `<small>${x.label}</small>` : ""}${yen(x.amt)}</span>`).join(" → ")}</div></div>`;
+  const refScore = r => usePromo && r.promos.length ? `<div class="breakdown">参考：2年間の実質月額 ${yen(r.score)}（キャンペーンの割引を2年間でならした額）</div>` : "";
   const planNames = r => [...new Set(r.members.map(x => x.plan))].join("・");
   const extrasTitle = r => (useNet && !r.net.keep ? " × " + r.net.name.replace(" に乗り換え", "") : "") + (useElec && !r.el.keep ? " × " + r.el.name.replace(" に切り替え", "") : "");
 
@@ -714,15 +799,16 @@ document.getElementById("form").addEventListener("submit", e => {
   document.getElementById("hero").innerHTML = `
     <div class="tagline">${topIsStay ? `今の${nowName}のまま見直すのがいちばんお得` : `${nowName} から乗り換えると、いちばん安いのは`}</div>
     <div class="title">${topIsStay ? nowName + "のまま" : nowName + " → " + best.name}${extrasTitle(best)}</div>
-    ${comboList(best)}
+    ${payBlock(best)}
+    ${refScore(best)}
     <div style="margin-top:12px">${diff > 0 ? `${scopeLabel}の合計で ${usePromo ? "2年間（キャンペーン込み）" : "年間"}` : ""}</div>
     ${diff > 0
-      ? `<div class="big">${yen(diff * P)} おトク</div><div class="ex">月 ${yen(nowTotal)} → ${usePromo && best.promos.length ? "実質 " : ""}${yen(best.score)}（月 ${yen(diff)} 安くなります）</div>`
+      ? `<div class="big">${yen(diff * P)} おトク</div><div class="ex">今の合計 月 ${yen(nowTotal)} と比べて、${usePromo && best.promos.length ? "実質月額で " : ""}月 ${yen(diff)} 安くなります</div>`
       : `<div class="big bad">今の契約がいちばんお得です</div><div class="ex">試算した中で最安は 月 ${yen(best.score)}（今は 月 ${yen(nowTotal)}）</div>`}
-    ${usePromo && best.promos.length && nowTotal - best.total !== diff ? `<div class="ex">キャンペーンが終わった後は 月 ${yen(best.total)}（今と比べて 月 ${signed(nowTotal - best.total)}）</div>` : ""}
-    ${timeline(best)}
+    ${comboList(best)}
+    ${useElec ? `<div class="breakdown">${elecBasis}</div>` : ""}
     ${promoBox(best.promos)}
-    ${partsDetail(best)}
+    ${partsDetail(best, true)}
     <table>
       <thead><tr><th></th><th>${usePromo ? "実質月額" : "月額"}</th><th>今と比べて/${pLabel}</th></tr></thead>
       <tbody>
@@ -739,17 +825,18 @@ document.getElementById("form").addEventListener("submit", e => {
   const isNow = r => single && r.ids[0] === nowIds[0];
   const card = (r, label, cls) => `
       <div class="plan ${cls}">
-        <div class="plan-head"><span class="carrier-head">${label}</span><span class="price">${yen(r.score)}</span></div>
-        ${priceNote(r)}
-        <div class="ex">今と比べて 月 ${signed(nowTotal - r.score)}・${pLabel} ${yen((nowTotal - r.score) * P)}</div>
+        <div class="plan-head"><span class="carrier-head">${label}</span><span class="price">${yen(firstPay(r))}<small>1か月目に払う額</small></span></div>
+        ${payBlock(r)}
+        ${refScore(r)}
+        <div class="ex">今の合計と比べて（${usePromo ? "実質月額・2年間の合計で" : "通常の月額・年間の合計で"}） 月 ${signed(nowTotal - r.score)}・${pLabel} ${yen((nowTotal - r.score) * P)}</div>
         <div class="bar"><span style="width:${Math.min(r.score / maxT, 1) * 100}%"></span></div>
         ${comboList(r)}
-        ${timeline(r)}
         ${promoBox(r.promos, true)}
-        ${partsDetail(r)}
+        ${partsDetail(r, /\brec\b/.test(cls))}
       </div>`;
   document.getElementById("ranking").innerHTML = `
-    <h2>${IC.rank}${scopeLabel}の合計で比べる（${usePromo ? "キャンペーン込み・2年間の実質月額" : "月額"}）</h2>
+    <h2>${scopeLabel}の合計で比べる（${usePromo ? "キャンペーン込み" : "キャンペーンなし"}）</h2>
+    <div class="breakdown">並び順は ${usePromo ? "2年間の実質月額（キャンペーンの割引を2年間でならした額）" : "月額"}の安い順です。各カードの大きな金額は、1か月目に実際に払う額です。</div>
     <div class="ex">今：${yen(nowTotal)}（スマホ ${yen(current)}${useNet ? ` ＋ ネット ${yen(netNowCost)}` : ""}${useElec ? ` ＋ でんき ${yen(elecNowCost)}` : ""}）</div>
     <div class="ranking" style="margin-top:10px">
       ${stay && !single ? card(stay, `<span class="plan-name">今のキャリアのまま見直し<span class="tag now">${nowName}</span></span>`, "is-now" + (topIsStay ? " rec" : "")) : ""}
@@ -777,7 +864,7 @@ document.getElementById("form").addEventListener("submit", e => {
   const gakuRows = D.carriers.map(c => ({ c, list: (c.student || []).filter(st => !st.until || st.until >= TODAY), v: gakuValue(c) }))
     .sort((x, y) => (y.v || 0) - (x.v || 0) || y.list.length - x.list.length);
   document.getElementById("gakuwari").innerHTML = `
-    <h2>${IC.gift}各社の学割</h2>
+    <h2>各社の学割</h2>
     <div class="ex">${students.length ? `学割の対象：${students.map(m => `${m.who}（${AGE_TEXT[m.age]}）`).join("・")}。家族みんなでその会社に乗り換えた場合に、学割で2年間に安くなる金額です。` : "入力欄の「年齢」で学生・子どもを選ぶと、学割でいくら安くなるかを計算します。"}</div>
     <div class="gaku-list">${gakuRows.map(({ c, list, v }) => `
       <div class="plan${v > 0 ? " rec" : ""}">
@@ -795,7 +882,7 @@ document.getElementById("form").addEventListener("submit", e => {
   const maxN = Math.max(...D.internet.map(n => n[house]), netCurrent, 1);
   const setNames = id => D.carriers.filter(c => c.net && c.net.ids.includes(id)).map(c => c.name).join("・");
   document.getElementById("internet").innerHTML = `
-    <h2>${IC.net}自宅のインターネット（${house === "home" ? "戸建て" : "マンション"}・月額）</h2>
+    <h2>自宅のインターネット（${house === "home" ? "戸建て" : "マンション"}・月額）</h2>
     <div class="ex">今：${netNow === "none" ? "回線なし" : yen(netCurrent)}</div>
     <div class="plans">${D.internet.map(n => {
       const cost = n.id === netNow && netFeeIn ? netFeeIn : n[house];
@@ -812,8 +899,9 @@ document.getElementById("form").addEventListener("submit", e => {
   const maxE = Math.max(...elecRows.map(r => r.real), elecCurrent, 1);
   const denkiSet = id => D.carriers.filter(c => c.denki && c.denki.id === id).map(c => `${c.name} -${yen(c.denki.amt)}/回線`).join("・");
   document.getElementById("elec").innerHTML = `
-    <h2>${IC.elec}でんき 切り替えシミュレーション（関西電力エリア）</h2>
+    <h2>でんき 切り替えシミュレーション（関西電力エリア）</h2>
     <div class="ex">月の使用量：約 ${kwh}kWh${kwhIn ? "" : billIn ? "（電気代から推定）" : "（目安）"}　／　今：${yen(elecCurrent)}</div>
+    <div class="breakdown">${elecBasis}</div>
     <div class="plans">${elecRows.sort((a, b) => a.real - b.real).map(r => `
       <div class="plan">
         <div class="plan-head"><span class="plan-name">${r.name}</span><span class="price">${yen(r.real)}</span></div>
@@ -823,7 +911,7 @@ document.getElementById("form").addEventListener("submit", e => {
         ${r.id !== elecNow ? promoBox(r.promos.map(p => ({ ...p, who: "" }))) : ""}
       </div>`).join("")}</div>
     ${elecNow === "kepcoNattoku" ? '<div class="notice">「なっトクパック」は電気とガスのセット割引が入っています。電気を他社に切り替えるとガスの契約条件が変わることがあるため、ガス料金は関西電力にご確認ください（この試算ではガス代は変わらない前提です）。</div>' : ""}
-    <div class="notice">電気代は燃料費調整額（楽天でんきは市場価格調整額）を含めずに比べています。月によって実際の差は変わります。</div>`;
+    <div class="notice">${billIn ? "各社の電気代は、今の電気代に各社との単価の差を足し引きした額です。" : "電気代は単価×使用量の目安で、"}燃料費調整額（楽天でんきは市場価格調整額）は各社同じとみなしており、月によって実際の差は変わります。</div>`;
 
   document.getElementById("disclaimer").innerHTML =
     `※ 料金は${D.updated}時点で各社の公式サイトを確認した税込の目安です（一部は参考値）。端末代・工事費・事務手数料・解約金は含みません。` +

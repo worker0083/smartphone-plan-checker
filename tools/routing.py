@@ -25,7 +25,7 @@ OPUS_PER_DAY = 3
 AGENT_DEFS = {
     "implement": ("implementer", "画面・計算ロジックの変更を実装する。変更後は回帰テストと validate_data.py を実行する",
                   "Read, Edit, Write, Bash, Grep, Glob"),
-    "verify": ("checker", "検証・チェック（validate_data.py の実行、差分・スナップショットの比較）を行い、結果だけを短く報告する。ファイルは変更しない",
+    "verify": ("checker", "検証・チェック（validate_data.py の実行、差分・スナップショットの比較、Playwright での画面確認）を行い、結果だけを短く報告する。リポジトリのファイルは変更しない。ブラウザ確認のスクリプトはファイルにせず node -e '...' で直接実行する（ファイル書き込みの道具は持たない）",
                "Read, Bash, Grep, Glob"),
     "review": ("reviewer", "PR の最終確認。料金・条件は出典（公式ページ）と支払い例で確かめ、validate_data.py を必ず実行する",
                "Read, Bash, Grep, Glob"),

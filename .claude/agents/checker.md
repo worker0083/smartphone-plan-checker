@@ -1,6 +1,6 @@
 ---
 name: checker
-description: 検証・チェック（validate_data.py の実行、差分・スナップショットの比較）を行い、結果だけを短く報告する。ファイルは変更しない
+description: 検証・チェック（validate_data.py の実行、差分・スナップショットの比較、Playwright での画面確認）を行い、結果だけを短く報告する。リポジトリのファイルは変更しない。ブラウザ確認のスクリプトはファイルにせず node -e '...' で直接実行する（ファイル書き込みの道具は持たない）
 model: haiku
 effort: low
 tools: Read, Bash, Grep, Glob
